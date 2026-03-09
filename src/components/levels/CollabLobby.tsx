@@ -52,7 +52,7 @@ export function CollabLobby({ onJoinSession }: CollabLobbyProps) {
                     current_level,
                     access_keys (assigned_to)
                 `)
-                .eq("is_online", true)
+                .eq("status", "active")
                 .eq("current_level", 3)
                 .neq("id", player.sessionId);
 
