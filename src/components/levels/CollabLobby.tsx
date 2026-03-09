@@ -102,7 +102,8 @@ export function CollabLobby({ onJoinSession }: CollabLobbyProps) {
                         .eq("id", newReq.host_id)
                         .single();
 
-                    const hostName = (Array.isArray(hostData?.access_keys) ? hostData.access_keys[0]?.assigned_to : hostData?.access_keys?.assigned_to) || hostData?.pc_id || "Unknown Host";
+                    const hostRaw: any = hostData?.access_keys;
+                    const hostName = (Array.isArray(hostRaw) ? hostRaw[0]?.assigned_to : hostRaw?.assigned_to) || hostData?.pc_id || "Unknown Host";
 
                     setIncomingRequest({
                         id: newReq.id,
