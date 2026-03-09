@@ -63,8 +63,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     const newPlayer = {
       id: `P-${Math.floor(100 + Math.random() * 900)}`,
       token,
-      currentLevel: 1,
-      fragments: [],
+      currentLevel: 2, // Level 1 disabled for now
+      fragments: ["STACK"], // Pre-load Level 1 fragment
       startTime: Date.now(),
     };
     setPlayer(newPlayer);
