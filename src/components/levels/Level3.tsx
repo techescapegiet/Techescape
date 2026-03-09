@@ -1,69 +1,211 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useGame } from "@/context/GameContext";
 import { GlowingButton } from "@/components/ui/GlowingButton";
 import { TerminalText } from "@/components/ui/TerminalText";
-import { CheckCircle2, ShieldAlert } from "lucide-react";
+import { CheckCircle2, ShieldAlert, Users, SplitSquareVertical, AlertCircle, Loader2, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CollabLobby } from "./CollabLobby";
+import { supabase } from "@/lib/supabase";
 
-const QUESTIONS = [
-  {
-    id: 1,
-    question: "Which of the following sorting algorithms has the best average-case time complexity?",
-    options: ["Bubble Sort", "Insertion Sort", "Merge Sort", "Selection Sort"],
-    correct: 2, // Merge Sort (0-indexed)
-  },
-  {
-    id: 2,
-    question: "In the context of database management, what does ACID stand for?",
-    options: [
-      "Atomicity, Consistency, Isolation, Durability",
-      "Array, Constant, Integer, Decimal",
-      "Asynchronous, Concurrent, Isolated, Dynamic",
-      "Allocation, Cache, Index, Data",
-    ],
-    correct: 0,
-  },
-  {
-    id: 3,
-    question: "Which network protocol is used to translate domain names to IP addresses?",
-    options: ["HTTP", "TCP", "DNS", "FTP"],
-    correct: 2,
-  },
+const HOST_QUESTIONS = [
+  { id: 1, question: "Which layer of the OSI model is for communication?", options: ["Physical", "Network", "Transport", "Session"], correct: 2, hint: "It handles end-to-end data transfer." },
+  { id: 2, question: "Function of a Semaphore?", options: ["Storage", "Sync", "Memory", "Routing"], correct: 1, hint: "It helps processes work together." },
+  { id: 3, question: "Which structure uses LIFO?", options: ["Queue", "Stack", "Heap", "List"], correct: 1, hint: "Last In, First Out (like plates)." },
 ];
 
+const GUEST_QUESTIONS = [
+  { id: 1, question: "Secure way to transfer files?", options: ["HTTP", "FTP", "SFTP", "SMTP"], correct: 2, hint: "Secure FTP." },
+  { id: 2, question: "Clear all records in SQL?", options: ["DELETE", "DROP", "TRUNCATE", "REMOVE"], correct: 2, hint: "Starts with T." },
+  { id: 3, question: "What is DHCP?", options: ["Dynamic Host", "Digital Link", "Data Control", "Direct Host"], correct: 0, hint: "It assigns IP addresses automatically." },
+];
+
+interface OnlinePlayer {
+  id: string; // Session UUID
+  pc_id: string; // PC name
+  current_level: number;
+  assigned_to?: string;
+}
+
 export function Level3() {
-  const { completeLevel } = useGame();
-  
-  const [currentQ, setCurrentQ] = useState(0);
+  const { completeLevel, player, handleMissionFailure } = useGame();
+  const [mode, setMode] = useState<"choice" | "solo" | "collab">("choice");
+  const [session, setSession] = useState<{ id: string, partnerId: string, role: "host" | "guest", partnerName?: string } | null>(null);
+
+  // Dynamic state for collab
+  const [currentStep, setCurrentStep] = useState(0);
+  const [attempts, setAttempts] = useState(3);
+  const [hostAnswered, setHostAnswered] = useState(false);
+  const [guestAnswered, setGuestAnswered] = useState(false);
+  const [status, setStatus] = useState<"active" | "completed" | "failed">("active");
+
+  // Local state
   const [selected, setSelected] = useState<number | null>(null);
+  const [partnerSelection, setPartnerSelection] = useState<number | null>(null);
+  const [pingedIndex, setPingedIndex] = useState<number | null>(null);
   const [success, setSuccess] = useState(false);
   const [errorFlash, setErrorFlash] = useState(false);
+  const [showHint, setShowHint] = useState(false);
 
-  const handleNext = () => {
+  const skipLevel = async () => {
+    if (mode === "collab" && session) {
+      await supabase.from("collab_sessions").update({
+        status: "completed"
+      }).eq("id", session.id);
+    } else {
+      setSuccess(true);
+      setTimeout(() => completeLevel("BINARY"), 1000);
+    }
+  };
+
+  useEffect(() => {
+    if (mode !== "collab" || !session) return;
+
+    const channel = supabase
+      .channel(`session-${session.id}`)
+      .on("postgres_changes", {
+        event: "UPDATE",
+        schema: "public",
+        table: "collab_sessions",
+        filter: `id=eq.${session.id}`
+      }, (payload) => {
+        const data = payload.new;
+        setCurrentStep(data.current_step);
+        setAttempts(data.attempts_left);
+        setHostAnswered(data.host_answered);
+        setGuestAnswered(data.guest_answered);
+        setStatus(data.status);
+
+        if (data.status === "completed") {
+          setSuccess(true);
+          setTimeout(() => completeLevel("BINARY"), 3000);
+        } else if (data.status === "failed") {
+          handleMissionFailure("SHIELD REJECTION: COLLABORATION FAILED");
+        }
+      })
+      .on("broadcast", { event: "selection" }, ({ payload }) => {
+        if (payload.sessionId !== player?.sessionId) {
+          setPartnerSelection(payload.index);
+        }
+      })
+      .on("broadcast", { event: "ping" }, ({ payload }) => {
+        if (payload.sessionId !== player?.sessionId) {
+          setPingedIndex(payload.index);
+          setTimeout(() => setPingedIndex(null), 2000);
+        }
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [mode, session, player?.sessionId, completeLevel]);
+
+  // Broadcast selection when it changes
+  useEffect(() => {
+    if (mode === "collab" && session && selected !== null) {
+      const channel = supabase.channel(`session-${session.id}`);
+      channel.send({
+        type: "broadcast",
+        event: "selection",
+        payload: { sessionId: player?.sessionId, index: selected }
+      });
+    }
+  }, [selected, mode, session, player?.sessionId]);
+
+  const handleJoinCollab = useCallback((sessionId: string, partnerId: string, role: "host" | "guest", partnerName?: string) => {
+    setSession({ id: sessionId, partnerId, role, partnerName });
+    setMode("collab");
+    setPartnerSelection(null);
+    setPingedIndex(null);
+  }, []);
+
+  const sendPing = (index: number) => {
+    if (mode === "collab" && session) {
+      const channel = supabase.channel(`session-${session.id}`);
+      channel.send({
+        type: "broadcast",
+        event: "ping",
+        payload: { sessionId: player?.sessionId, index }
+      });
+    }
+  };
+
+  const submitAnswer = async () => {
     if (selected === null) return;
 
-    if (selected === QUESTIONS[currentQ].correct) {
-      if (currentQ < QUESTIONS.length - 1) {
-        setCurrentQ(currentQ + 1);
-        setSelected(null);
+    if (mode === "solo") {
+      const isCorrect = selected === HOST_QUESTIONS[currentStep].correct;
+      if (isCorrect) {
+        if (currentStep < 2) {
+          setCurrentStep(currentStep + 1);
+          setSelected(null);
+          setShowHint(false);
+        } else {
+          setSuccess(true);
+          setTimeout(() => completeLevel("BINARY"), 3000);
+        }
       } else {
-        setSuccess(true);
-        setTimeout(() => {
-          completeLevel("BINARY"); // Key Fragment 3
-        }, 3000);
+        setErrorFlash(true);
+        handleMissionFailure("SOLO INFILTRATION DETECTED AND NEUTRALIZED");
       }
-    } else {
-      // Wrong answer
+      return;
+    }
+
+    if (!session) return;
+    // Handle collaborative answer submission
+
+    const questions = session.role === "host" ? HOST_QUESTIONS : GUEST_QUESTIONS;
+    const isCorrect = selected === questions[currentStep].correct;
+
+    if (!isCorrect) {
+      // Wrong answer resets BOTH for that step and subtracts attempt
+      const newAttempts = attempts - 1;
+      const newStatus = newAttempts <= 0 ? "failed" : "active";
+
+      await supabase.from("collab_sessions").update({
+        attempts_left: newAttempts,
+        host_answered: false,
+        guest_answered: false,
+        status: newStatus
+      }).eq("id", session.id);
+
       setErrorFlash(true);
       setTimeout(() => setErrorFlash(false), 800);
-      // Restart the MCQ
-      setTimeout(() => {
-        setCurrentQ(0);
-        setSelected(null);
-      }, 1000);
+      setSelected(null);
+      return;
     }
+
+    // Correct answer - update our flag
+    const update: any = session.role === "host" ? { host_answered: true } : { guest_answered: true };
+
+    // Check if both answered correct after this update
+    const bothAnswered = (session.role === "host" ? true : hostAnswered) &&
+      (session.role === "guest" ? true : guestAnswered);
+
+    if (bothAnswered) {
+      if (currentStep < 2) {
+        // Go to next question
+        await supabase.from("collab_sessions").update({
+          ...update,
+          current_step: currentStep + 1,
+          host_answered: false,
+          guest_answered: false
+        }).eq("id", session.id);
+        setShowHint(false);
+      } else {
+        // Finish level
+        await supabase.from("collab_sessions").update({
+          ...update,
+          status: "completed"
+        }).eq("id", session.id);
+      }
+    } else {
+      await supabase.from("collab_sessions").update(update).eq("id", session.id);
+    }
+
+    setSelected(null);
   };
 
   if (success) {
@@ -71,7 +213,7 @@ export function Level3() {
       <div className="flex flex-col items-center justify-center p-12 mt-12 border border-[#00ff00] bg-[#002200]/50 box-glow text-center">
         <CheckCircle2 className="w-24 h-24 text-[#00ff00] mb-6 animate-pulse" />
         <h2 className="text-4xl font-bold text-[#00ff00] text-glow mb-4">AUTHENTICATION SUCCESSFUL</h2>
-        <p className="text-xl mb-6 text-white">CODE WORD RECOVERED:</p>
+        <p className="text-xl mb-6 text-white">{session ? "COLLAB" : "SOLO"} CODE WORD RECOVERED:</p>
         <div className="text-5xl font-mono font-bold text-[#00ffff] tracking-widest bg-black p-6 border border-[#00ffff]">
           <TerminalText text="BINARY" />
         </div>
@@ -79,59 +221,194 @@ export function Level3() {
     );
   }
 
-  const q = QUESTIONS[currentQ];
+  if (mode === "choice") {
+    return (
+      <div className="flex flex-col h-full mt-6 gap-8">
+        <div className="border border-[#00ff00]/30 bg-black/50 p-6 box-glow">
+          <h2 className="text-2xl font-bold mb-2 flex items-center gap-3">
+            <ShieldAlert className="w-6 h-6 text-[#ff003c] animate-pulse" />
+            NODE 3: MULTI-FACTOR AUTHENTICATION
+          </h2>
+          <TerminalText text="Warning: This node requires high-level theoretical clearance. Collaboration recommended." speed={20} />
+        </div>
+
+        <button
+          onClick={skipLevel}
+          className="bg-white/5 hover:bg-white/10 text-white/20 hover:text-white/40 text-[10px] px-2 py-1 rounded border border-white/10 transition-colors self-center"
+        >
+          DEBUG: SKIP
+        </button>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
+          <div className="border border-[#00ff00]/30 p-8 flex flex-col bg-[#001100] group hover:border-[#00ff00] transition-colors">
+            <SplitSquareVertical className="w-16 h-16 text-[#00ff00] mb-6 opacity-50 group-hover:opacity-100 transition-opacity" />
+            <h3 className="text-2xl font-bold mb-4">SOLO INFILTRATION</h3>
+            <p className="opacity-70 mb-8 flex-1 text-lg">Attempt to bypass Node 3 protocols alone. Failure results in immediate session reset.</p>
+            <GlowingButton onClick={() => setMode("solo")} className="w-full">INITIALIZE SOLO</GlowingButton>
+          </div>
+
+          <div className="border border-[#00ffff]/30 p-8 flex flex-col bg-[#000811] group hover:border-[#00ffff] transition-colors">
+            <Users className="w-16 h-16 text-[#00ffff] mb-6 opacity-50 group-hover:opacity-100 transition-opacity" />
+            <h3 className="text-2xl font-bold mb-4 text-[#00ffff]">TACTICAL PARTNERSHIP</h3>
+            <p className="opacity-70 mb-8 flex-1 text-lg text-[#00ffff]/80">Collaborate with another online operative. Solve dual algorithms simultaneously to proceed.</p>
+            <GlowingButton onClick={() => setMode("collab")} variant="cyan" className="w-full">CONTACT REINFORCEMENTS</GlowingButton>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (mode === "collab" && !session) {
+    return (
+      <div className="mt-6 flex flex-col gap-6">
+        <button onClick={() => setMode("choice")} className="text-[#00ff00] hover:underline flex items-center gap-2">← ABORT AND RETURN</button>
+        <CollabLobby onJoinSession={handleJoinCollab} />
+      </div>
+    );
+  }
+
+  const questions = mode === "collab" ? (session?.role === "host" ? HOST_QUESTIONS : GUEST_QUESTIONS) : HOST_QUESTIONS;
+  const q = questions[currentStep];
+
+  if (!q) return null;
+
+  const amIAnswered = mode === "collab" ? (session?.role === "host" ? hostAnswered : guestAnswered) : false;
+  const partnerAnswered = mode === "collab" ? (session?.role === "host" ? guestAnswered : hostAnswered) : false;
 
   return (
     <div className="flex flex-col h-full mt-6 gap-6">
-      <div className="border border-[#00ff00]/30 bg-black/50 p-6 box-glow">
-        <h2 className="text-2xl font-bold mb-2 flex items-center gap-3">
-          <ShieldAlert className="w-6 h-6 text-[#ff003c] animate-pulse" />
-          NODE 3: MULTI-FACTOR AUTHENTICATION
-        </h2>
-        <div className="opacity-80">
-          <TerminalText text="You must pass the strict theoretical knowledge verification sequence. Any failure triggers a reset." speed={20} />
+      <div className="flex justify-between items-center bg-black/80 border border-[#00ffff]/30 p-4 box-glow">
+        <div className="flex items-center gap-4">
+          <div className="p-2 border border-[#00ffff] rounded">
+            <Users className="w-6 h-6 text-[#00ffff]" />
+          </div>
+          <div>
+            <div className="text-xs uppercase tracking-tighter text-[#00ffff] font-bold">Partnership Active</div>
+            <div className="font-mono text-sm uppercase">YOU + {session?.partnerName || `OPERATIVE ${session?.partnerId}`}</div>
+          </div>
+        </div>
+        <div className="flex items-center gap-6">
+          <div className="text-right">
+            <div className="text-xs uppercase text-[#ff003c] font-bold">Shield Stability</div>
+            <div className={cn("font-mono text-xl", attempts === 1 ? "text-[#ff003c] animate-pulse" : "text-[#00ff00]")}>
+              {attempts}/3 CYCLES REMAINING
+            </div>
+          </div>
+          <div className="h-10 w-[2px] bg-white/10" />
+          <div className="text-right">
+            <div className="text-xs uppercase text-[#00ffff] font-bold">Synchrony</div>
+            <div className="font-mono text-xl">STEP {currentStep + 1}/3</div>
+          </div>
         </div>
       </div>
 
-      <div className={cn("border border-[#00ff00]/30 p-8 flex flex-col bg-[#001100] transition-colors duration-300", errorFlash ? "border-[#ff003c] bg-[#330000]" : "")}>
-        <div className="flex justify-between items-center mb-6">
-          <span className="text-[#00ffff] font-bold tracking-widest uppercase">
-            VERIFICATION STEP {currentQ + 1} OF {QUESTIONS.length}
-          </span>
-          <div className="flex gap-2">
-            {QUESTIONS.map((_, idx) => (
-              <div key={idx} className={cn("w-3 h-3 rounded-full border border-[#00ff00]", idx === currentQ ? "bg-[#00ff00] animate-pulse" : idx < currentQ ? "bg-[#002200]" : "")} />
-            ))}
-          </div>
-        </div>
-
-        <h3 className="text-2xl font-bold mb-8 min-h-[80px]">
-          {errorFlash ? <span className="text-[#ff003c]">AUTHENTICATION FAILED. RESTARTING PROTOCOL...</span> : q.question}
-        </h3>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          {q.options.map((opt, idx) => (
-            <button
-              key={idx}
-              disabled={errorFlash}
-              onClick={() => setSelected(idx)}
-              className={cn(
-                "p-4 text-left border transition-all duration-200 uppercase",
-                selected === idx 
-                  ? "border-[#00ffff] bg-[#00ffff]/20 text-[#00ffff]" 
-                  : "border-[#00ff00]/30 hover:bg-[#00ff00]/10 hover:border-[#00ff00]"
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
+        {/* Left Side: My Terminal */}
+        <div className={cn(
+          "border-2 p-6 flex flex-col bg-black transition-all",
+          errorFlash ? "border-[#ff003c] animate-shake" : amIAnswered ? "border-[#00ff00]/50 opacity-80" : "border-[#00ffff]"
+        )}>
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-lg font-bold text-[#00ffff] tracking-widest uppercase">My Interface</h3>
+            <div className="flex items-center gap-4">
+              {!amIAnswered && (
+                <button onClick={() => setShowHint(true)} className="text-[10px] text-[#00ffff]/60 hover:text-[#00ffff] uppercase font-bold">Hint</button>
               )}
-            >
-              <span className="inline-block w-8 h-8 text-center bg-black border border-current mr-3 leading-8">{String.fromCharCode(65 + idx)}</span>
-              {opt}
-            </button>
-          ))}
+              {amIAnswered && <CheckCircle2 className="w-6 h-6 text-[#00ff00] animate-bounce" />}
+            </div>
+          </div>
+
+          {!amIAnswered ? (
+            <>
+              <p className="text-xl font-bold mb-4 min-h-[80px] leading-relaxed italic border-l-2 border-[#00ffff] pl-4">
+                "{q.question}"
+              </p>
+              {showHint && (
+                <div className="mb-6 p-2 bg-[#00ffff]/5 border border-[#00ffff]/20 text-[#00ffff] text-xs italic animate-pulse">
+                  HINT: {q.hint || "Try to think about the core concept."}
+                </div>
+              )}
+              <div className="grid grid-cols-1 gap-4">
+                {q.options.map((opt, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setSelected(idx)}
+                    className={cn(
+                      "p-4 text-left border font-mono transition-all relative overflow-hidden",
+                      selected === idx ? "border-[#00ffff] bg-[#00ffff]/20 text-[#00ffff]" : "border-[#00ffff]/20 hover:bg-[#00ffff]/10",
+                      pingedIndex === idx && "animate-pulse border-[#ff003c] bg-[#ff003c]/10"
+                    )}
+                  >
+                    {pingedIndex === idx && (
+                      <div className="absolute top-0 right-0 bg-[#ff003c] text-white text-[8px] px-2 py-0.5 font-bold animate-bounce">
+                        LOOK HERE!
+                      </div>
+                    )}
+                    <span className="mr-4 opacity-50">[{String.fromCharCode(65 + idx)}]</span> {opt}
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={submitAnswer}
+                disabled={selected === null}
+                className="mt-8 py-3 bg-[#00ffff] text-black font-bold uppercase tracking-widest hover:bg-white transition-colors disabled:opacity-50 shadow-[0_0_15px_rgba(0,255,255,0.3)]"
+              >
+                Transmit Response
+              </button>
+            </>
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center">
+              <Loader2 className="w-12 h-12 text-[#00ff00] animate-spin" />
+              <p className="text-[#00ff00] font-mono animate-pulse uppercase tracking-widest">Response Stored. Awaiting Synchrony...</p>
+            </div>
+          )}
         </div>
 
-        <div className="flex justify-end mt-auto">
-          <GlowingButton onClick={handleNext} disabled={selected === null || errorFlash} className="px-12">
-            CONFIRM
-          </GlowingButton>
+        {/* Right Side: Partner Terminal */}
+        <div className={cn(
+          "border-2 p-6 flex flex-col bg-[#000508]/80 transition-all border-dashed",
+          partnerAnswered ? "border-[#00ff00]/50" : "border-white/20"
+        )}>
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-lg font-bold opacity-50 tracking-widest uppercase">Partner Feed ({session?.partnerName || session?.partnerId})</h3>
+            {partnerAnswered && <CheckCircle2 className="w-6 h-6 text-[#00ff00]" />}
+          </div>
+
+          <div className="flex-1 flex flex-col gap-4">
+            {partnerAnswered ? (
+              <div className="flex-1 flex flex-col items-center justify-center p-8 bg-black/40 text-center gap-6">
+                <div className="w-20 h-20 border-2 border-[#00ff00] rounded-full flex items-center justify-center border-t-transparent animate-spin" />
+                <p className="text-[#00ff00] font-mono tracking-widest uppercase">Partner Secured Fragment</p>
+              </div>
+            ) : (
+              <div className="flex flex-col flex-1">
+                <p className="text-sm opacity-50 italic mb-4">"{(session?.role === "host" ? GUEST_QUESTIONS : HOST_QUESTIONS)[currentStep].question}"</p>
+                <div className="grid grid-cols-1 gap-2 flex-1">
+                  {(session?.role === "host" ? GUEST_QUESTIONS : HOST_QUESTIONS)[currentStep].options.map((opt, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => sendPing(idx)}
+                      className={cn(
+                        "p-3 text-left border text-xs font-mono transition-all group relative",
+                        partnerSelection === idx ? "border-[#00ff00] bg-[#00ff00]/10 text-[#00ff00]" : "border-white/5 hover:border-white/20"
+                      )}
+                    >
+                      <span className="opacity-30 group-hover:opacity-100 transition-opacity absolute right-2 text-[8px] uppercase">Click to Suggest</span>
+                      <span className="mr-2 opacity-30">[{String.fromCharCode(65 + idx)}]</span> {opt}
+                    </button>
+                  ))}
+                </div>
+                <div className="mt-4 flex items-center justify-center gap-2 text-[10px] font-mono opacity-50 animate-pulse">
+                  <Activity className="w-3 h-3 text-[#00ffff]" />
+                  SYNCING LIVE ACTIONS...
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-6 p-4 border border-white/5 bg-black/20 text-[10px] font-mono opacity-30 uppercase">
+            Interactive link established. Click partner options to highlight them on their screen.
+          </div>
         </div>
       </div>
     </div>

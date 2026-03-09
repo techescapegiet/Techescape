@@ -93,3 +93,21 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #00cc00;
 }
+@keyframes slide-infinite {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-slide-infinite {
+  animation: slide-infinite 2s linear infinite;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.animate-shake {
+  animation: shake 0.2s ease-in-out infinite;
+}

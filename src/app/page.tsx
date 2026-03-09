@@ -5,7 +5,7 @@ import { TerminalText } from "@/components/ui/TerminalText";
 import { GlitchText } from "@/components/ui/GlitchText";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { ShieldAlert } from "lucide-react";
+import { ShieldAlert, UserPlus } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -56,10 +56,18 @@ export default function Home() {
         initial={{ opacity: 0 }}
         animate={{ opacity: showButton ? 1 : 0 }}
         transition={{ duration: 0.5 }}
+        className="flex flex-col items-center gap-6"
       >
-        <GlowingButton onClick={() => router.push("/login")} className="text-xl px-12 py-4">
+        <GlowingButton onClick={() => router.push("/login")} className="text-xl px-12 py-4 w-64">
           START MISSION
         </GlowingButton>
+
+        <button
+          onClick={() => router.push("/register")}
+          className="text-xs uppercase tracking-[0.3em] text-[#00ffff]/60 hover:text-[#00ffff] transition-all font-bold border-b border-transparent hover:border-[#00ffff] flex items-center gap-2"
+        >
+          <UserPlus className="w-3 h-3" /> New Operative? Register at HQ
+        </button>
       </motion.div>
     </div>
   );

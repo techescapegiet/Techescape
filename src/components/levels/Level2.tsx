@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 const WORD_POOL = [
   { word: "ALGORITHM", hint: "Step-by-step instructions to solve a problem" },
   { word: "RECURSION", hint: "A function that calls itself" },
-  { range: "DATABASE", hint: "An organized collection of structured information" },
+  { word: "DATABASE", hint: "An organized collection of structured information" },
   { word: "FRAMEWORK", hint: "A platform for developing software applications" },
   { word: "INTERFACE", hint: "A shared boundary across which two components exchange information" },
   { word: "COMPILER", hint: "Translates high-level source code to machine code" },
@@ -46,17 +46,22 @@ const WORD_POOL = [
 const LEVEL_TIME = 60; // 60 seconds per question
 
 export function Level2() {
-  const { completeLevel, logout } = useGame();
-  
+  const { completeLevel, logout, handleMissionFailure } = useGame();
+
   const [questions, setQuestions] = useState<typeof WORD_POOL>([]);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
   const [blanks, setBlanks] = useState<string[]>([]);
   const [revealedIndices, setRevealedIndices] = useState<number[]>([]);
-  
+
   const [timeLeft, setTimeLeft] = useState(LEVEL_TIME);
   const [success, setSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
-  
+
+  const skipLevel = () => {
+    setSuccess(true);
+    setTimeout(() => completeLevel("LOGIC"), 1000);
+  };
+
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   // Initialize Game
@@ -64,36 +69,39 @@ export function Level2() {
     // Pick 5 random words
     const shuffled = [...WORD_POOL].sort(() => Math.random() - 0.5);
     const selected = shuffled.slice(0, 5);
-    setQuestions(selected.map(q => ({ word: q.word || q.range || "UNKNOWN", hint: q.hint })));
+    setQuestions(selected.map(q => ({ word: q.word || "UNKNOWN", hint: q.hint })));
   }, []);
 
   // Setup current question
   useEffect(() => {
-    if (questions.length === 0 || success) return;
-    
-    const word = questions[currentQuestionIdx].word;
+    const currentQData = questions[currentQuestionIdx];
+    if (!currentQData || success) return;
+
+    const word = currentQData.word;
+    if (!word) return;
+
     const length = word.length;
-    
     // Determine how many letters to reveal (roughly 30-40%)
     const numToReveal = Math.max(1, Math.floor(length * 0.35));
     const indicesToReveal: number[] = [];
-    
+
     while (indicesToReveal.length < numToReveal) {
       const randIdx = Math.floor(Math.random() * length);
       if (!indicesToReveal.includes(randIdx)) {
         indicesToReveal.push(randIdx);
       }
     }
-    
+
     setRevealedIndices(indicesToReveal);
-    
-    const initialBlanks = word.split("").map((char, i) => 
+
+    if (!word) return;
+    const initialBlanks = word.split("").map((char, i) =>
       indicesToReveal.includes(i) ? char : ""
     );
-    
+
     setBlanks(initialBlanks);
     setTimeLeft(LEVEL_TIME); // Reset timer for new question
-    
+
     // Focus first empty input
     setTimeout(() => {
       const firstEmpty = initialBlanks.findIndex(b => b === "");
@@ -101,7 +109,7 @@ export function Level2() {
         inputRefs.current[firstEmpty]?.focus();
       }
     }, 100);
-    
+
   }, [currentQuestionIdx, questions, success]);
 
   // Timer logic
@@ -118,14 +126,13 @@ export function Level2() {
   // Fail condition
   useEffect(() => {
     if (timeLeft === 0 && !success) {
-      alert("TIME EXPIRED. SECURITY NODE 2 LOCKED. TERMINATING SESSION...");
-      logout();
+      handleMissionFailure("TIME EXPIRED: SECURITY NODE 2 LOCKED");
     }
-  }, [timeLeft, success, logout]);
+  }, [timeLeft, success, handleMissionFailure]);
 
   const handleInputChange = (index: number, value: string) => {
     if (revealedIndices.includes(index) || success) return;
-    
+
     const char = value.toUpperCase().slice(-1); // Only take last char
     const newBlanks = [...blanks];
     newBlanks[index] = char;
@@ -145,7 +152,7 @@ export function Level2() {
         }
       }
     }
-    
+
     // Check answer if all filled
     if (newBlanks.every(b => b !== "")) {
       checkAnswer(newBlanks.join(""));
@@ -155,10 +162,10 @@ export function Level2() {
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Backspace" && blanks[index] === "") {
       // Move focus back on backspace if current is empty
-      const prevEmpty = [...blanks].reverse().findIndex((b, i) => 
+      const prevEmpty = [...blanks].reverse().findIndex((b, i) =>
         !revealedIndices.includes(blanks.length - 1 - i) && (blanks.length - 1 - i) < index
       );
-      
+
       if (prevEmpty !== -1) {
         const targetIdx = blanks.length - 1 - prevEmpty;
         inputRefs.current[targetIdx]?.focus();
@@ -167,7 +174,9 @@ export function Level2() {
   };
 
   const checkAnswer = (attempt: string) => {
-    const word = questions[currentQuestionIdx].word;
+    const currentQData = questions[currentQuestionIdx];
+    if (!currentQData) return;
+    const word = currentQData.word;
     if (attempt === word) {
       if (currentQuestionIdx < questions.length - 1) {
         setCurrentQuestionIdx(prev => prev + 1);
@@ -212,15 +221,22 @@ export function Level2() {
               <TerminalText text="Warning: Filesystem corrupted. Reconstruct the missing syntax to proceed." speed={15} />
             </div>
           </div>
-          
-          <div className={cn("px-6 py-3 border-2 flex items-center gap-3", 
+
+          <button
+            onClick={skipLevel}
+            className="bg-white/5 hover:bg-white/10 text-white/30 hover:text-white/60 text-[9px] px-2 py-0.5 rounded border border-white/10 transition-colors uppercase font-mono self-center"
+          >
+            Skip
+          </button>
+
+          <div className={cn("px-6 py-3 border-2 flex items-center gap-3",
             isCriticalTime ? "border-red-500 text-red-500 bg-red-500/10 box-glow animate-pulse" : "border-[#00ffff] text-[#00ffff] bg-black"
           )}>
             <Timer className="w-6 h-6" />
             <span className="text-3xl font-mono font-black">{timeLeft}s</span>
           </div>
         </div>
-        
+
         {/* Progress Bar */}
         <div className="mt-6">
           <div className="flex justify-between text-xs text-[#00ff00] font-mono mb-2 uppercase tracking-widest">
@@ -228,12 +244,12 @@ export function Level2() {
             <span>{currentQuestionIdx + 1} / 5</span>
           </div>
           <div className="flex gap-2">
-            {[0,1,2,3,4].map((i) => (
-              <div 
-                key={i} 
-                className={cn("h-2 flex-1 transition-colors", 
-                  i < currentQuestionIdx ? "bg-[#00ff00]" : 
-                  i === currentQuestionIdx ? "bg-[#00ffff] animate-pulse" : "bg-[#002200]"
+            {[0, 1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className={cn("h-2 flex-1 transition-colors",
+                  i < currentQuestionIdx ? "bg-[#00ff00]" :
+                    i === currentQuestionIdx ? "bg-[#00ffff] animate-pulse" : "bg-[#002200]"
                 )}
               />
             ))}
@@ -242,11 +258,11 @@ export function Level2() {
       </div>
 
       {/* Main Challenge Area */}
-      <div className={cn("border-2 p-8 md:p-12 relative overflow-hidden transition-colors duration-300", 
-        isError ? "border-red-500 bg-red-950/20 shadow-[inset_0_0_50px_rgba(255,0,0,0.2)]" : 
-        "border-[#00ffff]/30 bg-[#001122]/80 box-glow"
+      <div className={cn("border-2 p-8 md:p-12 relative overflow-hidden transition-colors duration-300",
+        isError ? "border-red-500 bg-red-950/20 shadow-[inset_0_0_50px_rgba(255,0,0,0.2)]" :
+          "border-[#00ffff]/30 bg-[#001122]/80 box-glow"
       )}>
-        
+
         {isError && (
           <div className="absolute inset-0 pointer-events-none opacity-10 bg-[repeating-linear-gradient(45deg,rgba(255,0,0,0.2),rgba(255,0,0,0.2)_10px,transparent_10px,transparent_20px)]" />
         )}
@@ -275,8 +291,8 @@ export function Level2() {
                 onKeyDown={(e) => handleKeyDown(index, e)}
                 className={cn(
                   "w-12 h-16 md:w-16 md:h-20 text-center text-3xl md:text-4xl font-mono font-black border-b-4 focus:outline-none transition-all",
-                  isRevealed 
-                    ? "bg-transparent border-[#00ff00]/50 text-[#00ff00] cursor-not-allowed" 
+                  isRevealed
+                    ? "bg-transparent border-[#00ff00]/50 text-[#00ff00] cursor-not-allowed"
                     : isError
                       ? "bg-red-900/40 border-red-500 text-red-500 focus:border-red-400"
                       : "bg-[#002244]/50 border-[#00ffff] text-white focus:bg-[#00ffff]/10 focus:border-white focus:shadow-[0_4px_15px_#00ffff]"
@@ -285,9 +301,9 @@ export function Level2() {
             );
           })}
         </div>
-        
+
         {isError && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center mt-8 text-red-500 font-bold tracking-widest uppercase animate-pulse"
@@ -298,9 +314,9 @@ export function Level2() {
       </div>
 
       <div className="text-center opacity-50 text-sm font-mono flex justify-center items-center gap-2">
-        <Keyboard className="w-4 h-4" /> 
+        <Keyboard className="w-4 h-4" />
         Type letters to fill blanks. Backspace to clear.
       </div>
-    </div>
+    </div >
   );
 }

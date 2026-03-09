@@ -46,8 +46,8 @@ const GRID_SIZE = 9;
 const LEVEL_TIME = 360; // 6 minutes in seconds
 
 export function Level1() {
-  const { completeLevel, logout } = useGame();
-  
+  const { completeLevel, logout, handleMissionFailure } = useGame();
+
   const [questions, setQuestions] = useState<typeof QUESTION_POOL>([]);
   const [grid, setGrid] = useState<string[][]>([]);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
@@ -58,6 +58,11 @@ export function Level1() {
   const [isInitializing, setIsInitializing] = useState(true);
   const [timeLeft, setTimeLeft] = useState(LEVEL_TIME);
 
+  const skipLevel = () => {
+    setSuccess(true);
+    setTimeout(() => completeLevel("STACK"), 1000);
+  };
+
   const initializeGame = useCallback(() => {
     setIsInitializing(true);
     const shuffledPool = [...QUESTION_POOL].sort(() => Math.random() - 0.5);
@@ -65,7 +70,7 @@ export function Level1() {
     setQuestions(selected);
 
     const newGrid: string[][] = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(""));
-    
+
     selected.forEach((q) => {
       const word = q.answer.toUpperCase();
       let placed = false;
@@ -136,10 +141,9 @@ export function Level1() {
   // Fail condition: LOGOUT
   useEffect(() => {
     if (timeLeft === 0 && !success) {
-      alert("TIME EXPIRED. SECURITY BREACH FAILED. LOGGING OUT...");
-      logout();
+      handleMissionFailure("TIME EXPIRED: SECURITY BREACH FAILED");
     }
-  }, [timeLeft, success, logout]);
+  }, [timeLeft, success, handleMissionFailure]);
 
   const currentWord = questions[currentQuestionIdx]?.answer || "";
 
@@ -156,7 +160,7 @@ export function Level1() {
     setSelectedCells(newSelection);
 
     const spelled = newSelection.map(cell => grid[cell.r][cell.c]).join("");
-    
+
     if (spelled === currentWord) {
       setFoundWords([...foundWords, currentWord]);
       setSelectedCells([]);
@@ -172,7 +176,7 @@ export function Level1() {
     }
   };
 
-  const isSelected = (r: number, c: number) => 
+  const isSelected = (r: number, c: number) =>
     selectedCells.some(cell => cell.r === r && cell.c === c);
 
   const formatTime = (seconds: number) => {
@@ -215,7 +219,7 @@ export function Level1() {
       {/* Header */}
       <div className="border-b-2 border-[#00ff00]/30 pb-4 flex justify-between items-center px-2">
         <div className="flex items-center gap-4">
-          <motion.div 
+          <motion.div
             animate={isCritical ? { rotate: [0, -2, 2, -2, 2, 0] } : {}}
             transition={{ repeat: Infinity, duration: 0.2 }}
           >
@@ -228,17 +232,25 @@ export function Level1() {
             <p className="text-xs opacity-50 uppercase tracking-widest mt-1">JNTUH YEAR 01-02 CURRICULUM ENCRYPTION</p>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-8">
           <div className="text-right border-r border-white/20 pr-8">
-            <span className="text-xs opacity-50 block uppercase">Encryption Strength</span>
-            <span className="text-xl font-bold text-[#00ffff]">EASY_MODE_ACTIVE</span>
+            <span className="text-xs opacity-50 block uppercase text-white/40">Encryption Strength</span>
+            <div className="flex items-center gap-3">
+              <span className="text-xl font-bold text-[#00ffff]">EASY_MODE</span>
+              <button
+                onClick={skipLevel}
+                className="bg-white/5 hover:bg-white/10 text-white/30 hover:text-white/60 text-[9px] px-2 py-0.5 rounded border border-white/10 transition-colors uppercase font-mono"
+              >
+                Skip
+              </button>
+            </div>
           </div>
-          
-          <div className={cn("flex flex-col items-center p-3 border-2 min-w-[140px] box-glow", 
-            timeLeft <= 60 ? "border-red-500 bg-red-500/10" : 
-            timeLeft <= 180 ? "border-yellow-500 bg-yellow-500/10" : 
-            "border-[#00ff00] bg-black")}>
+
+          <div className={cn("flex flex-col items-center p-3 border-2 min-w-[140px] box-glow",
+            timeLeft <= 60 ? "border-red-500 bg-red-500/10" :
+              timeLeft <= 180 ? "border-yellow-500 bg-yellow-500/10" :
+                "border-[#00ff00] bg-black")}>
             <span className="text-[10px] font-bold uppercase tracking-widest opacity-70">Extraction Time</span>
             <span className={cn("text-4xl font-mono font-black", getTimerColor(), isCritical && "animate-ping")}>
               {formatTime(timeLeft)}
@@ -249,7 +261,7 @@ export function Level1() {
 
       <AnimatePresence>
         {isCritical && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
@@ -262,7 +274,7 @@ export function Level1() {
         )}
       </AnimatePresence>
 
-      <motion.div 
+      <motion.div
         animate={isCritical ? {
           x: [0, -3, 3, -3, 3, 0],
           y: [0, 2, -2, 2, -2, 0]
@@ -275,7 +287,7 @@ export function Level1() {
           <div className="flex items-center gap-2 text-[#00ff00] font-bold text-xs uppercase tracking-[0.2em] mb-1">
             <LayoutGrid className="w-4 h-4" /> Active Grid
           </div>
-          <div 
+          <div
             className={cn(
               "grid grid-cols-9 gap-1.5 p-4 bg-black/80 border-2 border-[#00ff00]/40 box-glow rounded-sm grow aspect-square lg:aspect-auto relative overflow-hidden",
               errorFlash && "border-[#ff003c] bg-[#330000]/30 shadow-[0_0_20px_#ff003c]",
@@ -311,12 +323,12 @@ export function Level1() {
         {/* RIGHT: QUESTION & ACTIVE ANSWER */}
         <div className="w-full lg:w-[450px] flex flex-col gap-6">
           <div className="flex flex-col gap-3">
-             <div className="flex items-center gap-2 text-[#00ffff] font-bold text-xs uppercase tracking-[0.2em]">
+            <div className="flex items-center gap-2 text-[#00ffff] font-bold text-xs uppercase tracking-[0.2em]">
               <HelpCircle className="w-4 h-4" /> Active Query
             </div>
-            <div className={cn("border-2 p-6 box-glow rounded-sm min-h-[160px] flex flex-col justify-between transition-colors relative overflow-hidden", 
+            <div className={cn("border-2 p-6 box-glow rounded-sm min-h-[160px] flex flex-col justify-between transition-colors relative overflow-hidden",
               isCritical ? "border-red-600 bg-red-950/20" : "border-[#00ffff]/40 bg-[#001122]/60")}>
-              
+
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentQuestionIdx}
@@ -328,7 +340,7 @@ export function Level1() {
                   <p className="text-xl font-bold text-white leading-relaxed">
                     {questions[currentQuestionIdx]?.question}
                   </p>
-                  
+
                   {/* Hint Section */}
                   <div className="flex items-start gap-2 text-[#00ffff] bg-black/40 p-3 border border-[#00ffff]/20 rounded-sm">
                     <Lightbulb className="w-4 h-4 mt-0.5 shrink-0" />
@@ -338,15 +350,15 @@ export function Level1() {
                   </div>
                 </motion.div>
               </AnimatePresence>
-              
+
               <div className="mt-6 flex flex-wrap gap-2">
                 {currentWord.split("").map((_, i) => (
-                  <div 
-                    key={i} 
+                  <div
+                    key={i}
                     className={cn(
                       "w-10 h-12 border-2 flex items-center justify-center font-mono text-xl font-bold",
-                      selectedCells[i] 
-                        ? "border-[#00ffff] bg-[#00ffff]/20 text-[#00ffff] text-glow" 
+                      selectedCells[i]
+                        ? "border-[#00ffff] bg-[#00ffff]/20 text-[#00ffff] text-glow"
                         : "border-[#00ffff]/20 bg-black/40 text-[#00ffff]/20"
                     )}
                   >
@@ -363,15 +375,15 @@ export function Level1() {
             </div>
             <div className="flex flex-col gap-2 overflow-y-auto max-h-[350px] pr-2 scrollbar-thin scrollbar-thumb-[#00ff00]/20">
               {questions.map((q, i) => (
-                <div 
+                <div
                   key={i}
                   className={cn(
                     "p-3 border flex items-center justify-between text-xs font-mono uppercase tracking-widest",
-                    i < currentQuestionIdx 
-                      ? "border-[#00ff00] bg-[#00ff00]/10 text-[#00ff00] opacity-50" 
-                      : i === currentQuestionIdx 
-                      ? "border-[#00ffff] bg-[#00ffff]/10 text-[#00ffff] font-bold box-glow" 
-                      : "border-white/10 bg-black/20 text-white/30"
+                    i < currentQuestionIdx
+                      ? "border-[#00ff00] bg-[#00ff00]/10 text-[#00ff00] opacity-50"
+                      : i === currentQuestionIdx
+                        ? "border-[#00ffff] bg-[#00ffff]/10 text-[#00ffff] font-bold box-glow"
+                        : "border-white/10 bg-black/20 text-white/30"
                   )}
                 >
                   <div className="flex items-center gap-3">
@@ -385,12 +397,12 @@ export function Level1() {
           </div>
 
           <div className="mt-auto">
-             <div className={cn("p-4 border font-mono uppercase text-[10px]", 
-               isCritical ? "border-red-600 text-red-500 bg-red-950/20 shadow-[0_0_10px_#ff0000]" : "border-[#00ff00]/20 text-[#00ff00]/60 bg-black/50")}>
-               &gt; STATUS: {isCritical ? "BREAKDOWN_DETECTED" : "MATRIX_STABLE"}<br/>
-               &gt; GAME_OVER_PENALTY: LOGOUT_ON_EXPIRY<br/>
-               &gt; ENCRYPTION: 30_EASY_MODE_POOL
-             </div>
+            <div className={cn("p-4 border font-mono uppercase text-[10px]",
+              isCritical ? "border-red-600 text-red-500 bg-red-950/20 shadow-[0_0_10px_#ff0000]" : "border-[#00ff00]/20 text-[#00ff00]/60 bg-black/50")}>
+              &gt; STATUS: {isCritical ? "BREAKDOWN_DETECTED" : "MATRIX_STABLE"}<br />
+              &gt; GAME_OVER_PENALTY: LOGOUT_ON_EXPIRY<br />
+              &gt; ENCRYPTION: 30_EASY_MODE_POOL
+            </div>
           </div>
         </div>
       </motion.div>
