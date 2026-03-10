@@ -12,7 +12,7 @@ import {
   getCrosswordWords,
   getSemanticBlanks,
   getMCQs,
-  getDebuggingChallenge,
+  getDebuggingChallenges,
   AcademicYear,
   Department,
   MCQQuestion,
@@ -32,6 +32,7 @@ export function Level5() {
   const [success, setSuccess] = useState(false);
   const [errorFlash, setErrorFlash] = useState(false);
   const [showHint, setShowHint] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
 
   // Stage 1 (Crossword/Word Search)
   const [s1Words, setS1Words] = useState<any[]>([]);
@@ -62,7 +63,8 @@ export function Level5() {
 
     // Init all stages data
     const s1WordsPool = getCrosswordWords(year, dept);
-    setS1Words(s1WordsPool);
+    const shuffledS1 = [...s1WordsPool].sort(() => 0.5 - Math.random());
+    setS1Words([shuffledS1[0]]); // exactly one word for Stage 1
     setFoundWords([]);
 
     const s2Pool = getSemanticBlanks(year, dept);
@@ -72,11 +74,12 @@ export function Level5() {
       d2 = s2Pool.find(p => !s1WordsPool.some(w => w.word === p.word)) || d2;
     }
 
-    const mcqs = getMCQs(year, dept);
+    const mcqs = getMCQs();
     const d3 = mcqs[Math.floor(Math.random() * mcqs.length)];
 
     const langs: ("C" | "Java" | "Python")[] = ["C", "Java", "Python"];
-    const d4 = getDebuggingChallenge(year, dept, langs[Math.floor(Math.random() * 3)]);
+    const d4Pool = getDebuggingChallenges(langs[Math.floor(Math.random() * 3)]);
+    const d4 = d4Pool[0];
 
     setS2Data(d2); setS3Data(d3); setS4Data(d4);
     setUserCode(d4.initialCode);
@@ -85,19 +88,22 @@ export function Level5() {
     const gridSize = 8;
     const newGrid: string[][] = Array(gridSize).fill(null).map(() => Array(gridSize).fill(""));
 
-    s1WordsPool.forEach(w => {
+    [shuffledS1[0]].forEach(w => {
       let placed = false;
       let limit = 0;
       const word = w.word.toUpperCase();
-      while (!placed && limit < 100) {
+      while (!placed && limit < 200) {
         limit++;
-        const dir = [[0, 1], [1, 0], [1, 1], [0, -1], [-1, 0]][Math.floor(Math.random() * 5)];
+        // Prioritize Horizontal, Vertical, Diagonal directions
+        const directions = [[0, 1], [1, 0], [1, 1], [1, -1]];
+        const dir = directions[Math.floor(Math.random() * directions.length)];
+
         const r = Math.floor(Math.random() * gridSize);
         const c = Math.floor(Math.random() * gridSize);
         const er = r + (word.length - 1) * dir[0];
         const ec = c + (word.length - 1) * dir[1];
 
-        if (er >= 0 && er < gridSize && ec >= 0 && ec < gridSize) {
+        if (er >= 0 && er < gridSize && ec >= 0 && ec < gridSize && er >= 0 && ec < gridSize) {
           let ok = true;
           for (let i = 0; i < word.length; i++) {
             const curr = newGrid[r + i * dir[0]][c + i * dir[1]];
@@ -137,7 +143,10 @@ export function Level5() {
       setErrorFlash(false);
     } else {
       setSuccess(true);
-      setTimeout(() => completeLevel("SYNTAX"), 3000);
+      if (!isCompleting) {
+        setIsCompleting(true);
+        setTimeout(() => completeLevel("SYNTAX"), 3000);
+      }
     }
   };
 
@@ -156,14 +165,31 @@ export function Level5() {
   const handleCellClick = (r: number, c: number) => {
     if (stage !== 1) return;
 
-    // Toggle logic
-    const idx = selectedCells.findIndex(cell => cell.r === r && cell.c === c);
-    let newSel;
-    if (idx >= 0) {
-      newSel = selectedCells.slice(0, idx);
-    } else {
-      newSel = [...selectedCells, { r, c }];
+    // Linear Path Enforcement
+    if (selectedCells.length > 0) {
+      const last = selectedCells[selectedCells.length - 1];
+      const isAdjacent = Math.abs(r - last.r) <= 1 && Math.abs(c - last.c) <= 1;
+
+      if (!isAdjacent) {
+        setSelectedCells([{ r, c }]);
+        return;
+      }
+
+      // Enforce direction if more than 1 cell selected
+      if (selectedCells.length >= 2) {
+        const first = selectedCells[0];
+        const second = selectedCells[1];
+        const dr = second.r - first.r;
+        const dc = second.c - first.c;
+        if ((r - last.r) !== dr || (c - last.c) !== dc) {
+          setSelectedCells([{ r, c }]);
+          return;
+        }
+      }
     }
+
+    // Add cell
+    const newSel = [...selectedCells, { r, c }];
     setSelectedCells(newSel);
 
     const spelled = newSel.map(cell => grid[cell.r][cell.c]).join("").toUpperCase();
@@ -178,14 +204,12 @@ export function Level5() {
           handleStageSuccess();
         }
       } else {
-        setSelectedCells([]); // Already found
+        setSelectedCells([]);
       }
     } else {
-      // Check if it's still a potential prefix
       const potential = s1Words.some(w => w.word.toUpperCase().startsWith(spelled));
-      if (!potential || spelled.length > 10) {
-        handleStageFailure();
-        setSelectedCells([]);
+      if (!potential) {
+        setSelectedCells([{ r, c }]); // Fail - start new
       }
     }
   };

@@ -295,11 +295,17 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     await syncPlayerToSupabase(updatedPlayer);
 
     if (updatedPlayer.currentLevel > 5) {
+      // Mark session as completed so leaderboard can show it and calculate time
+      await supabase.from("players").update({
+        status: "completed",
+        last_seen: new Date().toISOString()
+      }).eq("id", updatedPlayer.sessionId);
       router.push("/reconstruct");
     } else {
       router.push("/dashboard");
     }
   };
+
 
   const registerStudent = async (details: { name: string; roll: string; email: string; year: string; dept: string }) => {
     try {

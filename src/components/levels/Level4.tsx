@@ -8,7 +8,7 @@ import { CheckCircle2, XCircle, Bug, Clock, LifeBuoy, Code2, Play, Lightbulb } f
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-import { getDebuggingChallenge, CodeChallenge, AcademicYear, Department } from "@/lib/questionBank";
+import { getDebuggingChallenges, CodeChallenge } from "@/lib/questionBank";
 
 function normalize(code: string): string {
   return code.replace(/\r\n/g, "\n").replace(/\t/g, "    ").trim();
@@ -18,36 +18,38 @@ export function Level4() {
   const { completeLevel, handleMissionFailure, player } = useGame();
 
   const [selectedLanguage, setSelectedLanguage] = useState<"C" | "Java" | "Python" | null>(null);
-  const [currentChallenge, setCurrentChallenge] = useState<CodeChallenge | null>(null);
+  const [challenges, setChallenges] = useState<CodeChallenge[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [userCode, setUserCode] = useState("");
   const [compileResult, setCompileResult] = useState<"idle" | "success" | "error">("idle");
   const [compileMsg, setCompileMsg] = useState("");
   const [attempts, setAttempts] = useState(3);
   const [success, setSuccess] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(120); // 120s for the challenge
+  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes for 5 snippets
   const [showHint, setShowHint] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
 
   useEffect(() => {
-    if (selectedLanguage && player?.academicYear && player?.department) {
-      const challenge = getDebuggingChallenge(
-        player.academicYear as AcademicYear,
-        player.department as Department,
-        selectedLanguage
-      );
-      setCurrentChallenge(challenge);
-      setUserCode(challenge.initialCode);
+    if (selectedLanguage) {
+      const pool = getDebuggingChallenges(selectedLanguage);
+      setChallenges(pool);
+      if (pool.length > 0) {
+        setUserCode(pool[0].initialCode);
+      }
     }
   }, [selectedLanguage, player]);
 
   useEffect(() => {
-    if (!currentChallenge || success) return;
+    if (challenges.length === 0 || success) return;
     if (timeLeft <= 0) {
       handleMissionFailure("TIME EXPIRED: SECURITY NODE 4 LOCKED");
       return;
     }
     const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
     return () => clearInterval(timer);
-  }, [timeLeft, currentChallenge, success, handleMissionFailure]);
+  }, [timeLeft, challenges.length, success, handleMissionFailure]);
+
+  const currentChallenge = challenges[currentIndex];
 
   const handleCompile = () => {
     if (!currentChallenge) return;
@@ -59,16 +61,31 @@ export function Level4() {
 
     if (isCorrect) {
       setCompileResult("success");
-      setCompileMsg("✓ Compilation successful. All tests passed.");
-      setSuccess(true);
-      setTimeout(() => completeLevel("STACK"), 2000);
+      setCompileMsg("✓ Snippet verified. Injection payload ready.");
+
+      setTimeout(() => {
+        if (currentIndex < challenges.length - 1) {
+          const nextIdx = currentIndex + 1;
+          setCurrentIndex(nextIdx);
+          setUserCode(challenges[nextIdx].initialCode);
+          setCompileResult("idle");
+          setShowHint(false);
+          setCompileMsg("");
+        } else {
+          setSuccess(true);
+          if (!isCompleting) {
+            setIsCompleting(true);
+            setTimeout(() => completeLevel("STACK"), 2000);
+          }
+        }
+      }, 1500);
     } else {
       const remaining = attempts - 1;
       setAttempts(remaining);
       setCompileResult("error");
       setCompileMsg(`✗ Compilation failed. Syntax or logic error detected.`);
       if (remaining <= 0) {
-        setTimeout(() => handleMissionFailure("PATCH CRITICALLY REJECTED: SYSTEM LOCKDOWN"), 1000);
+        setTimeout(() => handleMissionFailure("PATCH REJECTED: SYSTEM LOCKDOWN"), 1000);
       } else {
         setTimeout(() => setCompileResult("idle"), 2000);
       }
@@ -111,7 +128,7 @@ export function Level4() {
     );
   }
 
-  if (!currentChallenge) return (
+  if (challenges.length === 0) return (
     <div className="flex flex-col items-center justify-center p-12 text-white font-mono">
       <div className="animate-pulse">INITIALIZING COMPILER...</div>
     </div>
@@ -123,12 +140,12 @@ export function Level4() {
       <div className="border-2 border-[#00ffff]/20 bg-black/60 p-3 md:p-4 box-glow flex flex-wrap items-center justify-between gap-2 rounded-sm">
         <div className="flex items-center gap-4 md:gap-8">
           <div>
-            <div className="text-[10px] text-[#00ffff]/50 uppercase font-mono mb-1">Bug</div>
+            <div className="text-[10px] text-[#00ffff]/50 uppercase font-mono mb-1">Snippets Fixed</div>
             <div className="text-lg md:text-xl font-bold flex items-center gap-2">
               <Bug className="w-4 h-4 md:w-5 md:h-5 text-[#ff003c]" />
-              <span className="text-[#00ffff]">1</span>
+              <span className="text-[#00ffff]">{currentIndex + 1}</span>
               <span className="text-white/20">/</span>
-              <span className="text-white/40">1</span>
+              <span className="text-white/40">{challenges.length}</span>
             </div>
           </div>
 

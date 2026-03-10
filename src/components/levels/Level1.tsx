@@ -43,7 +43,7 @@ export function Level1() {
     targetEntries.forEach(({ word }) => {
       let placed = false;
       let attempts = 0;
-      while (!placed && attempts < 150) {
+      while (!placed && attempts < 500) {
         attempts++;
         const directions = [
           [0, 1],   // right
@@ -131,6 +131,28 @@ export function Level1() {
       return;
     }
 
+    // Enforce Linear Path
+    if (selectedCells.length > 0) {
+      const last = selectedCells[selectedCells.length - 1];
+      const dr = r - last.r;
+      const dc = c - last.c;
+
+      // Must be adjacent
+      if (Math.abs(dr) > 1 || Math.abs(dc) > 1 || (dr === 0 && dc === 0)) {
+        return;
+      }
+
+      // If 2+ cells already selected, must follow established direction
+      if (selectedCells.length >= 2) {
+        const prev = selectedCells[selectedCells.length - 2];
+        const prevDr = last.r - prev.r;
+        const prevDc = last.c - prev.c;
+        if (dr !== prevDr || dc !== prevDc) {
+          return;
+        }
+      }
+    }
+
     const newSelection = [...selectedCells, { r, c }];
     setSelectedCells(newSelection);
 
@@ -147,7 +169,10 @@ export function Level1() {
       }
     } else if (spelled.length >= currentWord.length || !currentWord.startsWith(spelled)) {
       setErrorFlash(true);
-      setTimeout(() => { setErrorFlash(false); setSelectedCells([]); }, 500);
+      setTimeout(() => {
+        setErrorFlash(false);
+        setSelectedCells([]);
+      }, 500);
     }
   };
 

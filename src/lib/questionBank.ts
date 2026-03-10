@@ -1,4 +1,4 @@
-// src/lib/questionBank.ts
+﻿// src/lib/questionBank.ts
 
 export type AcademicYear = "1st Year" | "2nd Year" | "3rd Year" | "4th Year";
 export type Department = "cse" | "csM" | "csd" | "ece" | "ce" | "mech";
@@ -50,12 +50,12 @@ export interface L1Word {
 const L1_WORDS: Record<AcademicYear, Record<Department, L1Word[]>> = {
     "1st Year": {
         "cse": [
-            { word: "ALGORITHM", clue: "Steps to solve a problem." },
-            { word: "COMPILER", clue: "Translates code to machine language." },
-            { word: "POINTER", clue: "Stores a memory address." },
+            { word: "ALGO", clue: "Steps to solve a problem." },
+            { word: "CODE", clue: "Translates code to machine language." },
+            { word: "PTR", clue: "Stores a memory address." },
             { word: "ARRAY", clue: "List of items in memory." },
-            { word: "FUNCTION", clue: "Reusable block of code." },
-            { word: "VARIABLE", clue: "Named storage in memory." },
+            { word: "FUNC", clue: "Reusable block of code." },
+            { word: "VAR", clue: "Named storage in memory." },
             { word: "SYNTAX", clue: "Rules of a language." },
             { word: "BINARY", clue: "Base-2 number system." }
         ],
@@ -65,7 +65,7 @@ const L1_WORDS: Record<AcademicYear, Record<Department, L1Word[]>> = {
             { word: "CURRENT", clue: "Flow of charge." },
             { word: "DIODE", clue: "One-way current flow." },
             { word: "CIRCUIT", clue: "Path for electricity." },
-            { word: "TRANSISTOR", clue: "Amplify or switch signals." },
+            { word: "CHIP", clue: "Amplify or switch signals." },
             { word: "SENSOR", clue: "Detects physical input." },
             { word: "BATTERY", clue: "Stores energy." }
         ],
@@ -114,42 +114,42 @@ const L1_WORDS: Record<AcademicYear, Record<Department, L1Word[]>> = {
         "cse": [
             { word: "OBJECT", clue: "An instance of a class." },
             { word: "CLASS", clue: "A blueprint for creating objects." },
-            { word: "INHERITANCE", clue: "Mechanism where one class acquires the properties of another." },
-            { word: "POLYMORPHISM", clue: "Ability of an object to take on many forms." },
-            { word: "ENCAPSULATION", clue: "Wrapping of data and methods into a single unit." },
-            { word: "LINKEDLIST", clue: "A linear data structure where elements are not stored at contiguous locations." },
-            { word: "STACK", clue: "A linear data structure which follows LIFO (Last In First Out)." },
-            { word: "QUEUE", clue: "A linear data structure which follows FIFO (First In First Out)." }
+            { word: "EXTENDS", clue: "Mechanism where one class acquires the properties of another." },
+            { word: "POLY", clue: "Ability of an object to take on many forms." },
+            { word: "ENCODER", clue: "Wrapping of data and methods into a single unit." },
+            { word: "LIST", clue: "Linear data structure with nodes." },
+            { word: "STACK", clue: "Linear structure following LIFO." },
+            { word: "QUEUE", clue: "Linear structure following FIFO." }
         ],
         "ece": [
-            { word: "AMPLIFIER", clue: "A device that increases the power of a signal." },
-            { word: "OSCILLATOR", clue: "An electronic circuit that produces a periodic, oscillating signal." },
-            { word: "MODULATION", clue: "Process of varying properties of a periodic waveform." },
+            { word: "AMP", clue: "A device that increases the power of a signal." },
+            { word: "WAVE", clue: "Electronic circuit producing periodic signal." },
+            { word: "MODEM", clue: "Process of varying properties of a waveform." },
             { word: "OPAMP", clue: "Operational Amplifier." },
-            { word: "SIGNAL", clue: "A physical quantity that varies with time, space, or any other variable." },
-            { word: "SYSTEM", clue: "A combination of components that act together to perform a function." },
-            { word: "BOOLEAN", clue: "A type of algebra used in digital logic." },
+            { word: "SIGNAL", clue: "Physical quantity varying with time." },
+            { word: "SYSTEM", clue: "Combination of components acting together." },
+            { word: "BOOLEAN", clue: "Type of algebra used in digital logic." },
             { word: "LOGIC", clue: "The study of formal reasoning." }
         ],
         "mech": [
-            { word: "KINEMATICS", clue: "The branch of mechanics concerned with motion without forces." },
-            { word: "DYNAMICS", clue: "Mechanics concerned with the motion of bodies under forces." },
-            { word: "THERMODYNAMICS", clue: "Relationship between heat and other forms of energy." },
-            { word: "FLUID", clue: "A substance that has no fixed shape and yields to external pressure." },
-            { word: "ENTROPY", clue: "A measure of disorder or randomness in a system." },
-            { word: "ENTHALPY", clue: "A property of a thermodynamic system equal to inner energy plus PV." },
-            { word: "CARNOT", clue: "Scientist famous for the most efficient heat engine cycle." },
-            { word: "VISCOSITY", clue: "A measure of a fluid's resistance to flow." }
+            { word: "MOTION", clue: "The branch of mechanics concerned with motion." },
+            { word: "DYNAMICS", clue: "Mechanics concerned with motion under forces." },
+            { word: "THERMO", clue: "Relationship between heat and other energy." },
+            { word: "FLUID", clue: "Substance that has no fixed shape." },
+            { word: "ENTROPY", clue: "Measure of disorder in a system." },
+            { word: "ENTHALPY", clue: "Thermodynamic property (U + PV)." },
+            { word: "CARNOT", clue: "Efficient heat engine cycle scientist." },
+            { word: "VISCOS", clue: "Measure of fluid resistance to flow." }
         ],
         "ce": [
             { word: "FLUID", clue: "A substance that flows." },
-            { word: "MECHANICS", clue: "The branch of science concerned with the behavior of physical bodies." },
-            { word: "SURVEYING", clue: "Technique of determining terrestrial position of points." },
-            { word: "LEVELING", clue: "Finding the difference in elevation between points." },
-            { word: "CONTOUR", clue: "An imaginary line on the ground joining points of equal elevation." },
-            { word: "THEODOLITE", clue: "Precision optical instrument for measuring angles." },
+            { word: "MECHANIC", clue: "Science of behavior of physical bodies." },
+            { word: "SURVEY", clue: "Technique of determining terrestrial position." },
+            { word: "LEVELS", clue: "Finding elevation difference." },
+            { word: "CONTOUR", clue: "Line joining points of equal elevation." },
+            { word: "OPTICAL", clue: "Precision instrument for measuring angles." },
             { word: "STRESS", clue: "Force per unit area." },
-            { word: "DEFLECTION", clue: "The degree to which a structural element is displaced under a load." }
+            { word: "DEFORM", clue: "Element displacement under load." }
         ],
         "csM": [
             { word: "NEURAL", clue: "Brain-like network." },
@@ -171,23 +171,23 @@ const L1_WORDS: Record<AcademicYear, Record<Department, L1Word[]>> = {
     "3rd Year": {
         "cse": [
             { word: "PROCESS", clue: "A program in execution." },
-            { word: "THREAD", clue: "Smallest unit of execution within a process." },
-            { word: "DEADLOCK", clue: "A situation where processes are blocked forever." },
-            { word: "PAGING", clue: "Memory management scheme that eliminates the need for contiguous allocation." },
-            { word: "RELATIONAL", clue: "Type of database based on the relational model." },
-            { word: "NORMALIZATION", clue: "Process of organizing data in a database to reduce redundancy." },
-            { word: "TRANSACTION", clue: "A sequence of database operations processed as a single unit." },
-            { word: "DATAGRAM", clue: "A self-contained, independent entity of data." }
+            { word: "THREAD", clue: "Smallest unit of execution." },
+            { word: "LOCK", clue: "Situation where processes are blocked." },
+            { word: "PAGING", clue: "Memory management scheme." },
+            { word: "DBASE", clue: "Type of database model." },
+            { word: "NORMAL", clue: "Reducing database redundancy." },
+            { word: "TXN", clue: "Sequence of database operations." },
+            { word: "PACKET", clue: "Independent entity of data." }
         ],
         "ece": [
-            { word: "MICROPROCESSOR", clue: "An IC that contains the functions of a CPU." },
-            { word: "MICROCONTROLLER", clue: "A small computer on a single IC." },
-            { word: "ANTENNA", clue: "Interface between radio waves and electric currents." },
-            { word: "WAVEGUIDE", clue: "Structure that guides waves, such as EM waves." },
+            { word: "CPU", clue: "IC containing functions of a CPU." },
+            { word: "MCU", clue: "Small computer on a single IC." },
+            { word: "ANTENNA", clue: "Interface for radio waves." },
+            { word: "WAVE", clue: "Structure that guides waves." },
             { word: "DSP", clue: "Digital Signal Processing." },
             { word: "VLSI", clue: "Very Large Scale Integration." },
-            { word: "CMOS", clue: "Complementary Metal-Oxide Semiconductor." },
-            { word: "EMBEDDED", clue: "Computer system combined with hardware." }
+            { word: "CMOS", clue: "Semiconductor technology." },
+            { word: "EMBED", clue: "System combined with hardware." }
         ],
         "mech": [
             { word: "HEAT", clue: "Forms of energy transferred between systems due to temperature difference." },
@@ -200,14 +200,14 @@ const L1_WORDS: Record<AcademicYear, Record<Department, L1Word[]>> = {
             { word: "CASTING", clue: "Pouring liquid into a mold." }
         ],
         "ce": [
-            { word: "CONCRETE", clue: "Composite building material made from aggregate and cement." },
+            { word: "CONCRETE", clue: "Material made from cement." },
             { word: "STEEL", clue: "Alloy of iron and carbon." },
-            { word: "STRUCTURE", clue: "System of connected parts used to support a load." },
-            { word: "FOUNDATION", clue: "The element of a structure which connects it to the ground." },
-            { word: "SOIL", clue: "Mixture of organic matter, minerals, gases, liquids, and organisms." },
-            { word: "BEARING", clue: "Capacity of soil to support loads." },
-            { word: "REINFORCEMENT", clue: "Strengthening of concrete." },
-            { word: "HIGHWAY", clue: "Public road for heavy traffic." }
+            { word: "STRUCT", clue: "System supporting a load." },
+            { word: "FOUND", clue: "Connects structure to ground." },
+            { word: "SOIL", clue: "Earth material." },
+            { word: "BEARING", clue: "Soil load capacity." },
+            { word: "REBAR", clue: "Strengthening concrete." },
+            { word: "HIGHWAY", clue: "Road for heavy traffic." }
         ],
         "csM": [
             { word: "DEEP", clue: "ML network depth." },
@@ -228,24 +228,24 @@ const L1_WORDS: Record<AcademicYear, Record<Department, L1Word[]>> = {
     },
     "4th Year": {
         "cse": [
-            { word: "CLOUD", clue: "On-demand availability of computer system resources." },
-            { word: "MACHINE", clue: "A device that uses energy to perform some action." },
-            { word: "LEARNING", clue: "A branch of AI focused on building systems that learn from data." },
-            { word: "SECURITY", clue: "Protection of computer systems from information disclosure." },
-            { word: "NETWORK", clue: "A set of computers sharing resources." },
-            { word: "AGILE", clue: "Methods for software development based on iterative development." },
-            { word: "SCRUM", clue: "Framework for project management." },
-            { word: "DEVOPS", clue: "Set of practices that combine software development and IT operations." }
+            { word: "CLOUD", clue: "Remote resource availability." },
+            { word: "MACHINE", clue: "Device performing actions." },
+            { word: "ML", clue: "AI learning from data." },
+            { word: "SECURE", clue: "System protection." },
+            { word: "NETWORK", clue: "Computers sharing resources." },
+            { word: "AGILE", clue: "Iterative development." },
+            { word: "SCRUM", clue: "Project management framework." },
+            { word: "DEVOPS", clue: "Combined Dev and Ops." }
         ],
         "ece": [
             { word: "IOT", clue: "Internet of Things." },
-            { word: "WIRELESS", clue: "Communication without wires." },
-            { word: "OPTICAL", clue: "Relating to sight or light." },
-            { word: "SATELLITE", clue: "An artificial body placed in orbit round the earth." },
-            { word: "RADAR", clue: "System for detecting the presence, direction, distance, and speed of objects." },
-            { word: "NANOTECH", clue: "Manipulation of matter on an atomic, molecular, and supramolecular scale." },
-            { word: "ROBOTICS", clue: "Interdisciplinary branch of engineering and science." },
-            { word: "AUTOMATION", clue: "Use of largely automatic equipment." }
+            { word: "WIRELESS", clue: "No-wire communication." },
+            { word: "OPTICAL", clue: "Relating to light." },
+            { word: "SAT", clue: "Artificial body in orbit." },
+            { word: "RADAR", clue: "Object detection system." },
+            { word: "NANO", clue: "Atomic scale tech." },
+            { word: "ROBOT", clue: "Engineering for machines." },
+            { word: "AUTO", clue: "Automatic equipment use." }
         ],
         "mech": [
             { word: "CAD", clue: "Computer Aided Design." },
@@ -501,284 +501,64 @@ export interface MCQQuestion {
     explanation: string;
 }
 
-const L3_MCQS: Record<AcademicYear, Record<Department, MCQQuestion[]>> = {
-    "1st Year": {
-        "cse": [
-            { id: 101, question: "Which of the following is NOT a fundamental data type in C?", options: ["int", "float", "string", "char"], correct: 2, explanation: "C does not have a built-in 'string' type; arrays of char are used instead." },
-            { id: 102, question: "What does the 'sizeof' operator evaluate?", options: ["Execution time", "Memory size in bytes", "String length", "Array size"], correct: 1, explanation: "sizeof returns memory footprint." },
-            { id: 103, question: "Which header file is required for printf()?", options: ["conio.h", "math.h", "stdio.h", "stdlib.h"], correct: 2, explanation: "stdio.h stands for Standard Input Output." },
-            { id: 104, question: "What is the result of 5 / 2 in integer division in C?", options: ["2.5", "2", "3", "0"], correct: 1, explanation: "Integer division truncates decimals." },
-            { id: 105, question: "Which of these is used for multi-line comments in C?", options: ["//", "/* */", "--", "#"], correct: 1, explanation: "/* */ is standard for multi-line." },
-            { id: 106, question: "What is the escape sequence for a newline?", options: ["\\t", "\\r", "\\n", "\\b"], correct: 2, explanation: "\\n is newline." },
-            { id: 107, question: "Complexity of Binary Search?", options: ["O(n)", "O(log n)", "O(n^2)", "O(1)"], correct: 1, explanation: "Divide and conquer." },
-            { id: 108, question: "Which logic gate is universal?", options: ["AND", "OR", "NAND", "XOR"], correct: 2, explanation: "NAND can build all." },
-            { id: 109, question: "First index of an array in C?", options: ["0", "1", "-1", "any"], correct: 0, explanation: "0-based." }
-        ],
-        "ece": [
-            { id: 121, question: "KCL is based on the law of conservation of:", options: ["Energy", "Momentum", "Charge", "Mass"], correct: 2, explanation: "KCL states charge cannot be created/destroyed at a node." },
-            { id: 122, question: "An ideal voltmeter has:", options: ["Zero resistance", "Infinite resistance", "Finite small", "Reactance"], correct: 1, explanation: "Infinite resistance prevents current flow." },
-            { id: 123, question: "Silicon is a:", options: ["Conductor", "Semiconductor", "Insulator", "Superconductor"], correct: 1, explanation: "Silicon is the base of electronics." },
-            { id: 124, question: "What is the unit of Capacitance?", options: ["Ohm", "Henry", "Farad", "Volt"], correct: 2, explanation: "Farad (F)." },
-            { id: 125, question: "PN junction diode allows current in:", options: ["Both directions", "One direction", "Neither", "Depends on heat"], correct: 1, explanation: "Diodes are unidirectional." },
-            { id: 126, question: "Resistance of an ideal wire is:", options: ["Infinite", "Zero", "1 Ohm", "Variable"], correct: 1, explanation: "Ideal wires have no lost energy." },
-            { id: 127, question: "Unit of Inductance?", options: ["Farad", "Henry", "Ohm", "Watt"], correct: 1, explanation: "Henry (H)." },
-            { id: 128, question: "Which component stores energy in a magnetic field?", options: ["Resistor", "Capacitor", "Inductor", "Transistor"], correct: 2, explanation: "Inductors store magnetic energy." },
-            { id: 129, question: "Zener diode is used for:", options: ["Rectification", "Amplification", "Voltage Regulation", "Filtering"], correct: 2, explanation: "Works in breakdown region." }
-        ],
-        "mech": [
-            { id: 131, question: "Newton's Second Law relates force to:", options: ["Velocity/Time", "Mass/Acceleration", "Work/Distance", "Pressure/Area"], correct: 1, explanation: "F = ma." },
-            { id: 132, question: "Hooke's Law holds good up to:", options: ["Yield point", "Proportionality limit", "Breaking point", "Elastic limit"], correct: 1, explanation: "Stress prop to Strain." },
-            { id: 133, question: "Unit of Work is:", options: ["Watt", "Newton", "Joule", "Pascal"], correct: 2, explanation: "Joule (J)." },
-            { id: 134, question: "Vector quantity among these is:", options: ["Mass", "Distance", "Velocity", "Temperature"], correct: 2, explanation: "Velocity has direction." },
-            { id: 135, question: "Power is defined as:", options: ["Force x Time", "Work / Time", "Mass x Velocity", "Force / Area"], correct: 1, explanation: "Rate of doing work." },
-            { id: 136, question: "Density is defined as:", options: ["Mass x Volume", "Volume / Mass", "Mass / Volume", "Weight / Area"], correct: 2, explanation: "m / V." },
-            { id: 137, question: "Boiling point of water at 1 atm?", options: ["0 C", "100 C", "200 C", "373 C"], correct: 1, explanation: "100 Degrees Celsius." },
-            { id: 138, question: "What is the unit of Pressure?", options: ["Newton", "Joule", "Pascal", "Watt"], correct: 2, explanation: "Pascal (Pa)." },
-            { id: 139, question: "Which is a simple machine?", options: ["Lever", "Car", "Engine", "Robot"], correct: 0, explanation: "Basic mechanical advantage." }
-        ],
-        "ce": [
-            { id: 141, question: "Unit of force in SI system:", options: ["Dyne", "Newton", "Pound", "Joule"], correct: 1, explanation: "Newton." },
-            { id: 142, question: "Moment of force is product of force and:", options: ["Parallel dist", "Perpendicular dist", "Velocity", "Time"], correct: 1, explanation: "M = F * d_perp." },
-            { id: 143, question: "Friction always acts in direction:", options: ["Parallel", "Perpendicular", "Opposite to motion", "45 deg"], correct: 2, explanation: "Opposes motion." },
-            { id: 144, question: "Stress is defined as:", options: ["Force / Area", "Force x Area", "Mass / Area", "Volume / Force"], correct: 0, explanation: "Standard definition." },
-            { id: 145, question: "The SI unit of pressure is:", options: ["Newton", "Joule", "Pascal", "Watt"], correct: 2, explanation: "Pascal (N/m^2)." },
-            { id: 146, question: "A body at rest is in:", options: ["Motion", "Static equilibrium", "Dynamic equilibrium", "Acceleration"], correct: 1, explanation: "Sum of forces = 0." },
-            { id: 147, question: "Purpose of a surveyor?", options: ["Map making", "Cooking", "Driving", "Painting"], correct: 0, explanation: "Land measurement." },
-            { id: 148, question: "Full form of RCC?", options: ["Reinforced Cement Concrete", "Rapid Core C", "Real Civil C", "None"], correct: 0, explanation: "Steel + Concrete." },
-            { id: 149, question: "Material used to make concrete?", options: ["Water+Cement+Sand", "Oil+Iron", "Plastic+Mud", "None"], correct: 0, explanation: "Binders and aggregates." }
-        ],
-        "csM": [
-            { id: 151, question: "Primary library for data manipulation in Python?", options: ["Numpy", "Pandas", "Matplotlib", "Scikit"], correct: 1, explanation: "Pandas for dataframes." },
-            { id: 152, question: "Keyword to define a function in Python?", options: ["func", "def", "lambda", "function"], correct: 1, explanation: "def." },
-            { id: 153, question: "Standard Mean is:", options: ["Sum", "Sum / Count", "Product", "Middle"], correct: 1, explanation: "Average." },
-            { id: 154, question: "What is an Outlier?", options: ["Center value", "Extreme value", "Average value", "Most frequent"], correct: 1, explanation: "Data point significantly different from others." },
-            { id: 155, question: "Median of [1, 3, 5] is?", options: ["1", "3", "5", "9"], correct: 1, explanation: "Middle value." },
-            { id: 156, question: "Python is a ___ type language.", options: ["Compiled", "Interpreted", "Low level", "Hardware"], correct: 1, explanation: "Interpreted." },
-            { id: 157, question: "Which is a tuple?", options: ["(1,2)", "[1,2]", "{1,2}", "<1,2>"], correct: 0, explanation: "Parentheses indicate tuple." },
-            { id: 158, question: "Library for numerical computing in Python?", options: ["Numpy", "Flask", "Django", "PyGame"], correct: 0, explanation: "NumPy is the base for math." },
-            { id: 159, question: "What is AI?", options: ["Artificial Intelligence", "Auto Info", "Actual Input", "None"], correct: 0, explanation: "Machine smarts." }
-        ],
-        "csd": [
-            { id: 161, question: "What does UI stand for?", options: ["User Interface", "User Input", "User Info", "User Interaction"], correct: 0, explanation: "User Interface." },
-            { id: 162, question: "What does UX stand for?", options: ["User Experience", "User Extreme", "User Example", "User Expand"], correct: 0, explanation: "User Experience." },
-            { id: 163, question: "Primary color model for screen?", options: ["RGB", "CMYK", "HSL", "RYB"], correct: 0, explanation: "Red Green Blue." },
-            { id: 164, question: "Which tool is for UI design?", options: ["Figma", "Excel", "Word", "Outlook"], correct: 0, explanation: "Figma is industry standard." },
-            { id: 165, question: "What is a wireframe?", options: ["Low-fi sketch", "High-fi code", "Database schema", "Hardware frame"], correct: 0, explanation: "A simple visual guide." },
-            { id: 166, question: "What is white space?", options: ["Empty area", "White text", "Clean code", "Empty folder"], correct: 0, explanation: "Breathing room in design." },
-            { id: 167, question: "What is a font?", options: ["Text style", "Image type", "Color code", "Web address"], correct: 0, explanation: "Typography style." },
-            { id: 168, question: "What is a Mockup?", options: ["Static design", "Working code", "Meeting", "File name"], correct: 0, explanation: "Visual representation." },
-            { id: 169, question: "Which is a design principle?", options: ["Balance", "Gravity", "Friction", "Torque"], correct: 0, explanation: "Visual harmony." }
-        ]
-    },
-    "2nd Year": {
-        "cse": [
-            { id: 201, question: "In Java, standard classes are inherited from:", options: ["System", "Class", "Object", "Main"], correct: 2, explanation: "java.lang.Object." },
-            { id: 202, question: "Optimal DS for priority queue?", options: ["Linked List", "BST", "Heap", "Hash Table"], correct: 2, explanation: "Heaps for O(log n)." },
-            { id: 203, question: "Time complexity of linear search?", options: ["O(log n)", "O(1)", "O(n^2)", "O(n)"], correct: 3, explanation: "Worst case n." },
-            { id: 204, question: "Which is not an OOP concept?", options: ["Encapsulation", "Inheritance", "Compilation", "Polymorphism"], correct: 2, explanation: "Compilation is a process." },
-            { id: 205, question: "Private members can be accessed by:", options: ["Child classes", "Same class", "Main method", "Public methods"], correct: 1, explanation: "Strict class scope." },
-            { id: 206, question: "Java uses which for memory management?", options: ["Manual delete", "Garbage Collector", "Destructors", "Free()"], correct: 1, explanation: "Automatic GC." },
-            { id: 207, question: "Which collection allows unique elements only?", options: ["List", "Set", "Map", "Vector"], correct: 1, explanation: "Sets don't allow duplicates." },
-            { id: 208, question: "Size of 'int' in Java?", options: ["16-bit", "32-bit", "64-bit", "8-bit"], correct: 1, explanation: "Standard 4 bytes." },
-            { id: 209, question: "Keyword to inherit a class in Java?", options: ["implements", "extends", "inherits", "import"], correct: 1, explanation: "extends for classes." },
-            { id: 210, question: "Constructor return type is:", options: ["void", "int", "None", "class name"], correct: 2, explanation: "No return type allowed." }
-        ],
-        "ece": [
-            { id: 221, question: "Op-Amp ideally has:", options: ["Zero input imp", "Inf input imp", "Inf output imp", "Unity gain"], correct: 1, explanation: "Infinite input impedance." },
-            { id: 222, question: "In boolean algebra, A + A.B equals:", options: ["A", "B", "A.B", "1"], correct: 0, explanation: "A(1+B) = A." },
-            { id: 223, question: "Base of Hexadecimal?", options: ["2", "8", "10", "16"], correct: 3, explanation: "16." },
-            { id: 224, question: "AND gate output is 1 if:", options: ["Any input 1", "No input 1", "All inputs 1", "Inputs different"], correct: 2, explanation: "Strict AND logic." },
-            { id: 225, question: "Binary 1010 in decimal is?", options: ["8", "10", "12", "14"], correct: 1, explanation: "8+2." },
-            { id: 226, question: "Zener diode is used for:", options: ["Amplification", "Rectification", "Voltage regulation", "Oscillation"], correct: 2, explanation: "Works in breakdown region." },
-            { id: 227, question: "Mod/Base of a 4-bit Counter is:", options: ["4", "8", "16", "32"], correct: 2, explanation: "2^4 = 16." },
-            { id: 228, question: "How many selection lines for 8:1 MUX?", options: ["2", "3", "4", "8"], correct: 1, explanation: "2^3 = 8." },
-            { id: 229, question: "Flip-flop that has both J and K as 1 toggles:", options: ["SR", "D", "JK", "T"], correct: 2, explanation: "JK property." },
-            { id: 230, question: "Karnaugh Map is used for:", options: ["Minimizing logic", "Multiplying", "Adding", "None"], correct: 0, explanation: "Simplification." }
-        ],
-        "mech": [
-            { id: 231, question: "First law of thermodynamics is law of conservation of:", options: ["Momentum", "Mass", "Energy", "Entropy"], correct: 2, explanation: "Energy conserved." },
-            { id: 232, question: "In reversible process, entropy of universe:", options: ["Increases", "Decreases", "Constant", "Unknown"], correct: 2, explanation: "Total entropy constant in ideal reversibility." },
-            { id: 233, question: "Bernoulli equation applies to:", options: ["Viscous", "Compressible", "Ideal incompressible", "Turbulent"], correct: 2, explanation: "Inviscid/Incompressible." },
-            { id: 234, question: "Viscosity of water compared to air is:", options: ["Higher", "Lower", "Same", "Zero"], correct: 0, explanation: "Water is more viscous." },
-            { id: 235, question: "Centrifugal pump is a ___ machine.", options: ["Power absorbing", "Power producing", "Static", "Efficiency"], correct: 0, explanation: "Takes work to move fluid." },
-            { id: 236, question: "Standard gravity (g) value in m/s^2:", options: ["8.9", "9.81", "10.5", "7.5"], correct: 1, explanation: "Constant." },
-            { id: 237, question: "Otto cycle is used in:", options: ["Petrol engine", "Diesel engine", "Steam engine", "None"], correct: 0, explanation: "Spark ignition." },
-            { id: 238, question: "Point at which fluid stops moving:", options: ["Stagnation", "Static", "Dynamic", "None"], correct: 0, explanation: "Stagnation point." },
-            { id: 239, question: "Efficiency of Carnot engine depends on:", options: ["Working fluid", "Temperature limits", "Speed", "Load"], correct: 1, explanation: "Source and sink temp." },
-            { id: 240, question: "Pascal's law relates to:", options: ["Solid", "Fluid pressure", "Gas only", "None"], correct: 1, explanation: "Fluid mechanics." }
-        ],
-        "ce": [
-            { id: 241, question: "Determining heights of points is called:", options: ["Levelling", "Contouring", "Surveying", "Traversing"], correct: 0, explanation: "Levelling." },
-            { id: 242, question: "Purpose of Theodolite?", options: ["Distances", "Angles", "Flow", "Pressure"], correct: 1, explanation: "Measuring angles." },
-            { id: 243, question: "Stress at which material breaks:", options: ["Yield", "Ultimate", "Failure", "Working"], correct: 2, explanation: "Breaking point." },
-            { id: 244, question: "Contours of equal elevation that close indicate a:", options: ["Valley", "Hill or Depression", "Cliff", "Road"], correct: 1, explanation: "Circular contours." },
-            { id: 245, question: "Unit of Stress:", options: ["N", "N/m", "N/m^2", "m"], correct: 2, explanation: "Pascal." },
-            { id: 246, question: "Concrete is strong in:", options: ["Tension", "Compression", "Torsion", "Bending"], correct: 1, explanation: "Brittle nature." },
-            { id: 247, question: "Scale of a map is 1:100. 1cm on map is:", options: ["1cm", "1m", "10m", "100m"], correct: 1, explanation: "100cm = 1m." },
-            { id: 248, question: "Which is a coarse aggregate?", options: ["Sand", "Gravel", "Cement", "Water"], correct: 1, explanation: "Large particles." },
-            { id: 249, question: "Bearing capacity is for:", options: ["Beam", "Soil", "Road", "Steel"], correct: 1, explanation: "Foundation support." },
-            { id: 250, question: "Slump test is for:", options: ["Durability", "Workability", "Strength", "None"], correct: 1, explanation: "Consistency of concrete." }
-        ],
-        "csM": [
-            { id: 251, question: "Algorithm for Linear Regression?", options: ["Gradient Descent", "Backprop", "K-Means", "Dijkstra"], correct: 0, explanation: "Minimizes cost." },
-            { id: 252, question: "Standard Deviation measures:", options: ["Central tendency", "Dispersion", "Probability", "Linearity"], correct: 1, explanation: "Spread of data." },
-            { id: 253, question: "Numpy stands for:", options: ["Number Py", "Numerical Py", "Null Py", "New Py"], correct: 1, explanation: "Numerical Python." },
-            { id: 254, question: "Normal Distribution is also called:", options: ["Bell curve", "S-Curve", "Step curve", "Log curve"], correct: 0, explanation: "Symmetric shape." },
-            { id: 255, question: "Correlation coefficient range:", options: ["0 to 1", "-1 to 1", "-inf to inf", "0 to inf"], correct: 1, explanation: "Pearson r." },
-            { id: 256, question: "Target variable in regression is:", options: ["Discrete", "Continuous", "Categorical", "Binary"], correct: 1, explanation: "Real numbers." },
-            { id: 257, question: "Which is a classification algorithm?", options: ["Linear Regression", "Logistic Regression", "K-Means", "PCA"], correct: 1, explanation: "Logistic is for categories." },
-            { id: 258, question: "What is 'Overfitting'?", options: ["Model too simple", "Model too complex", "No data", "Fast training"], correct: 1, explanation: "Memorizing noise." },
-            { id: 259, question: "Common activation function?", options: ["Sigmoid", "Plus", "Minus", "Divide"], correct: 0, explanation: "Squash values." },
-            { id: 260, question: "Data splitting ratio (typical)?", options: ["50/50", "80/20", "100/0", "10/90"], correct: 1, explanation: "Train / Test." }
-        ],
-        "csd": [
-            { id: 261, question: "What is Responsive Design?", options: ["Adapts to screen size", "High speed", "New colors", "Database type"], correct: 0, explanation: "Critical for mobile web." },
-            { id: 262, question: "Which is a CSS framework?", options: ["Tailwind", "Java", "Python", "SQL"], correct: 0, explanation: "Utility-first CSS." },
-            { id: 263, question: "What is an SVG?", options: ["Vector image", "Video file", "Source code", "Sound file"], correct: 0, explanation: "Scalable Vector Graphics." },
-            { id: 264, question: "What is a HEX code?", options: ["Color code", "Secret key", "File type", "User ID"], correct: 0, explanation: "Hexadecimal color." },
-            { id: 265, question: "What is accessibility in design?", options: ["Design for all", "Fast loading", "Rich colors", "Cloud storage"], correct: 0, explanation: "Inclusive design." },
-            { id: 266, question: "What does DOM stand for?", options: ["Document Object Model", "Data Object Main", "Digital Online Mark", "Direct Order Map"], correct: 0, explanation: "Web page structure." },
-            { id: 267, question: "Space between element border and content?", options: ["Margin", "Padding", "Gap", "Border"], correct: 1, explanation: "Padding." },
-            { id: 268, question: "Space outside element border?", options: ["Margin", "Padding", "Gap", "Radius"], correct: 0, explanation: "Margin." },
-            { id: 269, question: "Which property makes text bold?", options: ["font-weight", "font-size", "font-style", "text-decoration"], correct: 0, explanation: "Weight controls thickness." },
-            { id: 270, question: "Media queries are used for:", options: ["Interactivity", "Responsiveness", "Database", "Security"], correct: 1, explanation: "Screen adaptive design." }
-        ]
-    },
-    "3rd Year": {
-        "cse": [
-            { id: 301, question: "Property NOT required for deadlock?", options: ["Mutual Exclusion", "Hold and Wait", "Preemption", "Circular Wait"], correct: 2, explanation: "NO preemption required." },
-            { id: 302, question: "In database, ACID stands for:", options: ["Atomicity...", "Accuracy...", "Allocation...", "None"], correct: 0, explanation: "A,C,I,D." },
-            { id: 303, question: "OSI layer for IP protocol?", options: ["Data Link", "Network", "Transport", "Session"], correct: 1, explanation: "Layer 3." },
-            { id: 304, question: "Which scheduling is non-preemptive?", options: ["Round Robin", "FCFS", "Priority", "SRTF"], correct: 1, explanation: "First Come First Served." },
-            { id: 305, question: "HTTP port?", options: ["21", "25", "80", "443"], correct: 2, explanation: "Standard web port." },
-            { id: 306, question: "What is a Trojan Horse?", options: ["Protocol", "Hardware", "Malware disguised as good", "Antivirus"], correct: 2, explanation: "Security threat." },
-            { id: 307, question: "B-Tree is primarily for:", options: ["Main memory", "Disk storage", "CPU Cache", "Registers"], correct: 1, explanation: "Indexing large data." },
-            { id: 308, question: "Which is a synchronization tool?", options: ["Semaphore", "Thread", "Process", "Socket"], correct: 0, explanation: "Prevents race conditions." },
-            { id: 309, question: "Virtual memory uses:", options: ["RAM only", "Disk space as RAM", "Cache only", "None"], correct: 1, explanation: "Extends physical memory." },
-            { id: 310, question: "TCP is ___ protocol.", options: ["Connectionless", "Connection-oriented", "Hardware", "None"], correct: 1, explanation: "Handshake required." }
-        ],
-        "ece": [
-            { id: 321, question: "8085 is an ____ bit processor.", options: ["4", "8", "16", "32"], correct: 1, explanation: "8-bit data bus." },
-            { id: 322, question: "Aliasing occurs when:", options: ["fs > 2f", "fs < 2f", "Amp increased", "Filtered"], correct: 1, explanation: "Nyquist fails." },
-            { id: 323, question: "CMOS stands for:", options: ["Complementary Metal-Oxide...", "Complex...", "Capacitive...", "Current..."], correct: 0, explanation: "n-type + p-type." },
-            { id: 324, question: "Modulation is done at:", options: ["Transmitter", "Receiver", "Channel", "Antenna"], correct: 0, explanation: "Encoding signal." },
-            { id: 325, question: "Full Duplex means:", options: ["One way", "Two way alternate", "Two way simultaneous", "No way"], correct: 2, explanation: "Phone call type." },
-            { id: 326, question: "Microprocessor 8086 has address bus of:", options: ["8 bit", "16 bit", "20 bit", "32 bit"], correct: 2, explanation: "1MB memory addressable." },
-            { id: 327, question: "The number of flags in 8085 is:", options: ["3", "5", "8", "10"], correct: 1, explanation: "Sign, Zero, Auxiliary Carry, Parity, Carry." },
-            { id: 328, question: "Which is a non-maskable interrupt?", options: ["TRAP", "RST 7.5", "RST 6.5", "INTR"], correct: 0, explanation: "TRAP has highest priority." },
-            { id: 329, question: "A system with multiple inputs and outputs is:", options: ["SISO", "MIMO", "SIMO", "MISO"], correct: 1, explanation: "Multiple Input Multiple Output." },
-            { id: 330, question: "Unit of Gain in Decibels (dB) is:", options: ["Joule", "Watt", "Dimensionless Ratio", "None"], correct: 2, explanation: "Logarithmic ratio." }
-        ],
-        "mech": [
-            { id: 331, question: "Stefan-Boltzmann law is for:", options: ["Conduction", "Convection", "Thermal Radiation", "Mass Transfer"], correct: 2, explanation: "Power radiated." },
-            { id: 332, question: "Pouring molten metal into mold:", options: ["Forging", "Welding", "Machining", "Casting"], correct: 3, explanation: "Casting." },
-            { id: 333, question: "In orthogonal cutting, edge is:", options: ["Parallel", "Perpendicular", "Acute", "Obtuse"], correct: 1, explanation: "90 deg." },
-            { id: 334, question: "Heat engine converts heat into:", options: ["Work", "Mass", "Density", "Gravity"], correct: 0, explanation: "Energy conversion." },
-            { id: 335, question: "COP is for:", options: ["Engines", "Refrigerators", "Pumps", "Motors"], correct: 1, explanation: "Coefficient of Performance." },
-            { id: 336, question: "Latent heat is heat for:", options: ["Phase change", "Temp change", "Force change", "Mass change"], correct: 0, explanation: "Constant temp." },
-            { id: 337, question: "Which is a surface hardening process?", options: ["Annealing", "Nitriding", "Tempering", "Normalizing"], correct: 1, explanation: "Hardens only the outer layer." },
-            { id: 338, question: "Governor is used to control:", options: ["Mean speed", "Cyclic speed", "Load", "Pressure"], correct: 0, explanation: "Regulates fuel based on load." },
-            { id: 339, question: "Unit of Thermal Conductivity?", options: ["W/m-K", "J/s", "N/m", "None"], correct: 0, explanation: "Standard SI." },
-            { id: 340, question: "Torsion test determines:", options: ["Modulus of Elasticity", "Modulus of Rigidity", "Bulk Modulus", "None"], correct: 1, explanation: "Shear properties." }
-        ],
-        "ce": [
-            { id: 341, question: "Strength of M20 concrete at 28 days:", options: ["10 MPa", "15 MPa", "20 MPa", "25 MPa"], correct: 2, explanation: "N/mm^2 unit." },
-            { id: 342, question: "Reinforcement material in concrete:", options: ["Aluminum", "Copper", "Steel", "Iron"], correct: 2, explanation: "Steel." },
-            { id: 343, question: "Bearing capacity is:", options: ["Permeability", "Support loads", "Moisture", "Density"], correct: 1, explanation: "Soil strength." },
-            { id: 344, question: "Piles are used in ___ foundation.", options: ["Shallow", "Deep", "Isolated", "Combined"], correct: 1, explanation: "Transfer load to deep strata." },
-            { id: 345, question: "Slump test is for:", options: ["Strength", "Workability", "Durability", "Elasticity"], correct: 1, explanation: "Consistency of concrete." },
-            { id: 346, question: "Cement setting time:", options: ["10 min", "30 min (Initial)", "10 hours (Final)", "Both B and C"], correct: 3, explanation: "Standard ASTM." },
-            { id: 347, question: "Size of standard modular brick?", options: ["19x9x9 cm", "20x10x10 cm", "23x11x7 cm", "None"], correct: 0, explanation: "Standard dimensions." },
-            { id: 348, question: "The main constituent of cement is:", options: ["Alumina", "Lime", "Silica", "Iron oxide"], correct: 1, explanation: "Calcium carbonate based." },
-            { id: 349, question: "Unit weight of RCC (kg/m3):", options: ["2400", "2500", "2000", "1500"], correct: 1, explanation: "Standard estimate." },
-            { id: 350, question: "DPC stands for:", options: ["Damp Proof Course", "Dry Pipe Circle", "Dual Point Connection", "None"], correct: 0, explanation: "Moisture barrier." }
-        ],
-        "csM": [
-            { id: 351, question: "What is a 'Perceptron'?", options: ["Hidden layer", "Single layer NN", "Activation", "Dataset"], correct: 1, explanation: "Simplest NN." },
-            { id: 352, question: "Function outputs between 0 and 1?", options: ["ReLU", "Sigmoid", "Tanh", "Softmax"], correct: 1, explanation: "Sigmoid." },
-            { id: 353, question: "Backpropagation is for:", options: ["Cleaning", "Updating weights", "Clustering", "Visualizing"], correct: 1, explanation: "Gradient calculation." },
-            { id: 354, question: "Supervised learning requires:", options: ["Labels", "No labels", "Large CPU", "Internet"], correct: 0, explanation: "Matching inputs to targets." },
-            { id: 355, question: "K-Means is for:", options: ["Classification", "Clustering", "Regression", "Cleaning"], correct: 1, explanation: "Unsupervised grouping." },
-            { id: 356, question: "CNN stands for:", options: ["Computer Neural Net", "Convolutional Neural Net", "Circuit Neural Net", "Circular Neural Net"], correct: 1, explanation: "Image processing." },
-            { id: 357, question: "What is 'Pruning' in Decision Trees?", options: ["Growing branches", "Removing branches", "Splitting nodes", "None"], correct: 1, explanation: "Reduces complexity/overfitting." },
-            { id: 358, question: "Which is a generative model?", options: ["GAN", "SVM", "KNN", "Dijkstra"], correct: 0, explanation: "Generative Adversarial Net." },
-            { id: 359, question: "NLP technique to find root of word?", options: ["Stemming", "Pruning", "Hashing", "None"], correct: 0, explanation: "Reduces words like 'running' to 'run'." },
-            { id: 360, question: "A 'Neuron' in NN is primarily:", options: ["A mathematical function", "Hardware chip", "Physical wire", "None"], correct: 0, explanation: "Abstract computation unit." }
-        ],
-        "csd": [
-            { id: 361, question: "What is a 'Prototype'?", options: ["Test version", "Final code", "Server type", "Database"], correct: 0, explanation: "Preliminary model." },
-            { id: 362, question: "What is A/B testing?", options: ["Comparing versions", "Coding test", "Hardware test", "Grade test"], correct: 0, explanation: "Testing two variants." },
-            { id: 363, question: "What is a 'Persona'?", options: ["User profile", "Password", "Code name", "Icon"], correct: 0, explanation: "Representative user." },
-            { id: 364, question: "What is 'Pain point'?", options: ["User problem", "Code error", "Design color", "Server lag"], correct: 0, explanation: "Specific problem faced by users." },
-            { id: 365, question: "What is 'Affordance'?", options: ["Design hint for use", "Project cost", "Color depth", "Font size"], correct: 0, explanation: "Visual clue to function." },
-            { id: 366, question: "What is 'Mental model'?", options: ["User's belief on how it works", "AI logic", "Database design", "Design software"], correct: 0, explanation: "User's internal understanding." },
-            { id: 367, question: "Which is a UX law?", options: ["Hick's Law", "Newton's Law", "Ohm's Law", "None"], correct: 0, explanation: "Time to decide increases with choices." },
-            { id: 368, question: "What is 'Grid System'?", options: ["Alignment tool", "Database type", "Hardware frame", "None"], correct: 0, explanation: "Helper for layout consistency." },
-            { id: 369, question: "What is 'Typography'?", options: ["Font design", "Map making", "Code style", "None"], correct: 0, explanation: "Art of arranging type." },
-            { id: 370, question: "User flow is:", options: ["Path user takes", "Water flow", "Code execution", "None"], correct: 0, explanation: "Sequence of steps in task." }
-        ]
-    },
-    // Adding 4th year for complete coverage
-    "4th Year": {
-        "cse": [
-            { id: 401, question: "In ML, what is overfitting?", options: ["Good on train, bad on test", "Bad on both", "Good on both", "Too fast"], correct: 0, explanation: "Memorizes noise." },
-            { id: 402, question: "Cloud computing 'SaaS' stands for:", options: ["Software as a Service", "System as a Service", "Storage as a Service", "Service as a Software"], correct: 0, explanation: "Application via web." },
-            { id: 403, question: "Cyber security 'Worm' differs from Virus by:", options: ["Size", "Self-replication without host", "Color", "Price"], correct: 1, explanation: "Active spread." },
-            { id: 404, question: "What is 'Distributed Computing'?", options: ["Many computers one task", "One computer many tasks", "Slow computer", "None"], correct: 0, explanation: "Work shared across nodes." },
-            { id: 405, question: "A 'Botnet' is a network of:", options: ["Servers", "Compromised computers", "Routers", "Switches"], correct: 1, explanation: "Controlled by attacker." },
-            { id: 406, question: "Which is a 'Deep Learning' framework?", options: ["TensorFlow", "Excel", "Word", "Outlook"], correct: 0, explanation: "Google's open source lib." }
-        ],
-        "ece": [
-            { id: 421, question: "Advantage of Optical Fiber:", options: ["Attenuation", "Bandwidth", "EMI susceptibility", "Cost"], correct: 1, explanation: "Immense channel capacity." },
-            { id: 422, question: "GPS uses which frequency band?", options: ["HF", "VHF", "L-Band", "MF"], correct: 2, explanation: "Microwave region." },
-            { id: 423, question: "Radar stands for:", options: ["Radio Detection and Ranging", "Rapid Delay and Range", "Radio Digital and Run", "None"], correct: 0, explanation: "Standard acronym." },
-            { id: 424, question: "Which is a Wireless Standard?", options: ["802.11", "8086", "MP3", "JPEG"], correct: 0, explanation: "Wi-Fi." },
-            { id: 425, question: "What is 'Embedded System'?", options: ["Dedicated computer system", "General PC", "Database server", "Cloud"], correct: 0, explanation: "Hardware/Software combo for specific task." },
-            { id: 426, question: "GSM uses which access method?", options: ["TDMA", "CSMA", "ALOHA", "None"], correct: 0, explanation: "Time Division Multiple Access." }
-        ],
-        "mech": [
-            { id: 431, question: "In CAD, B-rep stands for:", options: ["Boundary Rep", "Basic Rep", "Binary Repl", "Broken Res"], correct: 0, explanation: "Solid modeling." },
-            { id: 432, question: "Robotics 'DOF' stands for:", options: ["Depth of Field", "Degrees of Freedom", "Data of Force", "Dual Operating Factor"], correct: 1, explanation: "Independent motions." },
-            { id: 433, question: "CNC stands for:", options: ["Computer Numerical Control", "Central Network Code", "Circular Node Control", "None"], correct: 0, explanation: "Automated machining." },
-            { id: 434, question: "What is 'JIT' in Manufacturing?", options: ["Just In Time", "Joint Info Team", "Job In Track", "None"], correct: 0, explanation: "Efficiency strategy." },
-            { id: 435, question: "A 'G-Code' controls:", options: ["CNC Machines", "Database", "UI", "Cloud"], correct: 0, explanation: "Motion commands." },
-            { id: 436, question: "TQM stands for:", options: ["Total Quality Mgmt", "Top Query Model", "Total Quantity Method", "None"], correct: 0, explanation: "Continuous improvement." }
-        ],
-        "ce": [
-            { id: 441, question: "BOD stands for:", options: ["Biological...", "Biochemical...", "Basic...", "Bacterial..."], correct: 1, explanation: "Oxygen metric." },
-            { id: 442, question: "Railway 'Gauge' is distance between:", options: ["Outer rails", "Inner faces of rails", "Sleepers", "Signals"], correct: 1, explanation: "Standard definition." },
-            { id: 443, question: "Traffic density is measured in:", options: ["km/hr", "vehicles/km", "tons/day", "liters"], correct: 1, explanation: "Road capacity metric." },
-            { id: 444, question: "What is 'BIM'?", options: ["Building Info Modeling", "Basic Iron Main", "Below Iron Mass", "None"], correct: 0, explanation: "Digital representation of facility." },
-            { id: 445, question: "A 'Retaining Wall' resists:", options: ["Soil pressure", "Air flow", "Sound", "None"], correct: 0, explanation: "Prevents slopes from sliding." },
-            { id: 446, question: "What is 'Pre-stressing'?", options: ["Stressing before load", "Stress after load", "No stress", "None"], correct: 0, explanation: "Enhances concrete strength." }
-        ],
-        "csM": [
-            { id: 451, question: "CNNs are primarily for:", options: ["NLP", "Image Recognition", "Tabular", "Audio"], correct: 1, explanation: "Spatial features." },
-            { id: 452, question: "NLP 'Tokenization' is:", options: ["Encrypting", "Breaking text into words", "Combining sentences", "Deleting stop words"], correct: 1, explanation: "Preprocessing step." },
-            { id: 453, question: "RNNs are good for:", options: ["Static images", "Sequential data", "Single values", "Colors"], correct: 1, explanation: "Time-series or text." },
-            { id: 454, question: "What is 'Transfer Learning'?", options: ["Using pre-trained models", "Moving nodes", "Deleting layers", "None"], correct: 0, explanation: "Leveraging existing knowledge." },
-            { id: 455, question: "A 'Loss Function' measures:", options: ["Model error", "Model speed", "Data size", "Price"], correct: 0, explanation: "Difference between actual and predicted." },
-            { id: 456, question: "What is 'Epoch'?", options: ["One full pass of data", "One node", "One layer", "One month"], correct: 0, explanation: "Training cycle." }
-        ],
-        "csd": [
-            { id: 461, question: "What is 'Design Thinking'?", options: ["Problem solving process", "Graphic tool", "Coding style", "Font type"], correct: 0, explanation: "Human-centered approach." },
-            { id: 462, question: "What is 'Empathy map'?", options: ["User insight tool", "GPS map", "Code structure", "Server list"], correct: 0, explanation: "Visualizing user behavior." },
-            { id: 463, question: "What is 'High-fidelity'?", options: ["Close to final product", "Fast speed", "Low cost", "Old version"], correct: 0, explanation: "Detailed representation." },
-            { id: 464, question: "What is 'Gamification'?", options: ["Game elements in non-games", "Playing games", "Making games", "Game engine"], correct: 0, explanation: "Enhancing engagement." },
-            { id: 465, question: "What is 'Iterative design'?", options: ["Cyclic improvement", "One-time design", "Buying designs", "Copying designs"], correct: 0, explanation: "Refining based on feedback." },
-            { id: 466, question: "What is 'Visual Hierarchy'?", options: ["Order of importance", "File list", "Code layers", "None"], correct: 0, explanation: "Guiding the eye." },
-            { id: 467, question: "Which tool is for vector icons?", options: ["Adobe Illustrator", "Notepad", "Calculator", "None"], correct: 0, explanation: "Vector industry standard." },
-            { id: 468, question: "What is 'Affinity Diagram'?", options: ["Grouping ideas", "Circuit diagram", "Map", "None"], correct: 0, explanation: "UX synthesis tool." }
-        ]
-    }
-};
+const L3_MCQS: MCQQuestion[] = [
+    { id: 1, question: "Which of the following sorting algorithms has the best average-case time complexity?", options: ["Bubble Sort", "Insertion Sort", "Merge Sort", "Selection Sort"], correct: 2, explanation: "Merge Sort consistently runs in O(n log n) time." },
+    { id: 2, question: "What does 'ACID' stand for in database transactions?", options: ["Atomicity, Consistency, Isolation, Durability", "Accuracy, Completeness, Integrity, Data", "Auto, Commit, Insert, Delete", "Array, Class, Interface, Delegation"], correct: 0, explanation: "ACID properties ensure reliable database transactions." },
+    { id: 3, question: "Which protocol is used for secure communication over a computer network?", options: ["HTTP", "FTP", "HTTPS", "Telnet"], correct: 2, explanation: "HTTPS encrypts the session with TLS/SSL." },
+    { id: 4, question: "In object-oriented programming, what is Encapsulation?", options: ["Inheriting traits from a parent", "Hiding internal state and requiring all interaction to be performed through an object's methods", "Writing code in capsules", "Allowing a function to take multiple forms"], correct: 1, explanation: "Encapsulation hides the internal implementation details." },
+    { id: 5, question: "What is the time complexity of searching an element in a balanced Binary Search Tree (BST)?", options: ["O(1)", "O(n)", "O(log n)", "O(n^2)"], correct: 2, explanation: "Balanced BST halves the search space each step." },
+    { id: 6, question: "Which layer of the OSI model handles routing?", options: ["Data Link Layer", "Network Layer", "Transport Layer", "Session Layer"], correct: 1, explanation: "The Network Layer (Layer 3) handles IP routing." },
+    { id: 7, question: "What does CORS stand for in web development?", options: ["Cross-Origin Resource Sharing", "Computer Object Runtime System", "Cascading Order Routing Style", "Control Object Registration Set"], correct: 0, explanation: "CORS is a security feature to restrict cross-origin requests." },
+    { id: 8, question: "Which data structure operates on a Last-In-First-Out (LIFO) principle?", options: ["Queue", "Stack", "Linked List", "Tree"], correct: 1, explanation: "Stacks push and pop from the top." },
+    { id: 9, question: "What does the 'chmod 777' command do in Linux?", options: ["Deletes a file", "Gives read, write, and execute permissions to everyone", "Changes the file owner", "Compresses the file"], correct: 1, explanation: "777 grants full permissions to owner, group, and others." },
+    { id: 10, question: "Which of these is NOT a NoSQL database?", options: ["MongoDB", "Cassandra", "PostgreSQL", "Redis"], correct: 2, explanation: "PostgreSQL is a relational (SQL) database." },
+    { id: 11, question: "What is the purpose of Docker?", options: ["To design UIs", "To containerize applications", "To sort arrays", "To compile C code"], correct: 1, explanation: "Docker packages apps into isolated containers." },
+    { id: 12, question: "Which Git command is used to save your local changes?", options: ["git push", "git pull", "git commit", "git stash"], correct: 2, explanation: "git commit records changes to the local repository." },
+    { id: 13, question: "What is a 'deadlock' in operating systems?", options: ["When the CPU overheats", "When two or more processes wait indefinitely for resources held by each other", "A memory leak", "A broken network connection"], correct: 1, explanation: "Deadlock is a stalemate between processes." },
+    { id: 14, question: "Which HTTP method is typically used to update an existing resource?", options: ["GET", "POST", "PUT", "DELETE"], correct: 2, explanation: "PUT replaces the resource; PATCH partially updates it." },
+    { id: 15, question: "What does JSON stand for?", options: ["Java Standard Output Network", "JavaScript Object Notation", "Junction Structured Object Network", "Joined String Ordered Notation"], correct: 1, explanation: "JSON is a lightweight data-interchange format." },
+    { id: 16, question: "What is the main function of an IP address?", options: ["To name a computer", "To connect to Bluetooth", "To identify a device on a network", "To encrypt data"], correct: 2, explanation: "IP addresses route traffic to specific devices." },
+    { id: 17, question: "Which language is heavily used for statistical analysis and machine learning?", options: ["PHP", "R", "Ruby", "Swift"], correct: 1, explanation: "R and Python are dominant in data science." },
+    { id: 18, question: "What is 'Polymorphism' in OOP?", options: ["Multiple threads running", "A single interface representing different underlying forms", "Hiding variables", "Connecting to multiple databases"], correct: 1, explanation: "Polymorphism allows objects to be treated as instances of their parent class." },
+    { id: 19, question: "What does a DNS server do?", options: ["Hosts websites", "Translates domain names into IP addresses", "Blocks spam", "Increases internet speed"], correct: 1, explanation: "DNS acts like the phonebook of the internet." },
+    { id: 20, question: "Which of the following is a CSS preprocessor?", options: ["React", "Babel", "Sass", "Webpack"], correct: 2, explanation: "Sass extends CSS with variables and nesting." },
+    { id: 21, question: "What is the result of 10 % 3 in most programming languages?", options: ["3.33", "1", "3", "10"], correct: 1, explanation: "The modulo operator (%) returns the remainder." },
+    { id: 22, question: "Which tree traversal visits the root node last?", options: ["In-order", "Pre-order", "Post-order", "Level-order"], correct: 2, explanation: "Post-order visits Left, Right, then Root." },
+    { id: 23, question: "What is the difference between TCP and UDP?", options: ["TCP is faster", "UDP guarantees delivery", "TCP is connection-oriented, UDP is connectionless", "UDP is only for local networks"], correct: 2, explanation: "TCP checks for lost packets; UDP just sends them." },
+    { id: 24, question: "What does a compiler do?", options: ["Runs code line by line", "Translates high-level source code into machine code", "Formats code visually", "Debugs runtime errors"], correct: 1, explanation: "Compilers convert whole files to binaries before running." },
+    { id: 25, question: "Which of the following is a front-end JavaScript framework?", options: ["Express", "Django", "Angular", "Spring"], correct: 2, explanation: "Angular is for UI. The others are backend frameworks." },
+    { id: 26, question: "What is 'virtual memory'?", options: ["Memory in the cloud", "Using disk space to simulate additional RAM", "Cache memory", "CPU registers"], correct: 1, explanation: "Virtual memory prevents out-of-memory crashes by swapping to disk." },
+    { id: 27, question: "What does 'pwd' stand for in Unix?", options: ["Print Working Directory", "Password", "Process Working Data", "Personal Web Domain"], correct: 0, explanation: "pwd outputs the absolute path of the current directory." },
+    { id: 28, question: "Which command lists files in a directory in Linux?", options: ["list", "dir", "ls", "show"], correct: 2, explanation: "ls lists directory contents." },
+    { id: 29, question: "What is a REST API?", options: ["An API that sleeps", "Representational State Transfer API", "Responsive Execution System Thread", "A database connection"], correct: 1, explanation: "REST relies on standard HTTP methods." },
+    { id: 30, question: "What does SQL stand for?", options: ["Structured Query Language", "Standard Query Logic", "System Query Link", "Server Query Language"], correct: 0, explanation: "SQL is used to manage relational databases." },
+    { id: 31, question: "What is an index in a database?", options: ["A list of all users", "A tool to speed up data retrieval", "A backup file", "The first column of a table"], correct: 1, explanation: "Indexes act like a book's index for quick lookups." },
+    { id: 32, question: "Which of these is a valid IP address?", options: ["256.1.2.3", "192.168.1.1", "127.0.0.1.0", "999.999.999.999"], correct: 1, explanation: "IPv4 segments range from 0 to 255." },
+    { id: 33, question: "What is 'phishing'?", options: ["A data mining technique", "A cyber attack designed to trick users into giving up credentials", "A networking protocol", "A type of sorting algorithm"], correct: 1, explanation: "Phishing usually involves fake emails or websites." },
+    { id: 34, question: "What is the primary function of a proxy server?", options: ["To speed up CPU", "To act as an intermediary for requests from clients", "To store passwords", "To replace a router"], correct: 1, explanation: "Proxies forward requests and can cache data or hide IPs." },
+    { id: 35, question: "Which keyword is used to handle exceptions in Python?", options: ["catch", "try/except", "error", "throw"], correct: 1, explanation: "Python uses try to test code and except to handle errors." },
+    { id: 36, question: "What does MVC stand for?", options: ["Minimum Value Control", "Model View Controller", "Main Virtual CPU", "More Visual Content"], correct: 1, explanation: "MVC is a design pattern separating data, UI, and logic." },
+    { id: 37, question: "In Git, what does a 'merge conflict' mean?", options: ["The server went down", "Two branches changed the same part of a file differently", "You forgot your password", "The code won't compile"], correct: 1, explanation: "Conflicts require manual resolution by the developer." },
+    { id: 38, question: "What is Big-O notation used for?", options: ["Network speed rating", "Describing the performance or complexity of an algorithm", "Database size limits", "Screen resolution sizes"], correct: 1, explanation: "Big-O maps how time/space grows with input size." },
+    { id: 39, question: "Which of the following is NOT a Linux distribution?", options: ["Ubuntu", "CentOS", "Fedora", "macOS"], correct: 3, explanation: "macOS is based on Unix (Darwin), but it is not Linux." },
+    { id: 40, question: "What does 'localhost' refer to?", options: ["The server next door", "Your own computer network interface", "A cloud server", "The router"], correct: 1, explanation: "Localhost usually resolves to 127.0.0.1." },
+    { id: 41, question: "What does HTML stand for?", options: ["Hyper Text Markup Language", "High Tech Modern Language", "Hyperlink Text Module Language", "Home Tool Markup Language"], correct: 0, explanation: "HTML structures web pages." },
+    { id: 42, question: "Which variable scoping allows reassignment but prevents block-scope leaking in JS?", options: ["var", "let", "const", "def"], correct: 1, explanation: "let allows reassignment inside its block scope." },
+    { id: 43, question: "What is standard port for SSH?", options: ["21", "22", "80", "443"], correct: 1, explanation: "Port 22 is used for Secure Shell." },
+    { id: 44, question: "Which command drops a table in SQL?", options: ["DELETE TABLE", "REMOVE TABLE", "DROP TABLE", "CLEAR TABLE"], correct: 2, explanation: "DROP TABLE deletes the schema and all data." },
+    { id: 45, question: "What is the primary characteristic of an IDE?", options: ["It provides an integrated environment for writing, testing, and debugging code", "It is only used for graphic design", "It compresses files", "It acts as a physical server"], correct: 0, explanation: "IDE stands for Integrated Development Environment." },
+    { id: 46, question: "Which concept allows a class to implement multiple interfaces in Java?", options: ["Multiple Inheritance", "Interfaces", "Abstract Classes", "Overloading"], correct: 1, explanation: "Java allows a class to implement many interfaces to avoid the diamond problem." },
+    { id: 47, question: "What is a 'hash map'?", options: ["A map of geographical hashes", "A data structure mapping keys to values for fast lookup", "A cryptography tool", "A networking loop"], correct: 1, explanation: "Hash maps provide average O(1) access time." },
+    { id: 48, question: "In Linux, how do you see running processes?", options: ["tasklist", "show process", "top", "procstat"], correct: 2, explanation: "top or htop shows real-time process info." },
+    { id: 49, question: "What does JVM stand for?", options: ["Java Virtual Machine", "Java Visual Module", "Joint Vector Machine", "Java Variable Manager"], correct: 0, explanation: "JVM allows Java programs to run on any device (Write Once, Run Anywhere)." },
+    { id: 50, question: "What is a foreign key in SQL?", options: ["A key used abroad", "A column that uniquely identifies a row in another table", "A password for the database", "An unused index"], correct: 1, explanation: "Foreign keys enforce referential integrity." }
+];
 
 /**
  * Seeded shuffle to ensure host and guest get same shuffle order from shared session ID
  */
 function seededShuffle<T>(array: T[], seed: string): T[] {
     const shuffled = [...array];
-    // Simple LCG or similar based on string hash
     let hash = 0;
     for (let i = 0; i < seed.length; i++) {
         hash = ((hash << 5) - hash) + seed.charCodeAt(i);
@@ -797,175 +577,111 @@ function seededShuffle<T>(array: T[], seed: string): T[] {
     return shuffled;
 }
 
-export function getMCQs(year: AcademicYear, dept: Department, seed?: string, offset: number = 0): MCQQuestion[] {
-    const yrBank = L3_MCQS[year] || L3_MCQS["1st Year"];
-    const targetDept = (dept === "csM" || dept === "csd") ? "cse" : dept;
-    let qs = yrBank[targetDept];
-    if (!qs || qs.length < 3) qs = yrBank["cse"];
+export function getMCQs(seed?: string, offset: number = 0): MCQQuestion[] {
+    const pool = L3_MCQS;
 
-    // If seed is provided, shuffle and pick based on offset
+    // If seed is provided, deterministic shuffle and pick based on offset (Host: 0, Guest: 3)
     if (seed) {
-        const shuffled = seededShuffle(qs, seed);
-        // If offset + 3 exceeds length, wrap around or just slice safely
+        const shuffled = seededShuffle(pool, seed);
         return shuffled.slice(offset, offset + 3);
     }
 
-    // Default: return first 3 (legacy/solo)
-    return qs.slice(0, 3);
+    // Default: completely random (for solo runs or Mashup round)
+    const count = 3;
+    return [...pool].sort(() => 0.5 - Math.random()).slice(0, count);
 }
 
 // -----------------------------------------------------------------------------------
-// LEVEL 4: CODE DEBUGGING
+// LEVEL 4: CODE DEBUGGING â€” Simple Syntax Errors (20 per language)
 // -----------------------------------------------------------------------------------
 
 export interface CodeChallenge {
     id: string;
     language: "C" | "Java" | "Python" | "Logic (Civil/Mech)";
     title: string;
-    brokenCode: string; // Used strictly for display
-    initialCode: string; // Editable starter state
+    brokenCode: string;
+    initialCode: string;
     expectedSolutionSnippet: string | string[];
     errorHint: string;
 }
 
-// For Level 4, we want to give C to 1st year. Java/Python/C for CS/IT 2/3. Logic to Mech/Civil.
-const L4_POOL: Record<AcademicYear, Record<Department, CodeChallenge[]>> = {
-    "1st Year": {
-        "cse": [
-            { id: "c_p1", language: "C", title: "Pointer Dereference", brokenCode: "int main() {\n  int x = 10;\n  int *p = &x;\n  printf(\"%d\", p); // Error\n}", initialCode: "int main() {\n  int x = 10;\n  int *p = &x;\n  printf(\"%d\", p);\n  return 0;\n}", expectedSolutionSnippet: "printf(\"%d\", *p)", errorHint: "Use the dereference operator (*)." },
-            { id: "c_p2", language: "C", title: "Array OOB", brokenCode: "int a[5];\na[5] = 10; // Error", initialCode: "int main() {\n  int a[5];\n  a[5] = 10;\n  return 0;\n}", expectedSolutionSnippet: "a[4]", errorHint: "Array indices for size 5 are 0-4." },
-            { id: "c_p3", language: "C", title: "Missing Semicolon", brokenCode: "int x = 5\nreturn 0;", initialCode: "int main() {\n  int x = 5\n  return 0;\n}", expectedSolutionSnippet: "int x = 5;", errorHint: "Statements in C must end with a semicolon." },
-            { id: "c_p4", language: "C", title: "Incorrect Loop Condition", brokenCode: "for(int i=0; i<=5; i--)", initialCode: "int main() {\n  for(int i=0; i<5; i--) {\n    printf(\"%d\", i);\n  }\n  return 0;\n}", expectedSolutionSnippet: "i++", errorHint: "Increment the loop variable." },
-            { id: "c_p5", language: "C", title: "String Null Terminator", brokenCode: "char s[3] = \"abc\";", initialCode: "char s[3] = \"abc\";", expectedSolutionSnippet: "s[4]", errorHint: "Strings need space for null terminator \\0." }
-        ],
-        "ece": [
-            { id: "ece_p1", language: "C", title: "Loop logic", brokenCode: "for(i=0; i<10; i--)", initialCode: "int main() {\n  for(int i=0; i<10; i--) {\n    printf(\"%d\", i);\n  }\n  return 0;\n}", expectedSolutionSnippet: "i++", errorHint: "Ensure the loop terminates." },
-            { id: "ece_p2", language: "Logic (Civil/Mech)", title: "Ohm's Law", brokenCode: "V = I / R", initialCode: "float V = I / R;", expectedSolutionSnippet: "I * R", errorHint: "Voltage is current times resistance." },
-            { id: "ece_p3", language: "C", title: "Array Size", brokenCode: "int a[x]; // x not const", initialCode: "int main() {\n  int x = 5;\n  int a[5];\n  return 0;\n}", expectedSolutionSnippet: "a[5]", errorHint: "Array size must be constant or literal." },
-            { id: "ece_p4", language: "C", title: "Character Quote", brokenCode: "char c = \"a\";", initialCode: "char c = 'a';", expectedSolutionSnippet: "'a'", errorHint: "Single quotes for characters." }
-        ],
-        "mech": [
-            { id: "mech_p1", language: "C", title: "Main Signature", brokenCode: "void main()", initialCode: "void main() {\n  return 0;\n}", expectedSolutionSnippet: "int main", errorHint: "In standard C, main returns int." },
-            { id: "mech_p2", language: "Logic (Civil/Mech)", title: "Density", brokenCode: "rho = m * V", initialCode: "float rho = m * V;", expectedSolutionSnippet: "m / V", errorHint: "Density is mass divided by volume." },
-            { id: "mech_p3", language: "C", title: "If Condition", brokenCode: "if(x=5)", initialCode: "int x = 0;\nif(x == 5) {\n}", expectedSolutionSnippet: "==", errorHint: "Use == for comparison, not =." },
-            { id: "mech_p4", language: "C", title: "Comment Error", brokenCode: "/ Comment", initialCode: "// Comment\nint main() {\n  return 0;\n}", expectedSolutionSnippet: "//", errorHint: "Standard line comment is //." }
-        ],
-        "ce": [
-            { id: "civ_p1", language: "C", title: "Missing include", brokenCode: "printf(\"Hello\"); // no stdio", initialCode: "#include <stdlib.h>\nint main() {\n  printf(\"Hello\");\n  return 0;\n}", expectedSolutionSnippet: "#include <stdio.h>", errorHint: "Add the standard I/O header." },
-            { id: "civ_p2", language: "Logic (Civil/Mech)", title: "Force Formula", brokenCode: "F = m / a", initialCode: "float F = m / a;", expectedSolutionSnippet: "m * a", errorHint: "Force equals mass times acceleration." },
-            { id: "civ_p3", language: "C", title: "Constant Define", brokenCode: "#define PI = 3.14", initialCode: "#define PI 3.14\nint main() {\n  return 0;\n}", expectedSolutionSnippet: "PI 3.14", errorHint: "Do not use = in #define." },
-            { id: "civ_p4", language: "C", title: "Switch Break", brokenCode: "case 1: do(); // no break", initialCode: "switch(x) {\n  case 1:\n    printf(\"1\");\n    break;\n}", expectedSolutionSnippet: "break", errorHint: "Use break to exit switch cases." }
-        ],
-        "csM": [
-            { id: "csm_p1", language: "Python", title: "Indentation", brokenCode: "if True:\nprint(1)", initialCode: "if True:\nprint(1)", expectedSolutionSnippet: "    print", errorHint: "Python uses indentation for blocks." },
-            { id: "csm_p2", language: "Python", title: "Type Conversion", brokenCode: "int('abc')", initialCode: "s = '123'\nx = int(s)\nprint(x)", expectedSolutionSnippet: "int(s)", errorHint: "Convert a numeric string to int." },
-            { id: "csm_p3", language: "Python", title: "List Append", brokenCode: "list.add(1)", initialCode: "l = []\nl.append(1)", expectedSolutionSnippet: "append", errorHint: "Use .append() for lists." },
-            { id: "csm_p4", language: "Python", title: "Range usage", brokenCode: "range(10, 0)", initialCode: "for i in range(0, 10):", expectedSolutionSnippet: "0, 10", errorHint: "Range(start, stop)." }
-        ],
-        "csd": [
-            { id: "csd_p1", language: "Python", title: "List Slicing", brokenCode: "s[5:1]", initialCode: "s = 'design'\nsub = s[0:2]", expectedSolutionSnippet: "0:2", errorHint: "Start index should be less than end index." },
-            { id: "csd_p2", language: "Python", title: "Variable Name", brokenCode: "1var = 10", initialCode: "var1 = 10", expectedSolutionSnippet: "var1", errorHint: "Variable names cannot start with a number." }
-        ]
-    },
-    "2nd Year": {
-        "cse": [
-            { id: "cs2_p1", language: "Java", title: "Array index", brokenCode: "int[] a={1}; a[1]=2;", initialCode: "int[] a = {1};\na[0] = 2;", expectedSolutionSnippet: "a[0]", errorHint: "Indices start at 0." },
-            { id: "cs2_p2", language: "Java", title: "Null check", brokenCode: "String s; s.len();", initialCode: "String s = \"\";\nSystem.out.println(s.length());", expectedSolutionSnippet: ["\"\"", "new String"], errorHint: "Initialize the string." },
-            { id: "cs2_p3", language: "Java", title: "Class access", brokenCode: "private int x; // in another class", initialCode: "class A { public int x; }\nA obj = new A(); obj.x = 5;", expectedSolutionSnippet: "public", errorHint: "Private members aren't accessible from outside." },
-            { id: "cs2_p4", language: "Java", title: "Method Override", brokenCode: "@Override public void wrongName()", initialCode: "@Override\npublic String toString() {\n  return \"\";\n}", expectedSolutionSnippet: "toString", errorHint: "Ensure method name matches exactly for override." },
-            { id: "cs2_p5", language: "Java", title: "Static access", brokenCode: "this.static_var", initialCode: "ClassName.static_var = 5;", expectedSolutionSnippet: "ClassName", errorHint: "Access static variables via class name." }
-        ],
-        "ece": [
-            { id: "ece2_p1", language: "C", title: "Pointer Arith", brokenCode: "p++ // size mismatch", initialCode: "int a[2];\nint *p = a;\n*(p+1) = 5;", expectedSolutionSnippet: "+1", errorHint: "Index using p+1." },
-            { id: "ece2_p2", language: "C", title: "Bitwise OR", brokenCode: "x || y // intent bitwise", initialCode: "unsigned char x = 0x01;\nunsigned char y = 0x02;\nunsigned char z = x | y;", expectedSolutionSnippet: "|", errorHint: "Use | for bitwise OR." }
-        ],
-        "mech": [
-            { id: "mech2_p1", language: "Logic (Civil/Mech)", title: "Efficiency", brokenCode: "Eff = In / Out", initialCode: "float Eff = Power_Out / Power_In;", expectedSolutionSnippet: "Out / In", errorHint: "Efficiency is Output/Input." },
-            { id: "mech2_p2", language: "C", title: "Math.h", brokenCode: "pow(2,3) // no math.h", initialCode: "#include <math.h>\nint main() {\n  double x = pow(2,3);\n  return 0;\n}", expectedSolutionSnippet: "#include <math.h>", errorHint: "POW needs math.h." }
-        ],
-        "ce": [
-            { id: "civ2_p1", language: "Logic (Civil/Mech)", title: "Bending Moment", brokenCode: "M = F + d", initialCode: "float M = F * d;", expectedSolutionSnippet: "F * d", errorHint: "Moment is force times distance." },
-            { id: "civ2_p2", language: "C", title: "Scanf error", brokenCode: "scanf(\"%d\", n);", initialCode: "int n;\nscanf(\"%d\", &n);", expectedSolutionSnippet: "&n", errorHint: "Scanf needs the address operator &." }
-        ],
-        "csM": [
-            { id: "csm2_p1", language: "Python", title: "Dictionary keys", brokenCode: "d[key]", initialCode: "d = {'a': 1}\nval = d.get('a')", expectedSolutionSnippet: "get", errorHint: "Use .get() or ensure key exists." },
-            { id: "csm2_p2", language: "Python", title: "Lambda", brokenCode: "f = lambda x: x*x", initialCode: "f = lambda x: x*x\nprint(f(5))", expectedSolutionSnippet: "x*x", errorHint: "Square the input." }
-        ],
-        "csd": [
-            { id: "csd2_p1", language: "Python", title: "String Method", brokenCode: "s.ups()", initialCode: "s = 'hi'\ns.upper()", expectedSolutionSnippet: "upper", errorHint: "Use .upper() for uppercase." },
-            { id: "csd2_p2", language: "Python", title: "List Append", brokenCode: "l + 1", initialCode: "l = []\nl.append(1)", expectedSolutionSnippet: "append", errorHint: "Use .append() to add to a list." }
-        ]
-    },
-    "3rd Year": {
-        "cse": [
-            { id: "cs3_p1", language: "Python", title: "List comprehension", brokenCode: "[x for x in l if x=2]", initialCode: "l = [1,2,3]\nnew_l = [x for x in l if x == 2]", expectedSolutionSnippet: "== 2", errorHint: "Use == for comparison." },
-            { id: "cs3_p2", language: "Python", title: "File close", brokenCode: "f = open('t.txt')", initialCode: "with open('file.txt', 'r') as f:\n    data = f.read()", expectedSolutionSnippet: "with", errorHint: "Use 'with' block for auto-close." },
-            { id: "cs3_p3", language: "Python", title: "Decorator", brokenCode: "@dec def f():", initialCode: "def dec(func):\n    return func\n\n@dec\ndef my_func():\n    pass", expectedSolutionSnippet: "@dec", errorHint: "Correct decorator syntax." }
-        ],
-        "ece": [
-            { id: "ece3_p1", language: "C", title: "Struct access", brokenCode: "s->val // if s is object", initialCode: "struct Node { int val; };\nstruct Node s;\ns.val = 10;", expectedSolutionSnippet: "s.val", errorHint: "Use . for objects, -> for pointers." },
-            { id: "ece3_p2", language: "C", title: "Type cast", brokenCode: "int x = (int)\"5\";", initialCode: "int x = atoi(\"5\");", expectedSolutionSnippet: "atoi", errorHint: "Use atoi to convert string to int." },
-            { id: "ece3_j1", language: "Java", title: "Exception Catch", brokenCode: "try { } catch { }", initialCode: "try {\n  int x = 5 / 0;\n} catch (ArithmeticException e) {\n  e.printStackTrace();\n}", expectedSolutionSnippet: "(ArithmeticException e)", errorHint: "Catch requires exception type." }
-        ],
-        "mech": [
-            { id: "mech3_p1", language: "Logic (Civil/Mech)", title: "Heat Transfer", brokenCode: "Q = m * c / dT", initialCode: "float Q = m * c * dT;", expectedSolutionSnippet: "m * c * dT", errorHint: "Heat is mass * specific heat * delta T." },
-            { id: "mech3_p2", language: "C", title: "Const error", brokenCode: "const int x=5; x=6;", initialCode: "const int x = 5;\n// x = 6; // remove this", expectedSolutionSnippet: "//", errorHint: "Cannot modify a constant." }
-        ],
-        "ce": [
-            { id: "civ3_p1", language: "Logic (Civil/Mech)", title: "Hydraulic Head", brokenCode: "H = P/rho + g", initialCode: "float H = P/(rho * g) + z;", expectedSolutionSnippet: "rho * g", errorHint: "Pressure head involves rho*g." },
-            { id: "civ3_p2", language: "C", title: "Bool type", brokenCode: "bool x = true; // no stdbool", initialCode: "#include <stdbool.h>\nbool x = true;", expectedSolutionSnippet: "#include <stdbool.h>", errorHint: "Include stdbool.h for bool type in C." }
-        ],
-        "csM": [
-            { id: "csm3_p1", language: "Python", title: "NumPy shape", brokenCode: "a.reshape(3,3) // for size 10", initialCode: "import numpy as np\na = np.arange(9)\nb = a.reshape(3, 3)", expectedSolutionSnippet: "(3, 3)", errorHint: "Ensure new shape matches size." },
-            { id: "csm3_p2", language: "Python", title: "LR parameter", brokenCode: "Adam(lr=0.01) // old param", initialCode: "from tensorflow.keras.optimizers import Adam\nopt = Adam(learning_rate=0.001)", expectedSolutionSnippet: "learning_rate", errorHint: "Use learning_rate instead of lr." }
-        ],
-        "csd": [
-            { id: "csd3_p1", language: "Python", title: "Matplotlib Plot", brokenCode: "plt.plot(x)", initialCode: "import matplotlib.pyplot as plt\nplt.plot([1,2,3], [4,5,6])", expectedSolutionSnippet: "plot", errorHint: "Provide x and y data." },
-            { id: "csd3_p2", language: "Python", title: "Pandas Head", brokenCode: "df.heads()", initialCode: "import pandas as pd\ndf = pd.DataFrame()\ndf.head()", expectedSolutionSnippet: "head", errorHint: "Use .head() to see first rows." }
-        ]
-    },
-    "4th Year": {
-        "cse": [
-            { id: "cs4_p1", language: "Python", title: "Async await", brokenCode: "def f(): await g()", initialCode: "async def f():\n    await g()", expectedSolutionSnippet: "async def", errorHint: "Await requires an async function." },
-            { id: "cs4_p2", language: "Python", title: "Set ops", brokenCode: "s.add([1,2])", initialCode: "s = set()\ns.add(1)", expectedSolutionSnippet: "add(1)", errorHint: "Cannot add list to set." }
-        ],
-        "ece": [
-            { id: "ece4_p1", language: "C", title: "Memcpy overlap", brokenCode: "memcpy(s, s+1, 10);", initialCode: "memmove(s, s+1, 10);", expectedSolutionSnippet: "memmove", errorHint: "Use memmove for overlapping regions." }
-        ],
-        "mech": [
-            { id: "mech4_p1", language: "Logic (Civil/Mech)", title: "Mach No", brokenCode: "M = c / v", initialCode: "float Mach = v / c;", expectedSolutionSnippet: "v / c", errorHint: "Mach is velocity over sound speed." }
-        ],
-        "ce": [
-            { id: "civ4_p1", language: "Logic (Civil/Mech)", title: "Reynolds", brokenCode: "Re = mu / (rho*v*d)", initialCode: "float Re = (rho * v * d) / mu;", expectedSolutionSnippet: "rho * v * d", errorHint: "Reynolds number formula error." }
-        ],
-        "csM": [
-            { id: "csm4_p1", language: "Python", title: "PyTorch Grad", brokenCode: "x.grad = None", initialCode: "optimizer.zero_grad()", expectedSolutionSnippet: "zero_grad", errorHint: "Use zero_grad() to reset gradients." }
-        ],
-        "csd": [
-            { id: "csd4_p1", language: "Python", title: "Flask Route", brokenCode: "@app.route(methods=['POST'])", initialCode: "@app.route('/api', methods=['POST'])", expectedSolutionSnippet: "'/api'", errorHint: "Missing path in route." }
-        ]
-    }
+// Flat pool of 20 simple, clear syntax-error questions per language
+const L4_SIMPLE_POOL: Record<"C" | "Java" | "Python", CodeChallenge[]> = {
+    "C": [
+        { id: "c01", language: "C", title: "Missing Semicolon", brokenCode: "int x = 5\nreturn 0;", initialCode: "#include <stdio.h>\nint main() {\n  int x = 5\n  return 0;\n}", expectedSolutionSnippet: "int x = 5;", errorHint: "Every statement in C must end with a semicolon (;)." },
+        { id: "c02", language: "C", title: "Wrong Loop Direction", brokenCode: "for(int i=0; i<5; i--)", initialCode: "#include <stdio.h>\nint main() {\n  for(int i=0; i<5; i--) {\n    printf(\"%d \", i);\n  }\n  return 0;\n}", expectedSolutionSnippet: "i++", errorHint: "The loop counter is decrementing instead of incrementing â€” it will never reach the end condition." },
+        { id: "c03", language: "C", title: "Assignment in Condition", brokenCode: "if(x = 5)", initialCode: "#include <stdio.h>\nint main() {\n  int x = 0;\n  if(x = 5) {\n    printf(\"five\");\n  }\n  return 0;\n}", expectedSolutionSnippet: "x == 5", errorHint: "Use == for comparison, not = (which assigns the value)." },
+        { id: "c04", language: "C", title: "Missing & in scanf", brokenCode: "scanf(\"%d\", n);", initialCode: "#include <stdio.h>\nint main() {\n  int n;\n  scanf(\"%d\", n);\n  printf(\"%d\", n);\n  return 0;\n}", expectedSolutionSnippet: "&n", errorHint: "scanf() needs the address of the variable â€” use the & operator." },
+        { id: "c05", language: "C", title: "Wrong Return Type for main", brokenCode: "void main()", initialCode: "void main() {\n  printf(\"Hello\");\n  return 0;\n}", expectedSolutionSnippet: "int main", errorHint: "The standard signature for main is int main(), not void." },
+        { id: "c06", language: "C", title: "Missing #include", brokenCode: "printf(\"Hi\"); // no stdio.h", initialCode: "#include <stdlib.h>\nint main() {\n  printf(\"Hello\");\n  return 0;\n}", expectedSolutionSnippet: "#include <stdio.h>", errorHint: "printf() is declared in <stdio.h>. Add the correct include." },
+        { id: "c07", language: "C", title: "Array Out of Bounds", brokenCode: "int a[5]; a[5] = 1;", initialCode: "#include <stdio.h>\nint main() {\n  int a[5];\n  a[5] = 1;\n  return 0;\n}", expectedSolutionSnippet: "a[4]", errorHint: "An array of size 5 has valid indices 0 through 4. Index 5 is out of bounds." },
+        { id: "c08", language: "C", title: "Integer Division", brokenCode: "float c = a / b;", initialCode: "#include <stdio.h>\nint main() {\n  int a = 5, b = 2;\n  float c = a / b;\n  printf(\"%f\", c);\n  return 0;\n}", expectedSolutionSnippet: "(float)a / b", errorHint: "Dividing two ints gives an int result. Cast one operand to float first." },
+        { id: "c09", language: "C", title: "Missing break in switch", brokenCode: "case 1: printf(\"one\");\ncase 2: printf(\"two\");", initialCode: "#include <stdio.h>\nint main() {\n  int x = 1;\n  switch(x) {\n    case 1: printf(\"one\");\n    case 2: printf(\"two\");\n  }\n  return 0;\n}", expectedSolutionSnippet: "break;", errorHint: "Without break, execution falls through to the next case." },
+        { id: "c10", language: "C", title: "Wrong Format Specifier", brokenCode: "printf(\"%d\", x); // x is float", initialCode: "#include <stdio.h>\nint main() {\n  float x = 3.14;\n  printf(\"%d\", x);\n  return 0;\n}", expectedSolutionSnippet: "%f", errorHint: "Use %f to print float values, not %d (which is for integers)." },
+        { id: "c11", language: "C", title: "Char Array Too Small", brokenCode: "char s[3] = \"abc\";", initialCode: "#include <stdio.h>\nint main() {\n  char s[4] = \"abc\";\n  printf(\"%s\", s);\n  return 0;\n}", expectedSolutionSnippet: "s[4]", errorHint: "A C string needs one extra byte for the null terminator '\\0'." },
+        { id: "c12", language: "C", title: "Uninitialized Pointer", brokenCode: "int *p;\n*p = 5;", initialCode: "#include <stdio.h>\nint main() {\n  int x = 0;\n  int *p = &x;\n  *p = 5;\n  printf(\"%d\", *p);\n  return 0;\n}", expectedSolutionSnippet: "&x", errorHint: "Declare and initialize the variable x, then point p to it using &x." },
+        { id: "c13", language: "C", title: "Wrong While Condition", brokenCode: "while(i >= 0) { i++; }", initialCode: "#include <stdio.h>\nint main() {\n  int i = 0;\n  while(i < 5) {\n    printf(\"%d\", i);\n    i++;\n  }\n  return 0;\n}", expectedSolutionSnippet: "i < 5", errorHint: "The condition should stop the loop after 5 iterations. Use i < 5." },
+        { id: "c14", language: "C", title: "Double Quotes for Char", brokenCode: "char c = \"A\";", initialCode: "#include <stdio.h>\nint main() {\n  char c = 'A';\n  printf(\"%c\", c);\n  return 0;\n}", expectedSolutionSnippet: "'A'", errorHint: "Use single quotes for character literals in C, not double quotes." },
+        { id: "c15", language: "C", title: "Missing return 0", brokenCode: "int main() {\n  printf(\"done\");\n}", initialCode: "#include <stdio.h>\nint main() {\n  printf(\"done\");\n  return 0;\n}", expectedSolutionSnippet: "return 0", errorHint: "main() returns int. Add 'return 0;' at the end." },
+        { id: "c16", language: "C", title: "Wrong sizeof for Array Length", brokenCode: "int len = sizeof(arr) / sizeof(arr);", initialCode: "#include <stdio.h>\nint main() {\n  int arr[5] = {1,2,3,4,5};\n  int len = sizeof(arr) / sizeof(arr[0]);\n  printf(\"%d\", len);\n  return 0;\n}", expectedSolutionSnippet: "arr[0]", errorHint: "To get element count, divide total size by size of one element: sizeof(arr[0])." },
+        { id: "c17", language: "C", title: "Using = vs == in if", brokenCode: "if(count = 0) printf(\"empty\");", initialCode: "#include <stdio.h>\nint main() {\n  int count = 5;\n  if(count == 0) printf(\"empty\");\n  else printf(\"not empty\");\n  return 0;\n}", expectedSolutionSnippet: "count == 0", errorHint: "Use == to compare; = assigns and always evaluates to a non-zero if assigned value != 0." },
+        { id: "c18", language: "C", title: "Wrong Pointer Increment", brokenCode: "printf(\"%d\", *p++); // intent: print then advance", initialCode: "#include <stdio.h>\nint main() {\n  int a[] = {10, 20};\n  int *p = a;\n  printf(\"%d\", *p);\n  p++;\n  printf(\"%d\", *p);\n  return 0;\n}", expectedSolutionSnippet: "*p", errorHint: "Dereference the pointer first, then increment separately to control order of operations." },
+        { id: "c19", language: "C", title: "Comparing Strings with ==", brokenCode: "if(s1 == s2) // compares pointers", initialCode: "#include <stdio.h>\n#include <string.h>\nint main() {\n  char s1[] = \"hi\";\n  char s2[] = \"hi\";\n  if(strcmp(s1, s2) == 0) printf(\"equal\");\n  return 0;\n}", expectedSolutionSnippet: "strcmp", errorHint: "Use strcmp() to compare strings in C, not == which compares memory addresses." },
+        { id: "c20", language: "C", title: "Missing Closing Brace", brokenCode: "int main() {\n  if(1) {\n    printf(\"yes\");\n  return 0;\n}", initialCode: "#include <stdio.h>\nint main() {\n  if(1) {\n    printf(\"yes\");\n  }\n  return 0;\n}", expectedSolutionSnippet: "}\n  return 0", errorHint: "The if block is missing its closing brace }." }
+    ],
+    "Java": [
+        { id: "j01", language: "Java", title: "Missing Semicolon", brokenCode: "int x = 5\nSystem.out.println(x);", initialCode: "public class Main {\n  public static void main(String[] args) {\n    int x = 5;\n    System.out.println(x);\n  }\n}", expectedSolutionSnippet: "int x = 5;", errorHint: "Java statements must end with a semicolon." },
+        { id: "j02", language: "Java", title: "String Compare with ==", brokenCode: "if(s == \"hello\")", initialCode: "public class Main {\n  public static void main(String[] args) {\n    String s = \"hello\";\n    if(s.equals(\"hello\")) System.out.println(\"yes\");\n  }\n}", expectedSolutionSnippet: "equals", errorHint: "Use .equals() to compare String content, not ==." },
+        { id: "j03", language: "Java", title: "Array Index Out of Bounds", brokenCode: "int[] a = {1,2,3};\na[3] = 4;", initialCode: "public class Main {\n  public static void main(String[] args) {\n    int[] a = {1,2,3};\n    a[2] = 4;\n    System.out.println(a[2]);\n  }\n}", expectedSolutionSnippet: "a[2]", errorHint: "Array of size 3 has indices 0, 1, 2. Index 3 is out of bounds." },
+        { id: "j04", language: "Java", title: "NullPointerException", brokenCode: "String s;\nSystem.out.println(s.length());", initialCode: "public class Main {\n  public static void main(String[] args) {\n    String s = \"\";\n    System.out.println(s.length());\n  }\n}", expectedSolutionSnippet: "= \"\"", errorHint: "Initialize the String variable before calling methods on it." },
+        { id: "j05", language: "Java", title: "Wrong main Signature", brokenCode: "public static void main(String args)", initialCode: "public class Main {\n  public static void main(String[] args) {\n    System.out.println(\"Hello\");\n  }\n}", expectedSolutionSnippet: "String[] args", errorHint: "The correct main signature requires String[] args (array), not String args." },
+        { id: "j06", language: "Java", title: "Missing new Keyword", brokenCode: "ArrayList<String> list = ArrayList<>();", initialCode: "import java.util.ArrayList;\npublic class Main {\n  public static void main(String[] args) {\n    ArrayList<String> list = new ArrayList<>();\n    list.add(\"hi\");\n  }\n}", expectedSolutionSnippet: "new ArrayList", errorHint: "Objects in Java must be created with the new keyword." },
+        { id: "j07", language: "Java", title: "Wrong Return Type", brokenCode: "public void getScore() {\n  return 42;\n}", initialCode: "public class Main {\n  public static int getScore() {\n    return 42;\n  }\n  public static void main(String[] args) {\n    System.out.println(getScore());\n  }\n}", expectedSolutionSnippet: "int getScore", errorHint: "A method that returns an integer must declare return type int, not void." },
+        { id: "j08", language: "Java", title: "Missing break in switch", brokenCode: "case 1: System.out.println(\"one\");\ncase 2: System.out.println(\"two\");", initialCode: "public class Main {\n  public static void main(String[] args) {\n    int x = 1;\n    switch(x) {\n      case 1: System.out.println(\"one\"); break;\n      case 2: System.out.println(\"two\"); break;\n    }\n  }\n}", expectedSolutionSnippet: "break;", errorHint: "Without break, execution falls through to the next case in Java." },
+        { id: "j09", language: "Java", title: "Extends vs Implements", brokenCode: "class Dog implements Animal {}", initialCode: "class Animal {}\npublic class Dog extends Animal {\n  public static void main(String[] args) {\n    Dog d = new Dog();\n  }\n}", expectedSolutionSnippet: "extends Animal", errorHint: "Use extends to inherit from a class, implements only for interfaces." },
+        { id: "j10", language: "Java", title: "Static Method on Instance", brokenCode: "Main obj = new Main();\nobj.staticMethod();", initialCode: "public class Main {\n  public static void staticMethod() {\n    System.out.println(\"static\");\n  }\n  public static void main(String[] args) {\n    Main.staticMethod();\n  }\n}", expectedSolutionSnippet: "Main.staticMethod", errorHint: "Call static methods on the class name, not an instance." },
+        { id: "j11", language: "Java", title: "Missing Import", brokenCode: "Scanner sc = new Scanner(System.in);", initialCode: "import java.util.Scanner;\npublic class Main {\n  public static void main(String[] args) {\n    Scanner sc = new Scanner(System.in);\n    sc.close();\n  }\n}", expectedSolutionSnippet: "import java.util.Scanner", errorHint: "Add 'import java.util.Scanner;' at the top of the file." },
+        { id: "j12", language: "Java", title: "Integer Overflow", brokenCode: "int result = 2000000000 * 2;", initialCode: "public class Main {\n  public static void main(String[] args) {\n    long result = 2000000000L * 2;\n    System.out.println(result);\n  }\n}", expectedSolutionSnippet: "long result", errorHint: "Large multiplications exceed int range. Use long and add L suffix to literals." },
+        { id: "j13", language: "Java", title: "Wrong Loop Bound", brokenCode: "for(int i=0; i<=arr.length; i++)", initialCode: "public class Main {\n  public static void main(String[] args) {\n    int[] arr = {1,2,3};\n    for(int i=0; i<arr.length; i++) {\n      System.out.println(arr[i]);\n    }\n  }\n}", expectedSolutionSnippet: "i<arr.length", errorHint: "Use < (not <=) to prevent accessing index equal to array length." },
+        { id: "j14", language: "Java", title: "Unchecked Exception", brokenCode: "int r = 5 / 0;", initialCode: "public class Main {\n  public static void main(String[] args) {\n    try {\n      int r = 5 / 2;\n      System.out.println(r);\n    } catch(ArithmeticException e) {\n      System.out.println(\"error\");\n    }\n  }\n}", expectedSolutionSnippet: "5 / 2", errorHint: "Fix the division. Dividing by zero throws ArithmeticException." },
+        { id: "j15", language: "Java", title: "Private Access Modifier", brokenCode: "private static void main(String[] args)", initialCode: "public class Main {\n  public static void main(String[] args) {\n    System.out.println(\"Hello\");\n  }\n}", expectedSolutionSnippet: "public static void main", errorHint: "The main method must be public so the JVM can call it." },
+        { id: "j16", language: "Java", title: "Wrong Cast", brokenCode: "Object obj = \"text\";\nInteger n = (Integer) obj;", initialCode: "public class Main {\n  public static void main(String[] args) {\n    Object obj = \"text\";\n    String s = (String) obj;\n    System.out.println(s);\n  }\n}", expectedSolutionSnippet: "(String)", errorHint: "Cast to the actual type of the object â€” it's a String, not Integer." },
+        { id: "j17", language: "Java", title: "Concatenation vs Addition", brokenCode: "System.out.println(\"Sum: \" + 1 + 2);", initialCode: "public class Main {\n  public static void main(String[] args) {\n    System.out.println(\"Sum: \" + (1 + 2));\n  }\n}", expectedSolutionSnippet: "(1 + 2)", errorHint: "Without parentheses, + with String performs concatenation left-to-right." },
+        { id: "j18", language: "Java", title: "Missing @Override", brokenCode: "public String tostring() { return \"x\"; }", initialCode: "public class Main {\n  @Override\n  public String toString() { return \"MyObj\"; }\n  public static void main(String[] args) {\n    System.out.println(new Main());\n  }\n}", expectedSolutionSnippet: "toString", errorHint: "Java is case-sensitive. Override uses toString(), not tostring()." },
+        { id: "j19", language: "Java", title: "Infinite While Loop", brokenCode: "while(true) { i++; } // no break", initialCode: "public class Main {\n  public static void main(String[] args) {\n    int i = 0;\n    while(i < 5) {\n      System.out.println(i);\n      i++;\n    }\n  }\n}", expectedSolutionSnippet: "i < 5", errorHint: "Replace the infinite loop condition with a finite bound like i < 5." },
+        { id: "j20", language: "Java", title: "Int vs float Division", brokenCode: "float res = 7 / 2;", initialCode: "public class Main {\n  public static void main(String[] args) {\n    float res = 7.0f / 2;\n    System.out.println(res);\n  }\n}", expectedSolutionSnippet: "7.0f", errorHint: "7/2 performs integer division. Use 7.0f to force float division." }
+    ],
+    "Python": [
+        { id: "p01", language: "Python", title: "Missing Colon after if", brokenCode: "if x > 5\n  print(x)", initialCode: "x = 10\nif x > 5:\n    print(x)", expectedSolutionSnippet: "if x > 5:", errorHint: "if statements in Python must end with a colon (:)." },
+        { id: "p02", language: "Python", title: "Indentation Error", brokenCode: "if True:\nprint('hi')", initialCode: "if True:\n    print('hi')", expectedSolutionSnippet: "    print", errorHint: "Python uses indentation to define code blocks. Indent the print statement." },
+        { id: "p03", language: "Python", title: "Assignment in Condition", brokenCode: "if x = 5:", initialCode: "x = 0\nif x == 5:\n    print('five')", expectedSolutionSnippet: "x == 5", errorHint: "Use == for comparison. = is assignment and causes a SyntaxError in conditions." },
+        { id: "p04", language: "Python", title: "String + Int", brokenCode: "print('Score: ' + score)", initialCode: "score = 90\nprint('Score: ' + str(score))", expectedSolutionSnippet: "str(score)", errorHint: "Python cannot concatenate str and int directly. Wrap the int with str()." },
+        { id: "p05", language: "Python", title: "List .add() vs .append()", brokenCode: "nums.add(5)", initialCode: "nums = []\nnums.append(5)\nprint(nums)", expectedSolutionSnippet: "append", errorHint: "Python lists use .append() to add items, not .add() (that's for sets)." },
+        { id: "p06", language: "Python", title: "Print Without Parentheses", brokenCode: "print 'Hello'", initialCode: "print('Hello')", expectedSolutionSnippet: "print(", errorHint: "In Python 3, print is a function and requires parentheses." },
+        { id: "p07", language: "Python", title: "Wrong range() Arguments", brokenCode: "for i in range(5, 0):", initialCode: "for i in range(0, 5):\n    print(i)", expectedSolutionSnippet: "range(0, 5)", errorHint: "range(5, 0) produces no values. Use range(0, 5) to iterate from 0 to 4." },
+        { id: "p08", language: "Python", title: "Missing self Parameter", brokenCode: "def greet():\n    print(self.name)", initialCode: "class Dog:\n    def __init__(self, name):\n        self.name = name\n    def greet(self):\n        print(self.name)", expectedSolutionSnippet: "def greet(self)", errorHint: "Instance methods in Python must have 'self' as the first parameter." },
+        { id: "p09", language: "Python", title: "Missing Colon after for", brokenCode: "for i in range(5)\n    print(i)", initialCode: "for i in range(5):\n    print(i)", expectedSolutionSnippet: "range(5):", errorHint: "for loops in Python must end with a colon (:)." },
+        { id: "p10", language: "Python", title: "Wrong Dictionary Key", brokenCode: "d = {'a': 1}\nprint(d['b'])", initialCode: "d = {'a': 1, 'b': 2}\nprint(d.get('b', 0))", expectedSolutionSnippet: ".get(", errorHint: "Accessing a non-existent key with [] raises KeyError. Use .get() or add the key." },
+        { id: "p11", language: "Python", title: "Infinite While Loop", brokenCode: "i = 0\nwhile i >= 0:\n    print(i)\n    i += 1", initialCode: "i = 0\nwhile i < 5:\n    print(i)\n    i += 1", expectedSolutionSnippet: "i < 5", errorHint: "The loop condition never becomes False. Change to i < 5." },
+        { id: "p12", language: "Python", title: "Integer vs Float Division", brokenCode: "result = 7 // 2\nprint(result) # expect 3.5", initialCode: "result = 7 / 2\nprint(result)", expectedSolutionSnippet: "7 / 2", errorHint: "// performs integer (floor) division. Use / for float division." },
+        { id: "p13", language: "Python", title: "Missing f in f-string", brokenCode: "name = 'Ali'\nprint('{name} wins')", initialCode: "name = 'Ali'\nprint(f'{name} wins')", expectedSolutionSnippet: "f'", errorHint: "To embed variables in a string, add f before the quote: f'{name}'." },
+        { id: "p14", language: "Python", title: "Undefined Variable", brokenCode: "print(total)", initialCode: "total = 0\ntotal += 10\nprint(total)", expectedSolutionSnippet: "total = 0", errorHint: "Declare and initialize 'total' before using it." },
+        { id: "p15", language: "Python", title: "Missing return Statement", brokenCode: "def add(a, b):\n    a + b", initialCode: "def add(a, b):\n    return a + b\nprint(add(3, 4))", expectedSolutionSnippet: "return a + b", errorHint: "The function performs the addition but doesn't return the result. Add 'return'." },
+        { id: "p16", language: "Python", title: "Wrong List Index", brokenCode: "nums = [1,2,3]\nprint(nums[3])", initialCode: "nums = [1,2,3]\nprint(nums[2])", expectedSolutionSnippet: "nums[2]", errorHint: "A list of 3 items has indices 0, 1, 2. Index 3 is out of range." },
+        { id: "p17", language: "Python", title: "Missing colon after while", brokenCode: "while x < 10\n    x += 1", initialCode: "x = 0\nwhile x < 10:\n    x += 1\nprint(x)", expectedSolutionSnippet: "while x < 10:", errorHint: "while statements in Python must end with a colon (:)." },
+        { id: "p18", language: "Python", title: "is vs ==", brokenCode: "x = 1000\nif x is 1000:", initialCode: "x = 1000\nif x == 1000:\n    print('match')", expectedSolutionSnippet: "x == 1000", errorHint: "Use == to compare values. 'is' checks object identity which can be unreliable for large integers." },
+        { id: "p19", language: "Python", title: "Variable Name Starts with Digit", brokenCode: "1result = 5\nprint(1result)", initialCode: "result1 = 5\nprint(result1)", expectedSolutionSnippet: "result1", errorHint: "Variable names cannot start with a digit in Python. Rename to result1 or similar." },
+        { id: "p20", language: "Python", title: "Missing import", brokenCode: "nums = [3,1,2]\nprint(sorted(nums))", initialCode: "import random\nnums = [3,1,2]\nrandom.shuffle(nums)\nprint(nums)", expectedSolutionSnippet: "import random", errorHint: "The random module must be imported before using random.shuffle()." }
+    ]
 };
 
-export function getDebuggingChallenge(year: AcademicYear, dept: Department, language: "C" | "Java" | "Python"): CodeChallenge {
-    const yrBank = L4_POOL[year] || L4_POOL["1st Year"];
-    const targetDept = (dept === "csM" || dept === "csd") ? "cse" : dept;
-    let qs = yrBank[targetDept] || yrBank["cse"];
+export function getDebuggingChallenges(language: "C" | "Java" | "Python", count: number = 5): CodeChallenge[] {
+    const pool = L4_SIMPLE_POOL[language] || L4_SIMPLE_POOL["C"];
+    return [...pool].sort(() => 0.5 - Math.random()).slice(0, count);
+}
 
-    // Filter by language
-    const filtered = qs.filter(q => q.language === language);
-
-    // If no exact match for language in this branch/year, fall back to any branch's match for that language
-    if (filtered.length === 0) {
-        // Search other departments in the same year
-        for (const d in yrBank) {
-            const fallbackQs = yrBank[d as Department].filter(q => q.language === language);
-            if (fallbackQs.length > 0) return fallbackQs[Math.floor(Math.random() * fallbackQs.length)];
-        }
-        // Final fallback to 1st year CS
-        const ultimateFallback = L4_POOL["1st Year"]["cse"].filter(q => q.language === language);
-        return ultimateFallback[Math.floor(Math.random() * ultimateFallback.length)] || ultimateFallback[0];
-    }
-
-    return filtered[Math.floor(Math.random() * filtered.length)];
+// Kept for backward compatibility (Level 5 uses the first item)
+export function getSingleDebuggingChallenge(language: "C" | "Java" | "Python"): CodeChallenge {
+    const pool = L4_SIMPLE_POOL[language] || L4_SIMPLE_POOL["C"];
+    return pool[Math.floor(Math.random() * pool.length)];
 }

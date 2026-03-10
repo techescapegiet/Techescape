@@ -39,6 +39,11 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!player) {
       router.push("/login");
+      return;
+    }
+    // If all levels done, skip dashboard entirely and go to reconstruction
+    if (player.currentLevel > 5) {
+      router.push("/reconstruct");
     }
   }, [player, router]);
 
@@ -53,7 +58,8 @@ export default function DashboardPage() {
   const isLowTime = timeRemaining < 300; // less than 5 minutes
 
   const startNextLevel = () => {
-    if (player.currentLevel <= 5) {
+    // Safety: never route to /level/6 or beyond
+    if (player.currentLevel >= 1 && player.currentLevel <= 5) {
       router.push(`/level/${player.currentLevel}`);
     } else {
       router.push("/reconstruct");

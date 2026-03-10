@@ -41,8 +41,18 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
         const levelMatch = pathname.match(/^\/level\/(\d+)$/);
         if (levelMatch) {
             const requestedLevel = parseInt(levelMatch[1], 10);
-            if (requestedLevel !== player.currentLevel) {
+
+            if (requestedLevel > player.currentLevel) {
+                // Trying to skip ahead: send back to current level
                 router.replace(`/level/${player.currentLevel}`);
+            } else if (requestedLevel < player.currentLevel) {
+                // Trying to go back, OR actively transitioning out after completing a level.
+                // Send to the appropriate next phase instead of flashing the next level page.
+                if (player.currentLevel > 5) {
+                    router.replace("/reconstruct");
+                } else {
+                    router.replace("/dashboard");
+                }
             }
         }
     }, [pathname, player, router]);

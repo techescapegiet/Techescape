@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useGame } from "@/context/GameContext";
 import { GlowingButton } from "@/components/ui/GlowingButton";
 import { TerminalText } from "@/components/ui/TerminalText";
+import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, ShieldAlert, Users, SplitSquareVertical, AlertCircle, Loader2, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CollabLobby } from "./CollabLobby";
@@ -35,6 +36,7 @@ export function Level3() {
   const [partnerSelection, setPartnerSelection] = useState<number | null>(null);
   const [pingedIndex, setPingedIndex] = useState<number | null>(null);
   const [success, setSuccess] = useState(false);
+  const [stepSuccess, setStepSuccess] = useState(false); // New: feedback between questions
   const [errorFlash, setErrorFlash] = useState(false);
   const [showHint, setShowHint] = useState(false);
 
@@ -47,15 +49,10 @@ export function Level3() {
     if (player?.academicYear && player?.department) {
       if (mode === "collab" && session?.id) {
         const myOffset = session.role === "host" ? 0 : 3;
-        setMyQuestions(getMCQs(
-          player.academicYear as AcademicYear,
-          player.department as Department,
-          session.id,
-          myOffset
-        ));
+        setMyQuestions(getMCQs(session.id, myOffset));
       } else {
         // Solo or choice mode
-        setMyQuestions(getMCQs(player.academicYear as AcademicYear, player.department as Department));
+        setMyQuestions(getMCQs());
       }
     }
   }, [player, mode, session?.id, session?.role]);
@@ -72,22 +69,13 @@ export function Level3() {
 
         if (error) {
           console.error("Partner details fetch error", error);
-          setPartnerQuestions(getMCQs("1st Year", "cse"));
+          setPartnerQuestions(getMCQs());
           return;
         }
 
-        const keys: any = Array.isArray(data?.access_keys) ? data?.access_keys[0] : data?.access_keys;
-        const pYear = keys?.academic_year || "1st Year";
-        const pDept = keys?.department || "cse";
-
         // Partner uses the REVERSE offset
         const partnerOffset = session.role === "host" ? 3 : 0;
-        setPartnerQuestions(getMCQs(
-          pYear as AcademicYear,
-          pDept as Department,
-          session.id,
-          partnerOffset
-        ));
+        setPartnerQuestions(getMCQs(session.id, partnerOffset));
       };
       fetchPartnerData();
     }
@@ -104,6 +92,27 @@ export function Level3() {
     }
   };
 
+  // Initial Sync from DB
+  useEffect(() => {
+    if (mode === "collab" && session?.id) {
+      const syncState = async () => {
+        const { data } = await supabase.from("collab_sessions").select("*").eq("id", session.id).single();
+        if (data) {
+          setCurrentStep(data.current_step);
+          setAttempts(data.attempts_left);
+          setHostAnswered(data.host_answered);
+          setGuestAnswered(data.guest_answered);
+          setStatus(data.status);
+          if (data.status === "completed") {
+            setSuccess(true);
+            setTimeout(() => completeLevel("LOGIC"), 3000);
+          }
+        }
+      };
+      syncState();
+    }
+  }, [mode, session?.id, completeLevel]);
+
   useEffect(() => {
     if (mode !== "collab" || !session) return;
 
@@ -119,9 +128,15 @@ export function Level3() {
 
         // Handle step advancement resets
         if (data.current_step > currentStep) {
-          setSelected(null);
-          setShowHint(false);
-          setPartnerSelection(null);
+          setStepSuccess(true);
+          setTimeout(() => {
+            setStepSuccess(false);
+            setSelected(null);
+            setShowHint(false);
+            setPartnerSelection(null);
+            setHostAnswered(false);
+            setGuestAnswered(false);
+          }, 1500);
         }
 
         setCurrentStep(data.current_step);
@@ -153,27 +168,31 @@ export function Level3() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [mode, session, player?.sessionId, completeLevel]);
+  }, [mode, session, player?.sessionId, completeLevel, currentStep]);
 
-  // Reactive Sync Controller: Only the Host coordinates step progression to prevent race conditions
+  // DECENTRALIZED Atomic Sync Controller: 
+  // Either client will attempt to advance the step as soon as both flags are true
   useEffect(() => {
-    if (mode === "collab" && session?.role === "host" && hostAnswered && guestAnswered) {
+    if (mode === "collab" && session && hostAnswered && guestAnswered && !stepSuccess) {
       const advanceStep = async () => {
         if (currentStep < 2) {
-          await supabase.from("collab_sessions").update({
-            current_step: currentStep + 1,
-            host_answered: false,
-            guest_answered: false
-          }).eq("id", session.id);
+          // Atomic update ONLY if conditions still met (prevents double increments)
+          await supabase.from("collab_sessions")
+            .update({
+              current_step: currentStep + 1,
+              host_answered: false,
+              guest_answered: false
+            })
+            .match({ id: session.id, host_answered: true, guest_answered: true, current_step: currentStep });
         } else {
-          await supabase.from("collab_sessions").update({
-            status: "completed"
-          }).eq("id", session.id);
+          await supabase.from("collab_sessions")
+            .update({ status: "completed" })
+            .match({ id: session.id, host_answered: true, guest_answered: true, status: "active" });
         }
       };
       advanceStep();
     }
-  }, [mode, session, hostAnswered, guestAnswered, currentStep]);
+  }, [mode, session, hostAnswered, guestAnswered, currentStep, stepSuccess]);
 
   // Broadcast selection when it changes
   useEffect(() => {
@@ -344,10 +363,27 @@ export function Level3() {
           <div className="h-10 w-[2px] bg-white/10" />
           <div className="text-right">
             <div className="text-xs uppercase text-[#00ffff] font-bold">Synchrony</div>
-            <div className="font-mono text-xl">STEP {currentStep + 1}/3</div>
+            <div className="font-mono text-xl tracking-widest">STEP {currentStep + 1}/3</div>
           </div>
         </div>
       </div>
+
+      <AnimatePresence>
+        {stepSuccess && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.2 }}
+            className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
+          >
+            <div className="bg-[#00ff00]/20 border-2 border-[#00ff00] p-12 backdrop-blur-md box-glow flex flex-col items-center gap-4">
+              <CheckCircle2 className="w-16 h-16 text-[#00ff00] animate-bounce" />
+              <h2 className="text-4xl font-black text-[#00ff00] italic tracking-tighter">DATA FRAGMENT SYNCED</h2>
+              <div className="text-white/40 font-mono text-xs uppercase tracking-[0.5em]">Advancing to next encryption layer...</div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className={cn("grid gap-6 flex-1", mode === "solo" ? "grid-cols-1 max-w-3xl mx-auto w-full" : "grid-cols-1 md:grid-cols-2")}>
         {/* Left Side: My Terminal */}
