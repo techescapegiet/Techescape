@@ -45,23 +45,33 @@ export function Level3() {
   // Setup My Questions
   useEffect(() => {
     if (player?.academicYear && player?.department) {
-      setMyQuestions(getMCQs(player.academicYear as AcademicYear, player.department as Department));
+      if (mode === "collab" && session?.id) {
+        const myOffset = session.role === "host" ? 0 : 3;
+        setMyQuestions(getMCQs(
+          player.academicYear as AcademicYear,
+          player.department as Department,
+          session.id,
+          myOffset
+        ));
+      } else {
+        // Solo or choice mode
+        setMyQuestions(getMCQs(player.academicYear as AcademicYear, player.department as Department));
+      }
     }
-  }, [player]);
+  }, [player, mode, session?.id, session?.role]);
 
   // Setup Partner Questions
   useEffect(() => {
-    if (mode === "collab" && session?.partnerId) {
+    if (mode === "collab" && session?.partnerId && session?.id) {
       const fetchPartnerData = async () => {
         const { data, error } = await supabase
           .from("players")
-          .select("access_keys(academic_year, department)")
+          .select("id, access_keys(academic_year, department)")
           .eq("id", session.partnerId)
           .single();
 
         if (error) {
           console.error("Partner details fetch error", error);
-          // Fallback to our own questions or 1st year CS
           setPartnerQuestions(getMCQs("1st Year", "Computer Science"));
           return;
         }
@@ -70,11 +80,18 @@ export function Level3() {
         const pYear = keys?.academic_year || "1st Year";
         const pDept = keys?.department || "Computer Science";
 
-        setPartnerQuestions(getMCQs(pYear as AcademicYear, pDept as Department));
+        // Partner uses the REVERSE offset
+        const partnerOffset = session.role === "host" ? 3 : 0;
+        setPartnerQuestions(getMCQs(
+          pYear as AcademicYear,
+          pDept as Department,
+          session.id,
+          partnerOffset
+        ));
       };
       fetchPartnerData();
     }
-  }, [mode, session]);
+  }, [mode, session?.id, session?.partnerId, session?.role]);
 
   const skipLevel = async () => {
     if (mode === "collab" && session) {

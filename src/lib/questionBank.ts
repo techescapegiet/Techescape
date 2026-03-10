@@ -477,127 +477,226 @@ export interface MCQQuestion {
 const L3_MCQS: Record<AcademicYear, Record<Department, MCQQuestion[]>> = {
     "1st Year": {
         "Computer Science": [
-            { id: 1, question: "Which of the following is NOT a fundamental data type in C?", options: ["int", "float", "string", "char"], correct: 2, explanation: "C does not have a built-in 'string' type; arrays of char are used instead." },
-            { id: 2, question: "What does the 'sizeof' operator evaluate?", options: ["The execution time of a function", "The memory size of a variable or data type in bytes", "The length of a string in characters", "The number of elements in an array"], correct: 1, explanation: "sizeof returns the memory footprint of a type." },
-            { id: 3, question: "What is the physical significance of the gradient of a scalar field?", options: ["It gives the direction of maximum decrease.", "It gives the direction of maximum increase.", "It represents rotation.", "It represents divergence."], correct: 1, explanation: "Gradient points in the direction of steepest ascent." }
+            { id: 101, question: "Which of the following is NOT a fundamental data type in C?", options: ["int", "float", "string", "char"], correct: 2, explanation: "C does not have a built-in 'string' type; arrays of char are used instead." },
+            { id: 102, question: "What does the 'sizeof' operator evaluate?", options: ["Execution time", "Memory size in bytes", "String length", "Array size"], correct: 1, explanation: "sizeof returns memory footprint." },
+            { id: 103, question: "Which header file is required for printf()?", options: ["conio.h", "math.h", "stdio.h", "stdlib.h"], correct: 2, explanation: "stdio.h stands for Standard Input Output." },
+            { id: 104, question: "What is the result of 5 / 2 in integer division in C?", options: ["2.5", "2", "3", "0"], correct: 1, explanation: "Integer division truncates decimals." },
+            { id: 105, question: "Which of these is used for multi-line comments in C?", options: ["//", "/* */", "--", "#"], correct: 1, explanation: "/* */ is standard for multi-line." },
+            { id: 106, question: "What is the escape sequence for a newline?", options: ["\\t", "\\r", "\\n", "\\b"], correct: 2, explanation: "\\n is newline." }
         ],
-        // For brevity, defaulting IT to CS, and generating 3 general questions for others.
         "Information Tech": [
-            { id: 1, question: "Which of the following is NOT a fundamental data type in C?", options: ["int", "float", "string", "char"], correct: 2, explanation: "C does not have a built-in 'string' type; arrays of char are used instead." },
-            { id: 2, question: "What does the 'sizeof' operator evaluate?", options: ["The execution time of a function", "The memory size of a variable or data type in bytes", "The length of a string in characters", "The number of elements in an array"], correct: 1, explanation: "sizeof returns the memory footprint of a type." },
-            { id: 3, question: "Which data structure operates on a Last In First Out (LIFO) principle?", options: ["Queue", "Tree", "Stack", "Graph"], correct: 2, explanation: "Stacks are LIFO." }
+            { id: 111, question: "Which of the following is NOT a fundamental data type in C?", options: ["int", "float", "string", "char"], correct: 2, explanation: "C does not have built-in 'string'." },
+            { id: 112, question: "Which data structure operates on LIFO?", options: ["Queue", "Tree", "Stack", "Graph"], correct: 2, explanation: "Stacks are LIFO." },
+            { id: 113, question: "RAM stands for?", options: ["Read Access Memory", "Random Access Memory", "Ready Access Memory", "Real Access Memory"], correct: 1, explanation: "Random Access Memory." },
+            { id: 114, question: "Which is a valid variable name in C?", options: ["2ndVar", "first_var", "float", "my-var"], correct: 1, explanation: "Variables can start with letters or underscore." },
+            { id: 115, question: "Binary representation of 5 is?", options: ["101", "110", "111", "001"], correct: 0, explanation: "4 + 0 + 1 = 5." },
+            { id: 116, question: "Who is known as the father of computers?", options: ["Alan Turing", "Charles Babbage", "Bill Gates", "Dennis Ritchie"], correct: 1, explanation: "Charles Babbage." }
         ],
         "Electronics": [
-            { id: 1, question: "Kirchhoff's Current Law (KCL) is based on the law of conservation of:", options: ["Energy", "Momentum", "Charge", "Mass"], correct: 2, explanation: "KCL mathematically states that charge cannot be created or destroyed at a node." },
-            { id: 2, question: "An ideal voltmeter has:", options: ["Zero resistance", "Infinite resistance", "Finite small resistance", "Reactance only"], correct: 1, explanation: "Infinite resistance prevents current from flowing through the meter, giving an accurate reading." },
-            { id: 3, question: "Which semiconductor material is most widely used?", options: ["Germanium", "Silicon", "Gallium Arsenide", "Carbon"], correct: 1, explanation: "Silicon is abundant and has favorable thermal properties." }
+            { id: 121, question: "KCL is based on the law of conservation of:", options: ["Energy", "Momentum", "Charge", "Mass"], correct: 2, explanation: "KCL states charge cannot be created/destroyed at a node." },
+            { id: 122, question: "An ideal voltmeter has:", options: ["Zero resistance", "Infinite resistance", "Finite small", "Reactance"], correct: 1, explanation: "Infinite resistance prevents current flow." },
+            { id: 123, question: "Silicon is a:", options: ["Conductor", "Semiconductor", "Insulator", "Superconductor"], correct: 1, explanation: "Silicon is the base of electronics." },
+            { id: 124, question: "What is the unit of Capacitance?", options: ["Ohm", "Henry", "Farad", "Volt"], correct: 2, explanation: "Farad (F)." },
+            { id: 125, question: "PN junction diode allows current in:", options: ["Both directions", "One direction", "Neither", "Depends on heat"], correct: 1, explanation: "Diodes are unidirectional." },
+            { id: 126, question: "Resistance of an ideal wire is:", options: ["Infinite", "Zero", "1 Ohm", "Variable"], correct: 1, explanation: "Ideal wires have no lost energy." }
         ],
         "Mechanical": [
-            { id: 1, question: "Newton's Second Law of motion relates force to:", options: ["Velocity and Time", "Mass and Acceleration", "Work and Distance", "Pressure and Area"], correct: 1, explanation: "F = ma." },
-            { id: 2, question: "Hooke's Law holds good up to:", options: ["Yield point", "Limit of proportionality", "Breaking point", "Elastic limit"], correct: 1, explanation: "Stress is proportional to strain up to the limit of proportionality." },
-            { id: 3, question: "Which of these is a scalar quantity?", options: ["Force", "Velocity", "Acceleration", "Work"], correct: 3, explanation: "Work is the dot product of two vectors, resulting in a scalar." }
+            { id: 131, question: "Newton's Second Law relates force to:", options: ["Velocity/Time", "Mass/Acceleration", "Work/Distance", "Pressure/Area"], correct: 1, explanation: "F = ma." },
+            { id: 132, question: "Hooke's Law holds good up to:", options: ["Yield point", "Proportionality limit", "Breaking point", "Elastic limit"], correct: 1, explanation: "Stress prop to Strain." },
+            { id: 133, question: "Unit of Work is:", options: ["Watt", "Newton", "Joule", "Pascal"], correct: 2, explanation: "Joule (J)." },
+            { id: 134, question: "Vector quantity among these is:", options: ["Mass", "Distance", "Velocity", "Temperature"], correct: 2, explanation: "Velocity has direction." },
+            { id: 135, question: "Power is defined as:", options: ["Force x Time", "Work / Time", "Mass x Velocity", "Force / Area"], correct: 1, explanation: "Rate of doing work." },
+            { id: 136, question: "Density is defined as:", options: ["Mass x Volume", "Volume / Mass", "Mass / Volume", "Weight / Area"], correct: 2, explanation: "m / V." }
         ],
         "Civil": [
-            { id: 1, question: "The unit of force in the SI system is:", options: ["Dyne", "Newton", "Pound", "Joule"], correct: 1, explanation: "Newton is the standard SI unit." },
-            { id: 2, question: "The moment of a force is the product of force and:", options: ["Parallel distance", "Perpendicular distance", "Velocity", "Time"], correct: 1, explanation: "Moment = Force x Perpendicular distance from the pivot." },
-            { id: 3, question: "Friction always acts in a direction:", options: ["Parallel to motion", "Perpendicular to motion", "Opposite to motion", "At 45 degrees"], correct: 2, explanation: "Friction opposes relative motion." }
+            { id: 141, question: "Unit of force in SI system:", options: ["Dyne", "Newton", "Pound", "Joule"], correct: 1, explanation: "Newton." },
+            { id: 142, question: "Moment of force is product of force and:", options: ["Parallel dist", "Perpendicular dist", "Velocity", "Time"], correct: 1, explanation: "M = F * d_perp." },
+            { id: 143, question: "Friction always acts in direction:", options: ["Parallel", "Perpendicular", "Opposite to motion", "45 deg"], correct: 2, explanation: "Opposes motion." },
+            { id: 144, question: "Stress is defined as:", options: ["Force / Area", "Force x Area", "Mass / Area", "Volume / Force"], correct: 0, explanation: "Standard definition." },
+            { id: 145, question: "The SI unit of pressure is:", options: ["Newton", "Joule", "Pascal", "Watt"], correct: 2, explanation: "Pascal (N/m^2)." },
+            { id: 146, question: "A body at rest is in:", options: ["Motion", "Static equilibrium", "Dynamic equilibrium", "Acceleration"], correct: 1, explanation: "Sum of forces = 0." }
         ],
         "CSM": [
-            { id: 1, question: "What is the primary library for data manipulation in Python?", options: ["Numpy", "Pandas", "Matplotlib", "Scikit-learn"], correct: 1, explanation: "Pandas is the core library for dataframes." },
-            { id: 2, question: "In Python, which keyword is used to define a function?", options: ["func", "def", "lambda", "function"], correct: 1, explanation: "def is used for standard functions." },
-            { id: 3, question: "Standard Mean is calculated by:", options: ["Summing all values", "Summing values and dividing by count", "Multiplying all values", "Finding the middle value"], correct: 1, explanation: "Mean = sum(x) / n." }
+            { id: 151, question: "Primary library for data manipulation in Python?", options: ["Numpy", "Pandas", "Matplotlib", "Scikit"], correct: 1, explanation: "Pandas for dataframes." },
+            { id: 152, question: "Keyword to define a function in Python?", options: ["func", "def", "lambda", "function"], correct: 1, explanation: "def." },
+            { id: 153, question: "Standard Mean is:", options: ["Sum", "Sum / Count", "Product", "Middle"], correct: 1, explanation: "Average." },
+            { id: 154, question: "What is an Outlier?", options: ["Center value", "Extreme value", "Average value", "Most frequent"], correct: 1, explanation: "Data point significantly different from others." },
+            { id: 155, question: "Median of [1, 3, 5] is?", options: ["1", "3", "5", "9"], correct: 1, explanation: "Middle value." },
+            { id: 156, question: "Python is a ___ type language.", options: ["Compiled", "Interpreted", "Low level", "Hardware"], correct: 1, explanation: "Interpreted." }
         ]
     },
     "2nd Year": {
         "Computer Science": [
-            { id: 1, question: "In Java, standard classes are inherited from which base class?", options: ["System", "Class", "Object", "Main"], correct: 2, explanation: "Every class implicity extends java.lang.Object." },
-            { id: 2, question: "Which data structure is optimal for implementing a priority queue?", options: ["Linked List", "Binary Search Tree", "Heap", "Hash Table"], correct: 2, explanation: "Heaps provide O(log n) insertions and extractions for priorities." },
-            { id: 3, question: "What is the time complexity of a purely linear search?", options: ["O(log n)", "O(1)", "O(n^2)", "O(n)"], correct: 3, explanation: "Every element must be checked in the worst case." }
+            { id: 201, question: "In Java, standard classes are inherited from:", options: ["System", "Class", "Object", "Main"], correct: 2, explanation: "java.lang.Object." },
+            { id: 202, question: "Optimal DS for priority queue?", options: ["Linked List", "BST", "Heap", "Hash Table"], correct: 2, explanation: "Heaps for O(log n)." },
+            { id: 203, question: "Time complexity of linear search?", options: ["O(log n)", "O(1)", "O(n^2)", "O(n)"], correct: 3, explanation: "Worst case n." },
+            { id: 204, question: "Which is not an OOP concept?", options: ["Encapsulation", "Inheritance", "Compilation", "Polymorphism"], correct: 2, explanation: "Compilation is a process." },
+            { id: 205, question: "Private members can be accessed by:", options: ["Child classes", "Same class", "Main method", "Public methods"], correct: 1, explanation: "Strict class scope." },
+            { id: 206, question: "Java uses which for memory management?", options: ["Manual delete", "Garbage Collector", "Destructors", "Free()"], correct: 1, explanation: "Automatic GC." }
         ],
         "Information Tech": [
-            { id: 1, question: "In Java, standard classes are inherited from which base class?", options: ["System", "Class", "Object", "Main"], correct: 2, explanation: "Every class implicity extends java.lang.Object." },
-            { id: 2, question: "Which data structure is optimal for implementing a priority queue?", options: ["Linked List", "Binary Search Tree", "Heap", "Hash Table"], correct: 2, explanation: "Heaps provide O(log n) insertions and extractions for priorities." },
-            { id: 3, question: "What is the time complexity of a purely linear search?", options: ["O(log n)", "O(1)", "O(n^2)", "O(n)"], correct: 3, explanation: "Every element must be checked in the worst case." }
+            { id: 211, question: "In Java, standard classes are inherited from:", options: ["System", "Class", "Object", "Main"], correct: 2, explanation: "java.lang.Object." },
+            { id: 212, question: "Optimal DS for priority queue?", options: ["Linked List", "BST", "Heap", "Hash Table"], correct: 2, explanation: "Heaps for O(log n)." },
+            { id: 213, question: "What is DBMS?", options: ["Database Mgmt System", "Data Block System", "Digital Backup", "Data Buffer"], correct: 0, explanation: "Managed data." },
+            { id: 214, question: "SQL stands for?", options: ["Simple Query Lang", "Structured Query Lang", "System Query Lang", "Static Query Lang"], correct: 1, explanation: "Structured Query." },
+            { id: 215, question: "Primary Key must be:", options: ["Null", "Unique and Not Null", "String", "Foreign"], correct: 1, explanation: "Unique identifier." },
+            { id: 216, question: "Which is a NoSQL database?", options: ["MySQL", "PostgreSQL", "MongoDB", "Oracle"], correct: 2, explanation: "Document based." }
         ],
         "Electronics": [
-            { id: 1, question: "An operational amplifier ideally has:", options: ["Zero input impedance", "Infinite input impedance", "Infinite output impedance", "Unity gain"], correct: 1, explanation: "Infinite input impedance draws zero current from the source." },
-            { id: 2, question: "In boolean algebra, A + A.B equals:", options: ["A", "B", "A.B", "1"], correct: 0, explanation: "A + A.B = A(1 + B) = A." },
-            { id: 3, question: "What is the base of the hexadecimal number system?", options: ["2", "8", "10", "16"], correct: 3, explanation: "Hex uses 0-9 and A-F." }
+            { id: 221, question: "Op-Amp ideally has:", options: ["Zero input imp", "Inf input imp", "Inf output imp", "Unity gain"], correct: 1, explanation: "Infinite input impedance." },
+            { id: 222, question: "In boolean algebra, A + A.B equals:", options: ["A", "B", "A.B", "1"], correct: 0, explanation: "A(1+B) = A." },
+            { id: 223, question: "Base of Hexadecimal?", options: ["2", "8", "10", "16"], correct: 3, explanation: "16." },
+            { id: 224, question: "AND gate output is 1 if:", options: ["Any input 1", "No input 1", "All inputs 1", "Inputs different"], correct: 2, explanation: "Strict AND logic." },
+            { id: 225, question: "Binary 1010 in decimal is?", options: ["8", "10", "12", "14"], correct: 1, explanation: "8+2." },
+            { id: 226, question: "Zener diode is used for:", options: ["Amplification", "Rectification", "Voltage regulation", "Oscillation"], correct: 2, explanation: "Works in breakdown region." }
         ],
         "Mechanical": [
-            { id: 1, question: "The first law of thermodynamics is essentially the law of conservation of:", options: ["Momentum", "Mass", "Energy", "Entropy"], correct: 2, explanation: "Energy cannot be created or destroyed." },
-            { id: 2, question: "In a reversible process, the entropy of the universe:", options: ["Increases", "Decreases", "Remains constant", "Cannot be determined"], correct: 2, explanation: "Only irreversible processes increase total entropy." },
-            { id: 3, question: "Bernoulli's equation applies to:", options: ["Viscous flow", "Compressible flow", "Ideal, incompressible fluid flow", "Turbulent flow"], correct: 2, explanation: "Assumes inviscid, incompressible, and steady flow." }
+            { id: 231, question: "First law of thermodynamics is law of conservation of:", options: ["Momentum", "Mass", "Energy", "Entropy"], correct: 2, explanation: "Energy conserved." },
+            { id: 232, question: "In reversible process, entropy of universe:", options: ["Increases", "Decreases", "Constant", "Unknown"], correct: 2, explanation: "Total entropy constant in ideal reversibility." },
+            { id: 233, question: "Bernoulli equation applies to:", options: ["Viscous", "Compressible", "Ideal incompressible", "Turbulent"], correct: 2, explanation: "Inviscid/Incompressible." },
+            { id: 234, question: "Viscosity of water compared to air is:", options: ["Higher", "Lower", "Same", "Zero"], correct: 0, explanation: "Water is more viscous." },
+            { id: 235, question: "Centrifugal pump is a ___ machine.", options: ["Power absorbing", "Power producing", "Static", "Efficiency"], correct: 0, explanation: "Takes work to move fluid." },
+            { id: 236, question: "Standard gravity (g) value in m/s^2:", options: ["8.9", "9.81", "10.5", "7.5"], correct: 1, explanation: "Constant." }
         ],
         "Civil": [
-            { id: 1, question: "The process of determining the relative heights of different points on or below the earth's surface is called:", options: ["Levelling", "Contouring", "Surveying", "Traversing"], correct: 0, explanation: "Levelling measures elevations." },
-            { id: 2, question: "What is the purpose of a Theodolite?", options: ["Measuring distances", "Measuring angles", "Measuring flow rate", "Measuring pressure"], correct: 1, explanation: "Used to measure horizontal and vertical angles." },
-            { id: 3, question: "The stress at which a material breaks is called:", options: ["Yield stress", "Ultimate stress", "Failure stress", "Working stress"], correct: 2, explanation: "Failure point marks physical fracture." }
+            { id: 241, question: "Determining heights of points is called:", options: ["Levelling", "Contouring", "Surveying", "Traversing"], correct: 0, explanation: "Levelling." },
+            { id: 242, question: "Purpose of Theodolite?", options: ["Distances", "Angles", "Flow", "Pressure"], correct: 1, explanation: "Measuring angles." },
+            { id: 243, question: "Stress at which material breaks:", options: ["Yield", "Ultimate", "Failure", "Working"], correct: 2, explanation: "Breaking point." },
+            { id: 244, question: "Contours of equal elevation that close indicate a:", options: ["Valley", "Hill or Depression", "Cliff", "Road"], correct: 1, explanation: "Circular contours." },
+            { id: 245, question: "Unit of Stress:", options: ["N", "N/m", "N/m^2", "m"], correct: 2, explanation: "Pascal." },
+            { id: 246, question: "Concrete is strong in:", options: ["Tension", "Compression", "Torsion", "Bending"], correct: 1, explanation: "Brittle nature." }
         ],
         "CSM": [
-            { id: 1, question: "Which algorithm is commonly used for Linear Regression?", options: ["Gradient Descent", "Backpropagation", "K-Means", "Dijkstra"], correct: 0, explanation: "Gradient descent minimizes the cost function." },
-            { id: 2, question: "Standard Deviation measures:", options: ["Central tendency", "Dispersion of data", "Probability of events", "Linearity"], correct: 1, explanation: "It tells us how spread out the numbers are." },
-            { id: 3, question: "Numpy stands for:", options: ["Number Python", "Numerical Python", "Null Python", "New Python"], correct: 1, explanation: "Numerical Python." }
+            { id: 251, question: "Algorithm for Linear Regression?", options: ["Gradient Descent", "Backprop", "K-Means", "Dijkstra"], correct: 0, explanation: "Minimizes cost." },
+            { id: 252, question: "Standard Deviation measures:", options: ["Central tendency", "Dispersion", "Probability", "Linearity"], correct: 1, explanation: "Spread of data." },
+            { id: 253, question: "Numpy stands for:", options: ["Number Py", "Numerical Py", "Null Py", "New Py"], correct: 1, explanation: "Numerical Python." },
+            { id: 254, question: "Normal Distribution is also called:", options: ["Bell curve", "S-Curve", "Step curve", "Log curve"], correct: 0, explanation: "Symmetric shape." },
+            { id: 255, question: "Correlation coefficient range:", options: ["0 to 1", "-1 to 1", "-inf to inf", "0 to inf"], correct: 1, explanation: "Pearson r." },
+            { id: 256, question: "Target variable in regression is:", options: ["Discrete", "Continuous", "Categorical", "Binary"], correct: 1, explanation: "Real numbers." }
         ]
     },
     "3rd Year": {
         "Computer Science": [
-            { id: 1, question: "Which of the following conditions is NOT required for a deadlock to occur?", options: ["Mutual Exclusion", "Hold and Wait", "Preemption", "Circular Wait"], correct: 2, explanation: "It must be NO preemption for deadlock to hold." },
-            { id: 2, question: "In a relational database, what does ACID stand for?", options: ["Atomicity, Consistency, Isolation, Durability", "Accuracy, Completeness, Integrity, Dependency", "Allocation, Concurrency, Iteration, Duration", "None of the above"], correct: 0, explanation: "ACID properties guarantee robust transactions." },
-            { id: 3, question: "At which OSI layer does the IP protocol operate?", options: ["Data Link", "Network", "Transport", "Session"], correct: 1, explanation: "IP relies on Layer 3 (Network) for routing." }
+            { id: 301, question: "Property NOT required for deadlock?", options: ["Mutual Exclusion", "Hold and Wait", "Preemption", "Circular Wait"], correct: 2, explanation: "NO preemption required." },
+            { id: 302, question: "In database, ACID stands for:", options: ["Atomicity...", "Accuracy...", "Allocation...", "None"], correct: 0, explanation: "A,C,I,D." },
+            { id: 303, question: "OSI layer for IP protocol?", options: ["Data Link", "Network", "Transport", "Session"], correct: 1, explanation: "Layer 3." },
+            { id: 304, question: "Which scheduling is non-preemptive?", options: ["Round Robin", "FCFS", "Priority", "SRTF"], correct: 1, explanation: "First Come First Served." },
+            { id: 305, question: "HTTP port?", options: ["21", "25", "80", "443"], correct: 2, explanation: "Standard web port." },
+            { id: 306, question: "What is a Trojan Horse?", options: ["Protocol", "Hardware", "Malware disguised as good", "Antivirus"], correct: 2, explanation: "Security threat." }
         ],
         "Information Tech": [
-            { id: 1, question: "Which of the following conditions is NOT required for a deadlock to occur?", options: ["Mutual Exclusion", "Hold and Wait", "Preemption", "Circular Wait"], correct: 2, explanation: "It must be NO preemption for deadlock to hold." },
-            { id: 2, question: "In a relational database, what does ACID stand for?", options: ["Atomicity, Consistency, Isolation, Durability", "Accuracy, Completeness, Integrity, Dependency", "Allocation, Concurrency, Iteration, Duration", "None of the above"], correct: 0, explanation: "ACID properties guarantee robust transactions." },
-            { id: 3, question: "At which OSI layer does the IP protocol operate?", options: ["Data Link", "Network", "Transport", "Session"], correct: 1, explanation: "IP relies on Layer 3 (Network) for routing." }
+            { id: 311, question: "Property NOT required for deadlock?", options: ["Mutual Exclusion", "Hold and Wait", "Preemption", "Circular Wait"], correct: 2, explanation: "NO preemption required." },
+            { id: 312, question: "In database, ACID stands for:", options: ["Atomicity...", "Accuracy...", "Allocation...", "None"], correct: 0, explanation: "A,C,I,D." },
+            { id: 313, question: "OSI layer for IP protocol?", options: ["Data Link", "Network", "Transport", "Session"], correct: 1, explanation: "Layer 3." },
+            { id: 314, question: "Cryptography deals with:", options: ["Hardware", "Secure Comm", "Database", "Networking"], correct: 1, explanation: "Encryption/Decryption." },
+            { id: 315, question: "Complexity of QuickSort (Avg)?", options: ["O(n)", "O(n log n)", "O(n^2)", "O(log n)"], correct: 1, explanation: "Divide and Conquer." },
+            { id: 316, question: "What is a Firewall?", options: ["Antivirus", "Network security device", "Hard drive", "CPU cooler"], correct: 1, explanation: "Filters traffic." }
         ],
         "Electronics": [
-            { id: 1, question: "The 8085 microprocessor is an ____ bit processor.", options: ["4", "8", "16", "32"], correct: 1, explanation: "It has an 8-bit data bus." },
-            { id: 2, question: "In digital signal processing, aliasing occurs when:", options: ["Sampling rate > 2 * max frequency", "Sampling rate < 2 * max frequency", "Signal is amplified", "Signal is filtered"], correct: 1, explanation: "Nyquist criterion must be met to avoid aliasing." },
-            { id: 3, question: "CMOS stands for:", options: ["Complementary Metal-Oxide Semiconductor", "Complex Metal-Oxide Silicon", "Capacitive Metal-Oxide System", "Current Mode Operating System"], correct: 0, explanation: "CMOS pairs p-type and n-type MOSFETs." }
+            { id: 321, question: "8085 is an ____ bit processor.", options: ["4", "8", "16", "32"], correct: 1, explanation: "8-bit data bus." },
+            { id: 322, question: "Aliasing occurs when:", options: ["fs > 2f", "fs < 2f", "Amp increased", "Filtered"], correct: 1, explanation: "Nyquist fails." },
+            { id: 323, question: "CMOS stands for:", options: ["Complementary Metal-Oxide...", "Complex...", "Capacitive...", "Current..."], correct: 0, explanation: "n-type + p-type." },
+            { id: 324, question: "Modulation is done at:", options: ["Transmitter", "Receiver", "Channel", "Antenna"], correct: 0, explanation: "Encoding signal." },
+            { id: 325, question: "Full Duplex means:", options: ["One way", "Two way alternate", "Two way simultaneous", "No way"], correct: 2, explanation: "Phone call type." },
+            { id: 326, question: "Microprocessor 8086 has address bus of:", options: ["8 bit", "16 bit", "20 bit", "32 bit"], correct: 2, explanation: "1MB memory addressable." }
         ],
         "Mechanical": [
-            { id: 1, question: "Stefan-Boltzmann law is applicable to:", options: ["Conduction", "Convection", "Thermal Radiation", "Mass Transfer"], correct: 2, explanation: "It describes the power radiated from a black body." },
-            { id: 2, question: "Which manufacturing process involves pouring molten metal into a mold cavity?", options: ["Forging", "Welding", "Machining", "Casting"], correct: 3, explanation: "Casting allows for complex shapes to be formed from liquid metal." },
-            { id: 3, question: "In orthogonal cutting, the cutting edge is:", options: ["Parallel to the direction of tool motion", "Perpendicular to the direction of tool motion", "At an acute angle to tool motion", "At an obtuse angle"], correct: 1, explanation: "Orthogonal implies 90 degrees." }
+            { id: 331, question: "Stefan-Boltzmann law is for:", options: ["Conduction", "Convection", "Thermal Radiation", "Mass Transfer"], correct: 2, explanation: "Power radiated." },
+            { id: 332, question: "Pouring molten metal into mold:", options: ["Forging", "Welding", "Machining", "Casting"], correct: 3, explanation: "Casting." },
+            { id: 333, question: "In orthogonal cutting, edge is:", options: ["Parallel", "Perpendicular", "Acute", "Obtuse"], correct: 1, explanation: "90 deg." },
+            { id: 334, question: "Heat engine converts heat into:", options: ["Work", "Mass", "Density", "Gravity"], correct: 0, explanation: "Energy conversion." },
+            { id: 335, question: "COP is for:", options: ["Engines", "Refrigerators", "Pumps", "Motors"], correct: 1, explanation: "Coefficient of Performance." },
+            { id: 336, question: "Latent heat is heat for:", options: ["Phase change", "Temp change", "Force change", "Mass change"], correct: 0, explanation: "Constant temp." }
         ],
         "Civil": [
-            { id: 1, question: "What is the standard compressive strength of M20 grade concrete after 28 days?", options: ["10 MPa", "15 MPa", "20 MPa", "25 MPa"], correct: 2, explanation: "The number refers to its 28-day 15cm cube compressive strength in N/mm² (MPa)." },
-            { id: 2, question: "The most commonly used reinforcement material in concrete is:", options: ["Aluminum", "Copper", "Steel", "Iron"], correct: 2, explanation: "Steel matches the thermal expansion of concrete well." },
-            { id: 3, question: "Bearing capacity of soil refers to:", options: ["Its permeability", "Its ability to support loads without failure", "Its moisture content", "Its density"], correct: 1, explanation: "Crucial for foundation design." }
+            { id: 341, question: "Strength of M20 concrete at 28 days:", options: ["10 MPa", "15 MPa", "20 MPa", "25 MPa"], correct: 2, explanation: "N/mm^2 unit." },
+            { id: 342, question: "Reinforcement material in concrete:", options: ["Aluminum", "Copper", "Steel", "Iron"], correct: 2, explanation: "Steel." },
+            { id: 343, question: "Bearing capacity is:", options: ["Permeability", "Support loads", "Moisture", "Density"], correct: 1, explanation: "Soil strength." },
+            { id: 344, question: "Piles are used in ___ foundation.", options: ["Shallow", "Deep", "Isolated", "Combined"], correct: 1, explanation: "Transfer load to deep strata." },
+            { id: 345, question: "Slump test is for:", options: ["Strength", "Workability", "Durability", "Elasticity"], correct: 1, explanation: "Consistency of concrete." },
+            { id: 346, question: "Cement setting time:", options: ["10 min", "30 min (Initial)", "10 hours (Final)", "Both B and C"], correct: 3, explanation: "Standard ASTM." }
         ],
         "CSM": [
-            { id: 1, question: "What is a 'Perceptron' in Neural Networks?", options: ["A hidden layer", "A single layer neural network", "An activation function", "A type of dataset"], correct: 1, explanation: "A perceptron is the simplest form of a neural network." },
-            { id: 2, question: "Which activation function outputs values between 0 and 1?", options: ["ReLU", "Sigmoid", "Tanh", "Softmax"], correct: 1, explanation: "Sigmoid maps input to (0, 1)." },
-            { id: 3, question: "What is Backpropagation used for?", options: ["Data cleaning", "Updating weights in neural networks", "Clustering data", "Visualizing results"], correct: 1, explanation: "It propagates the error backwards to update synapses." }
+            { id: 351, question: "What is a 'Perceptron'?", options: ["Hidden layer", "Single layer NN", "Activation", "Dataset"], correct: 1, explanation: "Simplest NN." },
+            { id: 352, question: "Function outputs between 0 and 1?", options: ["ReLU", "Sigmoid", "Tanh", "Softmax"], correct: 1, explanation: "Sigmoid." },
+            { id: 353, question: "Backpropagation is for:", options: ["Cleaning", "Updating weights", "Clustering", "Visualizing"], correct: 1, explanation: "Gradient calculation." },
+            { id: 354, question: "Supervised learning requires:", options: ["Labels", "No labels", "Large CPU", "Internet"], correct: 0, explanation: "Matching inputs to targets." },
+            { id: 355, question: "K-Means is for:", options: ["Classification", "Clustering", "Regression", "Cleaning"], correct: 1, explanation: "Unsupervised grouping." },
+            { id: 356, question: "CNN stands for:", options: ["Computer Neural Net", "Convolutional Neural Net", "Circuit Neural Net", "Circular Neural Net"], correct: 1, explanation: "Image processing." }
         ]
     },
+    // Adding 4th year for complete coverage
     "4th Year": {
         "Computer Science": [
-            { id: 1, question: "In Machine Learning, what is overfitting?", options: ["Model performs well on training data but poorly on unseen data", "Model performs poorly on both", "Model performs well on both", "Algorithm runs too fast"], correct: 0, explanation: "It memorizes the noise." }
+            { id: 401, question: "In ML, what is overfitting?", options: ["Good on train, bad on test", "Bad on both", "Good on both", "Too fast"], correct: 0, explanation: "Memorizes noise." },
+            { id: 402, question: "Cloud computing 'SaaS' stands for:", options: ["Software as a Service", "System as a Service", "Storage as a Service", "Service as a Software"], correct: 0, explanation: "Application via web." },
+            { id: 403, question: "Cyber security 'Worm' differs from Virus by:", options: ["Size", "Self-replication without host", "Color", "Price"], correct: 1, explanation: "Active spread." }
         ],
         "Information Tech": [
-            { id: 1, question: "In Machine Learning, what is overfitting?", options: ["Model performs well on training data but poorly on unseen data", "Model performs poorly on both", "Model performs well on both", "Algorithm runs too fast"], correct: 0, explanation: "It memorizes the noise." }
+            { id: 411, question: "In ML, what is overfitting?", options: ["Good on train, bad on test", "Bad on both", "Good on both", "Too fast"], correct: 0, explanation: "Memorizes noise." },
+            { id: 412, question: "Big Data 'V's include:", options: ["Volume, Variety, Velocity", "Value, Vendor, version", "Volume, Video, Voice", "None"], correct: 0, explanation: "Core characteristics." },
+            { id: 413, question: "Blockchain is a ___ ledger.", options: ["Centralized", "Distributed", "Temporary", "Secret"], correct: 1, explanation: "Decentralized trust." }
         ],
         "Electronics": [
-            { id: 1, question: "What is a major advantage of Optical Fiber communication?", options: ["High attenuation", "High bandwidth", "Susceptibility to EMI", "Low cost and easy splicing"], correct: 1, explanation: "Light provides immense bandwidth." }
+            { id: 421, question: "Advantage of Optical Fiber:", options: ["Attenuation", "Bandwidth", "EMI susceptibility", "Cost"], correct: 1, explanation: "Immense channel capacity." },
+            { id: 422, question: "GPS uses which frequency band?", options: ["HF", "VHF", "L-Band", "MF"], correct: 2, explanation: "Microwave region." },
+            { id: 423, question: "Radar stands for:", options: ["Radio Detection and Ranging", "Rapid Delay and Range", "Radio Digital and Run", "None"], correct: 0, explanation: "Standard acronym." }
         ],
         "Mechanical": [
-            { id: 1, question: "In CAD, what does B-rep stand for?", options: ["Boundary Representation", "Basic Representation", "Binary Replication", "Broken Resolution"], correct: 0, explanation: "Common solid modeling technique." }
+            { id: 431, question: "In CAD, B-rep stands for:", options: ["Boundary Rep", "Basic Rep", "Binary Repl", "Broken Res"], correct: 0, explanation: "Solid modeling." },
+            { id: 432, question: "Robotics 'DOF' stands for:", options: ["Depth of Field", "Degrees of Freedom", "Data of Force", "Dual Operating Factor"], correct: 1, explanation: "Independent motions." },
+            { id: 433, question: "CNC stands for:", options: ["Computer Numerical Control", "Central Network Code", "Circular Node Control", "None"], correct: 0, explanation: "Automated machining." }
         ],
         "Civil": [
-            { id: 1, question: "BOD stands for:", options: ["Biological Oxygen Demand", "Biochemical Oxygen Demand", "Basic Oxygen Depletion", "Bacterial Oxide Distribution"], correct: 1, explanation: "Metric for water pollution." }
+            { id: 441, question: "BOD stands for:", options: ["Biological...", "Biochemical...", "Basic...", "Bacterial..."], correct: 1, explanation: "Oxygen metric." },
+            { id: 442, question: "Railway 'Gauge' is distance between:", options: ["Outer rails", "Inner faces of rails", "Sleepers", "Signals"], correct: 1, explanation: "Standard definition." },
+            { id: 443, question: "Traffic density is measured in:", options: ["km/hr", "vehicles/km", "tons/day", "liters"], correct: 1, explanation: "Road capacity metric." }
         ],
         "CSM": [
-            { id: 1, question: "Convolutional Neural Networks (CNNs) are primarily used for:", options: ["Natural Language Processing", "Image Recognition", "Tabular Data", "Audio Synthesis"], correct: 1, explanation: "CNNs excel at detecting spatial features in images." }
+            { id: 451, question: "CNNs are primarily for:", options: ["NLP", "Image Recognition", "Tabular", "Audio"], correct: 1, explanation: "Spatial features." },
+            { id: 452, question: "NLP 'Tokenization' is:", options: ["Encrypting", "Breaking text into words", "Combining sentences", "Deleting stop words"], correct: 1, explanation: "Preprocessing step." },
+            { id: 453, question: "RNNs are good for:", options: ["Static images", "Sequential data", "Single values", "Colors"], correct: 1, explanation: "Time-series or text." }
         ]
     }
 };
 
-export function getMCQs(year: AcademicYear, dept: Department): MCQQuestion[] {
+/**
+ * Seeded shuffle to ensure host and guest get same shuffle order from shared session ID
+ */
+function seededShuffle<T>(array: T[], seed: string): T[] {
+    const shuffled = [...array];
+    // Simple LCG or similar based on string hash
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+        hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+        hash |= 0;
+    }
+
+    const pseudoRandom = () => {
+        hash = (hash * 1664525 + 1013904223) | 0;
+        return (hash >>> 0) / 0xffffffff;
+    };
+
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(pseudoRandom() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
+export function getMCQs(year: AcademicYear, dept: Department, seed?: string, offset: number = 0): MCQQuestion[] {
     const yrBank = L3_MCQS[year] || L3_MCQS["1st Year"];
     let qs = yrBank[dept];
-    if (!qs || qs.length < 3) qs = yrBank["Computer Science"]; // Fallback to CS if not enough questions
+    if (!qs || qs.length < 3) qs = yrBank["Computer Science"];
+
+    // If seed is provided, shuffle and pick based on offset
+    if (seed) {
+        const shuffled = seededShuffle(qs, seed);
+        // If offset + 3 exceeds length, wrap around or just slice safely
+        return shuffled.slice(offset, offset + 3);
+    }
+
+    // Default: return first 3 (legacy/solo)
     return qs.slice(0, 3);
 }
 
