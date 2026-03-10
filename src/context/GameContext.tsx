@@ -283,7 +283,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     router.push("/");
   };
 
-  const completeLevel = (fragment: string) => {
+  const completeLevel = async (fragment: string) => {
     if (!player) return;
     const updatedPlayer = {
       ...player,
@@ -292,7 +292,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     };
     setPlayer(updatedPlayer);
     localStorage.setItem("escape_room_player", JSON.stringify(updatedPlayer));
-    syncPlayerToSupabase(updatedPlayer);
+    await syncPlayerToSupabase(updatedPlayer);
 
     if (updatedPlayer.currentLevel > 5) {
       router.push("/reconstruct");

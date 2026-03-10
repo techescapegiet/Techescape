@@ -50,9 +50,10 @@ export function CollabLobby({ onJoinSession }: CollabLobbyProps) {
                     id, 
                     pc_id,
                     current_level,
-                    access_keys (assigned_to)
+                    access_keys!inner (assigned_to)
                 `)
                 .eq("status", "active")
+                .eq("is_online", true) // Ensure we only see online players
                 .eq("current_level", 3)
                 .neq("id", player.sessionId);
 
