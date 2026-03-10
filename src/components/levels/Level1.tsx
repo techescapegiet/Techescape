@@ -25,14 +25,14 @@ export function Level1() {
   const [timeLeft, setTimeLeft] = useState(LEVEL_TIME);
 
   // Dynamically load words based on player's syllabus
-  const targetWords = useMemo(() => {
-    if (!player) return ["ALGORITHM"]; // Safe fallback
+  const targetEntries = useMemo(() => {
+    if (!player) return [{ word: "ALGORITHM", clue: "A step-by-step procedure for solving a problem." }];
     return getCrosswordWords(player.academicYear as AcademicYear, player.department as Department).slice(0, 6);
   }, [player]);
 
   const skipLevel = () => {
     setSuccess(true);
-    setTimeout(() => completeLevel(targetWords[0]), 1000);
+    setTimeout(() => completeLevel(targetEntries[0].word), 1000);
   };
 
   const initializeGame = useCallback(() => {
@@ -40,7 +40,7 @@ export function Level1() {
 
     const newGrid: string[][] = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(""));
 
-    targetWords.forEach((word) => {
+    targetEntries.forEach(({ word }) => {
       let placed = false;
       let attempts = 0;
       while (!placed && attempts < 150) {
@@ -94,7 +94,7 @@ export function Level1() {
     setErrorFlash(false);
     setTimeLeft(LEVEL_TIME);
     setTimeout(() => setIsInitializing(false), 800);
-  }, [targetWords]);
+  }, [targetEntries]);
 
   useEffect(() => {
     initializeGame();
@@ -118,7 +118,8 @@ export function Level1() {
     }
   }, [timeLeft, success, handleMissionFailure]);
 
-  const currentWord = targetWords[currentQuestionIdx] || "";
+  const currentEntry = targetEntries[currentQuestionIdx] || { word: "", clue: "" };
+  const currentWord = currentEntry.word;
   const currentWordLength = currentWord.length;
 
   const handleCellClick = (r: number, c: number) => {
@@ -138,11 +139,11 @@ export function Level1() {
     if (spelled === currentWord) {
       setFoundWords([...foundWords, currentWord]);
       setSelectedCells([]);
-      if (currentQuestionIdx < targetWords.length - 1) {
+      if (currentQuestionIdx < targetEntries.length - 1) {
         setCurrentQuestionIdx(currentQuestionIdx + 1);
       } else {
         setSuccess(true);
-        setTimeout(() => completeLevel(targetWords[0]), 3000);
+        setTimeout(() => completeLevel(targetEntries[0].word), 3000);
       }
     } else if (spelled.length >= currentWord.length || !currentWord.startsWith(spelled)) {
       setErrorFlash(true);
@@ -182,7 +183,7 @@ export function Level1() {
         <CheckCircle2 className="w-24 h-24 text-[#00ff00] mb-6 animate-pulse" />
         <h2 className="text-4xl font-bold text-[#00ff00] text-glow mb-4">MATRIX BYPASSED</h2>
         <div className="text-5xl font-mono font-bold text-[#00ffff] tracking-[0.5em] bg-black p-8 border-2 border-[#00ffff]">
-          {targetWords[0]}
+          {targetEntries[0].word}
         </div>
       </div>
     );
@@ -210,26 +211,27 @@ export function Level1() {
           <div className="text-right border-r border-white/20 pr-8">
             <div className="flex items-center gap-2 mb-4">
               <BrainCircuit className="w-5 h-5 text-[#00ffff]" />
-              <h2 className="text-[#00ffff] font-bold tracking-widest uppercase">Target Syllabus Lexicon</h2>
+              <h2 className="text-[#00ffff] font-bold tracking-widest uppercase">Target Syllabus Clues</h2>
             </div>
-            <div className="grid grid-cols-3 gap-3">
-              {targetWords.map((word) => {
-                const isFound = foundWords.includes(word);
-                const isActive = word === currentWord && !isFound;
+            <div className="grid grid-cols-2 gap-3 max-w-[400px]">
+              {targetEntries.map((entry) => {
+                const isFound = foundWords.includes(entry.word);
+                const isActive = entry.word === currentWord && !isFound;
                 return (
                   <div
-                    key={word}
+                    key={entry.word}
                     className={cn(
-                      "flex items-center gap-2 text-xs font-mono uppercase tracking-widest p-2 rounded-sm",
+                      "flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest p-2 rounded-sm text-left truncate",
                       isFound
                         ? "bg-[#00ff00]/10 text-[#00ff00] border border-[#00ff00]"
                         : isActive
                           ? "bg-[#00ffff]/10 text-[#00ffff] border border-[#00ffff] box-glow"
                           : "bg-black/20 text-white/30 border border-white/10"
                     )}
+                    title={entry.clue}
                   >
-                    {isFound ? <CheckCircle2 className="w-3 h-3" /> : isActive ? <Unlock className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
-                    <span>{word}</span>
+                    {isFound ? <CheckCircle2 className="w-3 h-3 flex-shrink-0" /> : isActive ? <Unlock className="w-3 h-3 flex-shrink-0" /> : <Lock className="w-3 h-3 flex-shrink-0" />}
+                    <span className="truncate">{isActive ? entry.clue : isFound ? entry.word : "LOCKED_HASH"}</span>
                   </div>
                 );
               })}
@@ -327,10 +329,11 @@ export function Level1() {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 1.1 }}
-                  className="space-y-4 text-center"
+                  className="space-y-4 text-center px-4"
                 >
-                  <p className="text-4xl tracking-[0.3em] font-black text-white leading-relaxed">
-                    {currentWord}
+                  <p className="text-sm font-mono text-[#00ffff] uppercase tracking-widest mb-2 opacity-70">Decipher Clue:</p>
+                  <p className="text-lg md:text-xl font-bold text-white leading-relaxed">
+                    "{currentEntry.clue}"
                   </p>
                 </motion.div>
               </AnimatePresence>
@@ -340,7 +343,7 @@ export function Level1() {
                   <div
                     key={i}
                     className={cn(
-                      "w-10 h-12 border-2 flex items-center justify-center font-mono text-xl font-bold rounded-sm",
+                      "w-8 h-10 border-2 flex items-center justify-center font-mono text-lg font-bold rounded-sm",
                       selectedCells[i]
                         ? "border-[#00ffff] bg-[#00ffff]/20 text-[#00ffff] text-glow shadow-[0_0_10px_#00ffff]"
                         : "border-[#00ffff]/20 bg-black/40 text-[#00ffff]/20"
@@ -358,11 +361,11 @@ export function Level1() {
               <List className="w-4 h-4" /> Progress Log ( {currentQuestionIdx + 1} / 6 )
             </div>
             <div className="flex flex-col gap-2 overflow-y-auto max-h-[350px] pr-2 scrollbar-thin scrollbar-thumb-[#00ff00]/20">
-              {targetWords.map((word, i) => (
+              {targetEntries.map((entry, i) => (
                 <div
                   key={i}
                   className={cn(
-                    "p-3 border flex items-center justify-between text-xs font-mono uppercase tracking-widest",
+                    "p-3 border flex items-center justify-between text-[10px] font-mono uppercase tracking-widest",
                     i < currentQuestionIdx
                       ? "border-[#00ff00] bg-[#00ff00]/10 text-[#00ff00] opacity-50"
                       : i === currentQuestionIdx
@@ -372,7 +375,7 @@ export function Level1() {
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-[10px] w-4">{i + 1}.</span>
-                    <span>{i < currentQuestionIdx ? word : i === currentQuestionIdx ? "EXECUTING..." : "PENDING"}</span>
+                    <span>{i < currentQuestionIdx ? entry.word : i === currentQuestionIdx ? "ANALYZING_CLUE..." : "ENCRYPTED_DATA"}</span>
                   </div>
                   {i < currentQuestionIdx && <CheckCircle2 className="w-4 h-4" />}
                 </div>

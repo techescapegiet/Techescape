@@ -6,43 +6,266 @@ export type Department = "Computer Science" | "Information Tech" | "Electronics"
 // -----------------------------------------------------------------------------------
 // LEVEL 1: CROSSWORD (WORD SEARCH)
 // -----------------------------------------------------------------------------------
-const L1_WORDS: Record<AcademicYear, Record<Department, string[]>> = {
+// -----------------------------------------------------------------------------------
+// LEVEL 1: CROSSWORD (WORD SEARCH)
+// -----------------------------------------------------------------------------------
+export interface L1Word {
+    word: string;
+    clue: string;
+}
+
+const L1_WORDS: Record<AcademicYear, Record<Department, L1Word[]>> = {
     "1st Year": {
-        "Computer Science": ["ALGORITHM", "COMPILER", "POINTER", "ARRAY", "FUNCTION", "VARIABLE", "SYNTAX", "BINARY"],
-        "Information Tech": ["ALGORITHM", "COMPILER", "POINTER", "ARRAY", "FUNCTION", "VARIABLE", "SYNTAX", "BINARY"],
-        "Electronics": ["RESISTOR", "CAPACITOR", "VOLTAGE", "CURRENT", "DIODE", "TRANSISTOR", "OHM", "KIRCHHOFF"],
-        "Mechanical": ["PHYSICS", "THERMAL", "FORCE", "MOTION", "NEWTON", "ENERGY", "WORK", "POWER"],
-        "Civil": ["STATICS", "DYNAMICS", "FORCE", "VECTOR", "STRESS", "STRAIN", "MOMENT", "INERTIA"],
-        "CSM": ["ALGORITHM", "COMPILER", "POINTER", "ARRAY", "FUNCTION", "VARIABLE", "SYNTAX", "BINARY"]
+        "Computer Science": [
+            { word: "ALGORITHM", clue: "A step-by-step procedure for solving a problem." },
+            { word: "COMPILER", clue: "Translates high-level code into machine language." },
+            { word: "POINTER", clue: "A variable that stores a memory address." },
+            { word: "ARRAY", clue: "A collection of items stored at contiguous memory locations." },
+            { word: "FUNCTION", clue: "A reusable block of code that performs a specific task." },
+            { word: "VARIABLE", clue: "A named storage location in memory." },
+            { word: "SYNTAX", clue: "The set of rules that defines the combinations of symbols." },
+            { word: "BINARY", clue: "A numbering system that uses only 0 and 1." }
+        ],
+        "Information Tech": [
+            { word: "ALGORITHM", clue: "A step-by-step procedure for solving a problem." },
+            { word: "COMPILER", clue: "Translates high-level code into machine language." },
+            { word: "POINTER", clue: "A variable that stores a memory address." },
+            { word: "ARRAY", clue: "A collection of items stored at contiguous memory locations." },
+            { word: "FUNCTION", clue: "A reusable block of code that performs a specific task." },
+            { word: "VARIABLE", clue: "A named storage location in memory." },
+            { word: "SYNTAX", clue: "The set of rules that defines the combinations of symbols." },
+            { word: "BINARY", clue: "A numbering system that uses only 0 and 1." }
+        ],
+        "Electronics": [
+            { word: "RESISTOR", clue: "Component that limits the flow of electric current." },
+            { word: "CAPACITOR", clue: "Component that stores electrical energy in an electric field." },
+            { word: "VOLTAGE", clue: "The difference in electric potential between two points." },
+            { word: "CURRENT", clue: "The rate of flow of electric charge." },
+            { word: "DIODE", clue: "A semiconductor device that allows current to flow in one direction." },
+            { word: "TRANSISTOR", clue: "A semiconductor device used to amplify or switch signals." },
+            { word: "OHM", clue: "The SI unit of electrical resistance." },
+            { word: "KIRCHHOFF", clue: "Scientist famous for laws about current and voltage in circuits." }
+        ],
+        "Mechanical": [
+            { word: "PHYSICS", clue: "The branch of science concerned with the nature and properties of matter." },
+            { word: "THERMAL", clue: "Relating to heat." },
+            { word: "FORCE", clue: "An interaction that, when unopposed, will change the motion of an object." },
+            { word: "MOTION", clue: "The action or process of moving or being moved." },
+            { word: "NEWTON", clue: "The SI unit of force." },
+            { word: "ENERGY", clue: "The quantitative property that must be transferred to an object to perform work." },
+            { word: "WORK", clue: "The product of force and displacement." },
+            { word: "POWER", clue: "The rate of doing work." }
+        ],
+        "Civil": [
+            { word: "STATICS", clue: "The branch of mechanics that is concerned with the analysis of loads." },
+            { word: "DYNAMICS", clue: "The branch of mechanics concerned with the motion of bodies under action of forces." },
+            { word: "FORCE", clue: "An interaction that will change the motion of an object." },
+            { word: "VECTOR", clue: "A quantity having direction as well as magnitude." },
+            { word: "STRESS", clue: "Force per unit area within materials." },
+            { word: "STRAIN", clue: "The measure of deformation of a material." },
+            { word: "MOMENT", clue: "A measure of the tendency of a force to cause an object to rotate." },
+            { word: "INERTIA", clue: "The resistance of any physical object to any change in its velocity." }
+        ],
+        "CSM": [
+            { word: "ALGORITHM", clue: "A step-by-step procedure for solving a problem." },
+            { word: "COMPILER", clue: "Translates high-level code into machine language." },
+            { word: "POINTER", clue: "A variable that stores a memory address." },
+            { word: "ARRAY", clue: "A collection of items stored at contiguous memory locations." },
+            { word: "FUNCTION", clue: "A reusable block of code that performs a specific task." },
+            { word: "VARIABLE", clue: "A named storage location in memory." },
+            { word: "SYNTAX", clue: "The set of rules that defines the combinations of symbols." },
+            { word: "BINARY", clue: "A numbering system that uses only 0 and 1." }
+        ]
     },
     "2nd Year": {
-        "Computer Science": ["OBJECT", "CLASS", "INHERITANCE", "POLYMORPHISM", "ENCAPSULATION", "LINKEDLIST", "STACK", "QUEUE"],
-        "Information Tech": ["OBJECT", "CLASS", "INHERITANCE", "POLYMORPHISM", "ENCAPSULATION", "LINKEDLIST", "STACK", "QUEUE"],
-        "Electronics": ["AMPLIFIER", "OSCILLATOR", "MODULATION", "OPAMP", "SIGNAL", "SYSTEM", "BOOLEAN", "LOGIC"],
-        "Mechanical": ["KINEMATICS", "DYNAMICS", "THERMODYNAMICS", "FLUID", "ENTROPY", "ENTHALPY", "CARNOT", "VISCOSITY"],
-        "Civil": ["FLUID", "MECHANICS", "SURVEYING", "LEVELING", "CONTOUR", "THEODOLITE", "STRESS", "DEFLECTION"],
-        "CSM": ["PYTHON", "NUMPY", "PANDAS", "MATPLOTLIB", "PROBABILITY", "STATISTICS", "VECTORS", "MATRICES"]
+        "Computer Science": [
+            { word: "OBJECT", clue: "An instance of a class." },
+            { word: "CLASS", clue: "A blueprint for creating objects." },
+            { word: "INHERITANCE", clue: "Mechanism where one class acquires the properties of another." },
+            { word: "POLYMORPHISM", clue: "Ability of an object to take on many forms." },
+            { word: "ENCAPSULATION", clue: "Wrapping of data and methods into a single unit." },
+            { word: "LINKEDLIST", clue: "A linear data structure where elements are not stored at contiguous locations." },
+            { word: "STACK", clue: "A linear data structure which follows LIFO (Last In First Out)." },
+            { word: "QUEUE", clue: "A linear data structure which follows FIFO (First In First Out)." }
+        ],
+        "Information Tech": [
+            { word: "OBJECT", clue: "An instance of a class." },
+            { word: "CLASS", clue: "A blueprint for creating objects." },
+            { word: "INHERITANCE", clue: "Mechanism where one class acquires the properties of another." },
+            { word: "POLYMORPHISM", clue: "Ability of an object to take on many forms." },
+            { word: "ENCAPSULATION", clue: "Wrapping of data and methods into a single unit." },
+            { word: "LINKEDLIST", clue: "A linear data structure where elements are not stored at contiguous locations." },
+            { word: "STACK", clue: "A linear data structure which follows LIFO (Last In First Out)." },
+            { word: "QUEUE", clue: "A linear data structure which follows FIFO (First In First Out)." }
+        ],
+        "Electronics": [
+            { word: "AMPLIFIER", clue: "A device that increases the power of a signal." },
+            { word: "OSCILLATOR", clue: "An electronic circuit that produces a periodic, oscillating signal." },
+            { word: "MODULATION", clue: "Process of varying properties of a periodic waveform." },
+            { word: "OPAMP", clue: "Operational Amplifier." },
+            { word: "SIGNAL", clue: "A physical quantity that varies with time, space, or any other variable." },
+            { word: "SYSTEM", clue: "A combination of components that act together to perform a function." },
+            { word: "BOOLEAN", clue: "A type of algebra used in digital logic." },
+            { word: "LOGIC", clue: "The study of formal reasoning." }
+        ],
+        "Mechanical": [
+            { word: "KINEMATICS", clue: "The branch of mechanics concerned with motion without forces." },
+            { word: "DYNAMICS", clue: "Mechanics concerned with the motion of bodies under forces." },
+            { word: "THERMODYNAMICS", clue: "Relationship between heat and other forms of energy." },
+            { word: "FLUID", clue: "A substance that has no fixed shape and yields to external pressure." },
+            { word: "ENTROPY", clue: "A measure of disorder or randomness in a system." },
+            { word: "ENTHALPY", clue: "A property of a thermodynamic system equal to inner energy plus PV." },
+            { word: "CARNOT", clue: "Scientist famous for the most efficient heat engine cycle." },
+            { word: "VISCOSITY", clue: "A measure of a fluid's resistance to flow." }
+        ],
+        "Civil": [
+            { word: "FLUID", clue: "A substance that flows." },
+            { word: "MECHANICS", clue: "The branch of science concerned with the behavior of physical bodies." },
+            { word: "SURVEYING", clue: "Technique of determining terrestrial position of points." },
+            { word: "LEVELING", clue: "Finding the difference in elevation between points." },
+            { word: "CONTOUR", clue: "An imaginary line on the ground joining points of equal elevation." },
+            { word: "THEODOLITE", clue: "Precision optical instrument for measuring angles." },
+            { word: "STRESS", clue: "Force per unit area." },
+            { word: "DEFLECTION", clue: "The degree to which a structural element is displaced under a load." }
+        ],
+        "CSM": [
+            { word: "PYTHON", clue: "Popular high-level programming language for AI/ML." },
+            { word: "NUMPY", clue: "Library for numerical operations in Python." },
+            { word: "PANDAS", clue: "Library for data manipulation and analysis." },
+            { word: "MATPLOTLIB", clue: "Library for creating static, animated, and interactive visualizations." },
+            { word: "PROBABILITY", clue: "The likelihood of an event occurring." },
+            { word: "STATISTICS", clue: "Science of collecting and analyzing numerical data." },
+            { word: "VECTORS", clue: "Quantities with both magnitude and direction." },
+            { word: "MATRICES", clue: "Rectangular arrays of numbers." }
+        ]
     },
     "3rd Year": {
-        "Computer Science": ["PROCESS", "THREAD", "DEADLOCK", "PAGING", "RELATIONAL", "NORMALIZATION", "TRANSACTION", "DATAGRAM"],
-        "Information Tech": ["PROCESS", "THREAD", "DEADLOCK", "PAGING", "RELATIONAL", "NORMALIZATION", "TRANSACTION", "DATAGRAM"],
-        "Electronics": ["MICROPROCESSOR", "MICROCONTROLLER", "ANTENNA", "WAVEGUIDE", "DSP", "VLSI", "CMOS", "EMBEDDED"],
-        "Mechanical": ["HEAT", "TRANSFER", "CONDUCTION", "CONVECTION", "RADIATION", "MACHINING", "WELDING", "CASTING"],
-        "Civil": ["CONCRETE", "STEEL", "STRUCTURE", "FOUNDATION", "SOIL", "BEARING", "REINFORCEMENT", "HIGHWAY"],
-        "CSM": ["LEARNING", "NEURAL", "NETWORK", "REGRESSION", "CLASSIFIED", "CLUSTERING", "INFERENCE", "VALUATION"]
+        "Computer Science": [
+            { word: "PROCESS", clue: "A program in execution." },
+            { word: "THREAD", clue: "Smallest unit of execution within a process." },
+            { word: "DEADLOCK", clue: "A situation where processes are blocked forever." },
+            { word: "PAGING", clue: "Memory management scheme that eliminates the need for contiguous allocation." },
+            { word: "RELATIONAL", clue: "Type of database based on the relational model." },
+            { word: "NORMALIZATION", clue: "Process of organizing data in a database to reduce redundancy." },
+            { word: "TRANSACTION", clue: "A sequence of database operations processed as a single unit." },
+            { word: "DATAGRAM", clue: "A self-contained, independent entity of data." }
+        ],
+        "Information Tech": [
+            { word: "PROCESS", clue: "A program in execution." },
+            { word: "THREAD", clue: "Smallest unit of execution within a process." },
+            { word: "DEADLOCK", clue: "A situation where processes are blocked forever." },
+            { word: "PAGING", clue: "Memory management scheme that eliminates the need for contiguous allocation." },
+            { word: "RELATIONAL", clue: "Type of database based on the relational model." },
+            { word: "NORMALIZATION", clue: "Process of organizing data in a database to reduce redundancy." },
+            { word: "TRANSACTION", clue: "A sequence of database operations processed as a single unit." },
+            { word: "DATAGRAM", clue: "A self-contained, independent entity of data." }
+        ],
+        "Electronics": [
+            { word: "MICROPROCESSOR", clue: "An IC that contains the functions of a CPU." },
+            { word: "MICROCONTROLLER", clue: "A small computer on a single IC." },
+            { word: "ANTENNA", clue: "Interface between radio waves and electric currents." },
+            { word: "WAVEGUIDE", clue: "Structure that guides waves, such as EM waves." },
+            { word: "DSP", clue: "Digital Signal Processing." },
+            { word: "VLSI", clue: "Very Large Scale Integration." },
+            { word: "CMOS", clue: "Complementary Metal-Oxide Semiconductor." },
+            { word: "EMBEDDED", clue: "Computer system combined with hardware." }
+        ],
+        "Mechanical": [
+            { word: "HEAT", clue: "Forms of energy transferred between systems due to temperature difference." },
+            { word: "TRANSFER", clue: "Movement of something from one place to another." },
+            { word: "CONDUCTION", clue: "Heat transfer between parts of a continuum." },
+            { word: "CONVECTION", clue: "Heat transfer by mass motion of a fluid." },
+            { word: "RADIATION", clue: "Emission of energy as EM waves." },
+            { word: "MACHINING", clue: "Process of removing material to achieve a shape." },
+            { word: "WELDING", clue: "Fabrication process that joins materials." },
+            { word: "CASTING", clue: "Pouring liquid into a mold." }
+        ],
+        "Civil": [
+            { word: "CONCRETE", clue: "Composite building material made from aggregate and cement." },
+            { word: "STEEL", clue: "Alloy of iron and carbon." },
+            { word: "STRUCTURE", clue: "System of connected parts used to support a load." },
+            { word: "FOUNDATION", clue: "The element of a structure which connects it to the ground." },
+            { word: "SOIL", clue: "Mixture of organic matter, minerals, gases, liquids, and organisms." },
+            { word: "BEARING", clue: "Capacity of soil to support loads." },
+            { word: "REINFORCEMENT", clue: "Strengthening of concrete." },
+            { word: "HIGHWAY", clue: "Public road for heavy traffic." }
+        ],
+        "CSM": [
+            { word: "LEARNING", clue: "The acquisition of knowledge or skills." },
+            { word: "NEURAL", clue: "Relating to a network of artificial neurons." },
+            { word: "NETWORK", clue: "A group of interconnected systems." },
+            { word: "REGRESSION", clue: "A measure of the relation between the mean value of one variable and others." },
+            { word: "CLASSIFIED", clue: "Categorizing objects into groups." },
+            { word: "CLUSTERING", clue: "Grouping a set of objects such that objects in the same group are more similar." },
+            { word: "INFERENCE", clue: "Conclusion reached on the basis of evidence and reasoning." },
+            { word: "VALUATION", clue: "Estimation of something's worth." }
+        ]
     },
     "4th Year": {
-        // Fallback/Generic for 4th years if they play
-        "Computer Science": ["CLOUD", "MACHINE", "LEARNING", "SECURITY", "NETWORK", "AGILE", "SCRUM", "DEVOPS"],
-        "Information Tech": ["CLOUD", "MACHINE", "LEARNING", "SECURITY", "NETWORK", "AGILE", "SCRUM", "DEVOPS"],
-        "Electronics": ["IOT", "WIRELESS", "OPTICAL", "SATELLITE", "RADAR", "NANOTECH", "ROBOTICS", "AUTOMATION"],
-        "Mechanical": ["CAD", "CAM", "ROBOTICS", "AUTOMATION", "MECHATRONICS", "VIBRATION", "OPTIMIZATION", "RENEWABLE"],
-        "Civil": ["ENVIRONMENT", "TRANSPORTATION", "RAILWAY", "AIRPORT", "BRIDGE", "DAM", "RESERVOIR", "IRRIGATION"],
-        "CSM": ["DEEP", "VISION", "NATURAL", "LANGUAGE", "TENSORFLOW", "PYTORCH", "BIGDATA", "HADOOP"]
+        "Computer Science": [
+            { word: "CLOUD", clue: "On-demand availability of computer system resources." },
+            { word: "MACHINE", clue: "A device that uses energy to perform some action." },
+            { word: "LEARNING", clue: "A branch of AI focused on building systems that learn from data." },
+            { word: "SECURITY", clue: "Protection of computer systems from information disclosure." },
+            { word: "NETWORK", clue: "A set of computers sharing resources." },
+            { word: "AGILE", clue: "Methods for software development based on iterative development." },
+            { word: "SCRUM", clue: "Framework for project management." },
+            { word: "DEVOPS", clue: "Set of practices that combine software development and IT operations." }
+        ],
+        "Information Tech": [
+            { word: "CLOUD", clue: "On-demand availability of computer system resources." },
+            { word: "MACHINE", clue: "A device that uses energy to perform some action." },
+            { word: "LEARNING", clue: "A branch of AI focused on building systems that learn from data." },
+            { word: "SECURITY", clue: "Protection of computer systems from information disclosure." },
+            { word: "NETWORK", clue: "A set of computers sharing resources." },
+            { word: "AGILE", clue: "Methods for software development based on iterative development." },
+            { word: "SCRUM", clue: "Framework for project management." },
+            { word: "DEVOPS", clue: "Set of practices that combine software development and IT operations." }
+        ],
+        "Electronics": [
+            { word: "IOT", clue: "Internet of Things." },
+            { word: "WIRELESS", clue: "Communication without wires." },
+            { word: "OPTICAL", clue: "Relating to sight or light." },
+            { word: "SATELLITE", clue: "An artificial body placed in orbit round the earth." },
+            { word: "RADAR", clue: "System for detecting the presence, direction, distance, and speed of objects." },
+            { word: "NANOTECH", clue: "Manipulation of matter on an atomic, molecular, and supramolecular scale." },
+            { word: "ROBOTICS", clue: "Interdisciplinary branch of engineering and science." },
+            { word: "AUTOMATION", clue: "Use of largely automatic equipment." }
+        ],
+        "Mechanical": [
+            { word: "CAD", clue: "Computer Aided Design." },
+            { word: "CAM", clue: "Computer Aided Manufacturing." },
+            { word: "ROBOTICS", clue: "Interdisciplinary branch of engineering and science." },
+            { word: "AUTOMATION", clue: "Use of largely automatic equipment." },
+            { word: "MECHATRONICS", clue: "Multidisciplinary branch of engineering combining electronics and mechanics." },
+            { word: "VIBRATION", clue: "A periodic motion of the particles of an elastic body." },
+            { word: "OPTIMIZATION", clue: "The action of making the best or most effective use of a situation." },
+            { word: "RENEWABLE", clue: "Energy from a source that is not depleted when used." }
+        ],
+        "Civil": [
+            { word: "ENVIRONMENT", clue: "The surroundings or conditions in which a person lives." },
+            { word: "TRANSPORTATION", clue: "Movement of humans, animals and goods from one location to another." },
+            { word: "RAILWAY", clue: "A track or set of tracks made of steel rails." },
+            { word: "AIRPORT", clue: "A complex of runways and buildings for flying." },
+            { word: "BRIDGE", clue: "A structure built to span a physical obstacle." },
+            { word: "DAM", clue: "A barrier that stops or restricts the flow of water." },
+            { word: "RESERVOIR", clue: "Large natural or artificial lake used as a source of water supply." },
+            { word: "IRRIGATION", clue: "The supply of water to land or crops to help growth." }
+        ],
+        "CSM": [
+            { word: "DEEP", clue: "Type of learning based on artificial neural networks." },
+            { word: "VISION", clue: "Branch of AI that enables computers to derive meaningful info from images." },
+            { word: "NATURAL", clue: "Relating to language that has developed naturally in humans." },
+            { word: "LANGUAGE", clue: "The method of human communication." },
+            { word: "TENSORFLOW", clue: "Open-source library for machine learning." },
+            { word: "PYTORCH", clue: "Open-source machine learning framework." },
+            { word: "BIGDATA", clue: "Extremely large data sets." },
+            { word: "HADOOP", clue: "Framework for distributed storage and processing." }
+        ]
     }
 };
 
-export function getCrosswordWords(year: AcademicYear, dept: Department): string[] {
+export function getCrosswordWords(year: AcademicYear, dept: Department): L1Word[] {
     const yrBank = L1_WORDS[year] || L1_WORDS["1st Year"];
     const deptBank = yrBank[dept] || yrBank["Computer Science"];
     return deptBank;
