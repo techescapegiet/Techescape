@@ -262,7 +262,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         startTime: Date.now(),
         rollNumber: data.roll_number || sessionData?.roll_number || "",
         academicYear: data.academic_year || "1st Year",
-        department: data.department || "Computer Science"
+        department: data.department || "cse"
       };
 
       setPlayer(newPlayer);
@@ -367,7 +367,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       }
 
       // 2. Assign the PC in access_keys (For active session tracking)
-      const { error: updateError } = await supabase
+      // Use eq("is_assigned", false) to prevent race conditions (Atomic assignment)
+      const { error: updateError, count } = await supabase
         .from("access_keys")
         .update({
           is_assigned: true,
@@ -377,12 +378,14 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
           academic_year: details.year,
           department: details.dept,
           user_id: user.id
-        })
-        .eq("pc_id", pc.pc_id);
+        }, { count: 'exact' })
+        .eq("pc_id", pc.pc_id)
+        .eq("is_assigned", false);
 
-      if (updateError) {
-        console.error("Update PC error details:", updateError);
-        return { success: false, error: "ASSIGNMENT FAILED: " + updateError.message };
+      if (updateError || count === 0) {
+        console.error("Update PC conflict or error:", updateError);
+        // If count is 0, someone else grabbed this PC between our SELECT and UPDATE
+        return { success: false, error: "TERMINAL ASSIGNMENT CONFLICT: PLEASE RETRY" };
       }
 
       // 3. Initialize Session Log (History & Ban System)

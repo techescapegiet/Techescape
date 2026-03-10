@@ -17,22 +17,27 @@ function normalize(code: string): string {
 export function Level4() {
   const { completeLevel, handleMissionFailure, player } = useGame();
 
+  const [selectedLanguage, setSelectedLanguage] = useState<"C" | "Java" | "Python" | null>(null);
   const [currentChallenge, setCurrentChallenge] = useState<CodeChallenge | null>(null);
   const [userCode, setUserCode] = useState("");
   const [compileResult, setCompileResult] = useState<"idle" | "success" | "error">("idle");
   const [compileMsg, setCompileMsg] = useState("");
   const [attempts, setAttempts] = useState(3);
   const [success, setSuccess] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(60); // 60s for 1 question
+  const [timeLeft, setTimeLeft] = useState(120); // 120s for the challenge
   const [showHint, setShowHint] = useState(false);
 
   useEffect(() => {
-    if (player?.academicYear && player?.department) {
-      const challenge = getDebuggingChallenge(player.academicYear as AcademicYear, player.department as Department);
+    if (selectedLanguage && player?.academicYear && player?.department) {
+      const challenge = getDebuggingChallenge(
+        player.academicYear as AcademicYear,
+        player.department as Department,
+        selectedLanguage
+      );
       setCurrentChallenge(challenge);
       setUserCode(challenge.initialCode);
     }
-  }, [player]);
+  }, [selectedLanguage, player]);
 
   useEffect(() => {
     if (!currentChallenge || success) return;
@@ -83,7 +88,34 @@ export function Level4() {
     );
   }
 
-  if (!currentChallenge) return null;
+  if (!selectedLanguage) {
+    return (
+      <div className="flex flex-col items-center justify-center p-8 md:p-12 mt-8 md:mt-12 border border-[#00ffff]/30 bg-black/60 box-glow text-center rounded-lg max-w-2xl mx-auto w-full">
+        <Code2 className="w-16 h-16 text-[#00ffff] mb-6" />
+        <h2 className="text-2xl md:text-3xl font-bold text-[#00ffff] mb-2 uppercase tracking-tight">Select Debugging Protocol</h2>
+        <p className="text-white/60 mb-8 font-mono text-sm italic">"Choose the language interface to bypass this security layer."</p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
+          {(["C", "Java", "Python"] as const).map((lang) => (
+            <button
+              key={lang}
+              onClick={() => setSelectedLanguage(lang)}
+              className="flex flex-col items-center gap-3 p-6 border border-[#00ffff]/20 bg-white/5 hover:bg-[#00ffff]/10 hover:border-[#00ffff] transition-all rounded-lg group"
+            >
+              <div className="text-xl font-bold text-white group-hover:text-[#00ffff] transition-colors">{lang}</div>
+              <div className="text-[10px] text-white/40 uppercase font-mono">Select</div>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!currentChallenge) return (
+    <div className="flex flex-col items-center justify-center p-12 text-white font-mono">
+      <div className="animate-pulse">INITIALIZING COMPILER...</div>
+    </div>
+  );
 
   return (
     <div className="flex flex-col h-full mt-4 md:mt-6 gap-3 md:gap-4 w-full max-w-6xl mx-auto">

@@ -9,8 +9,8 @@ import { ShieldAlert, CheckCircle2, Lock, Unlock, Zap, Timer, BrainCircuit, Acti
 import { getCrosswordWords, AcademicYear, Department } from '@/lib/questionBank';
 import { cn } from "@/lib/utils";
 
-const GRID_SIZE = 12;
-const LEVEL_TIME = 360; // 6 minutes in seconds
+const GRID_SIZE = 9;
+const LEVEL_TIME = 420; // 7 minutes in seconds
 
 export function Level1() {
   const { completeLevel, handleMissionFailure, player } = useGame();
@@ -172,7 +172,7 @@ export function Level1() {
     return (
       <div className="flex-1 flex flex-col items-center justify-center">
         <BrainCircuit className="w-16 h-16 mb-4 animate-spin text-[#00ff00]" />
-        <h2 className="text-xl font-mono tracking-widest uppercase text-[#00ff00]">Generating 12x12 Security Matrix...</h2>
+        <h2 className="text-xl font-mono tracking-widest uppercase text-[#00ff00]">Generating 9x9 Security Matrix...</h2>
       </div>
     );
   }
@@ -202,7 +202,7 @@ export function Level1() {
           </motion.div>
           <div>
             <h2 className={cn("text-3xl font-black italic tracking-tighter flex items-center gap-3 drop-shadow-[0_0_10px_currentColor]", getTimerColor())}>
-              12X12 SECURITY MATRIX
+              9X9 SECURITY MATRIX
             </h2>
             <p className="text-xs opacity-50 uppercase tracking-widest mt-1">JNTUH {player?.academicYear} {player?.department} CURRICULUM ENCRYPTION</p>
           </div>
@@ -286,7 +286,7 @@ export function Level1() {
           </div>
           <div
             className={cn(
-              "grid grid-cols-12 gap-1.5 p-4 bg-black/80 border-2 border-[#00ff00]/40 box-glow rounded-sm grow aspect-square lg:aspect-auto relative overflow-hidden",
+              "grid grid-cols-9 gap-1.5 p-4 bg-black/80 border-2 border-[#00ff00]/40 box-glow rounded-sm grow aspect-square lg:aspect-auto relative overflow-hidden",
               errorFlash && "border-[#ff003c] bg-[#330000]/30 shadow-[0_0_20px_#ff003c]",
               isCritical && "border-red-600 shadow-[inset_0_0_50px_rgba(255,0,0,0.4)]"
             )}

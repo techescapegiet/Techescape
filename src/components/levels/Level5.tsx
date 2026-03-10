@@ -33,8 +33,9 @@ export function Level5() {
   const [errorFlash, setErrorFlash] = useState(false);
   const [showHint, setShowHint] = useState(false);
 
-  // Stage 1 (Crossword)
-  const [s1Data, setS1Data] = useState<any>(null);
+  // Stage 1 (Crossword/Word Search)
+  const [s1Words, setS1Words] = useState<any[]>([]);
+  const [foundWords, setFoundWords] = useState<string[]>([]);
   const [grid, setGrid] = useState<string[][]>([]);
   const [selectedCells, setSelectedCells] = useState<{ r: number, c: number }[]>([]);
 
@@ -60,51 +61,58 @@ export function Level5() {
     const dept = player.department as Department;
 
     // Init all stages data
-    // Use SemanticBlanks for Stage 1 too because it has hints/questions
-    const s1Pool = getSemanticBlanks(year, dept);
-    const d1Raw = s1Pool[Math.floor(Math.random() * s1Pool.length)];
-    const d1 = { answer: d1Raw.word, question: d1Raw.hint, hint: "Check your logic." };
+    const s1WordsPool = getCrosswordWords(year, dept);
+    setS1Words(s1WordsPool);
+    setFoundWords([]);
 
     const s2Pool = getSemanticBlanks(year, dept);
     let d2 = s2Pool[Math.floor(Math.random() * s2Pool.length)];
-    // Ensure d2 is different from d1 if possible
-    if (d2.word === d1.answer && s2Pool.length > 1) {
-      d2 = s2Pool.find(p => p.word !== d1.answer) || d2;
+    // Ensure d2 is different from s1 words if possible
+    if (s1WordsPool.some(w => w.word === d2.word) && s2Pool.length > 3) {
+      d2 = s2Pool.find(p => !s1WordsPool.some(w => w.word === p.word)) || d2;
     }
 
     const mcqs = getMCQs(year, dept);
     const d3 = mcqs[Math.floor(Math.random() * mcqs.length)];
 
-    const d4 = getDebuggingChallenge(year, dept);
+    const langs: ("C" | "Java" | "Python")[] = ["C", "Java", "Python"];
+    const d4 = getDebuggingChallenge(year, dept, langs[Math.floor(Math.random() * 3)]);
 
-    setS1Data(d1); setS2Data(d2); setS3Data(d3); setS4Data(d4);
+    setS2Data(d2); setS3Data(d3); setS4Data(d4);
     setUserCode(d4.initialCode);
 
-    // Build grid for S1 (6x6)
-    const newGrid: string[][] = Array(6).fill(null).map(() => Array(6).fill(""));
-    const word = d1.answer;
-    let placed = false;
-    let limit = 0;
-    while (!placed && limit < 150) {
-      limit++;
-      const dir = [[0, 1], [1, 0], [1, 1], [0, -1], [-1, 0], [-1, -1]][Math.floor(Math.random() * 6)];
-      const r = Math.floor(Math.random() * 6);
-      const c = Math.floor(Math.random() * 6);
-      const er = r + (word.length - 1) * dir[0];
-      const ec = c + (word.length - 1) * dir[1];
-      if (er >= 0 && er < 6 && ec >= 0 && ec < 6) {
-        let ok = true;
-        for (let i = 0; i < word.length; i++) {
-          if (newGrid[r + i * dir[0]][c + i * dir[1]] !== "") { ok = false; break; }
-        }
-        if (ok) {
-          for (let i = 0; i < word.length; i++) newGrid[r + i * dir[0]][c + i * dir[1]] = word[i];
-          placed = true;
+    // Build grid for S1 (8x8)
+    const gridSize = 8;
+    const newGrid: string[][] = Array(gridSize).fill(null).map(() => Array(gridSize).fill(""));
+
+    s1WordsPool.forEach(w => {
+      let placed = false;
+      let limit = 0;
+      const word = w.word.toUpperCase();
+      while (!placed && limit < 100) {
+        limit++;
+        const dir = [[0, 1], [1, 0], [1, 1], [0, -1], [-1, 0]][Math.floor(Math.random() * 5)];
+        const r = Math.floor(Math.random() * gridSize);
+        const c = Math.floor(Math.random() * gridSize);
+        const er = r + (word.length - 1) * dir[0];
+        const ec = c + (word.length - 1) * dir[1];
+
+        if (er >= 0 && er < gridSize && ec >= 0 && ec < gridSize) {
+          let ok = true;
+          for (let i = 0; i < word.length; i++) {
+            const curr = newGrid[r + i * dir[0]][c + i * dir[1]];
+            if (curr !== "" && curr !== word[i]) { ok = false; break; }
+          }
+          if (ok) {
+            for (let i = 0; i < word.length; i++) newGrid[r + i * dir[0]][c + i * dir[1]] = word[i];
+            placed = true;
+          }
         }
       }
-    }
-    for (let r = 0; r < 6; r++) {
-      for (let c = 0; c < 6; c++) {
+    });
+
+    for (let r = 0; r < gridSize; r++) {
+      for (let c = 0; c < gridSize; c++) {
         if (newGrid[r][c] === "") newGrid[r][c] = String.fromCharCode(65 + Math.floor(Math.random() * 26));
       }
     }
@@ -158,12 +166,27 @@ export function Level5() {
     }
     setSelectedCells(newSel);
 
-    const spelled = newSel.map(cell => grid[cell.r][cell.c]).join("");
-    if (spelled === s1Data.answer) {
-      handleStageSuccess();
-    } else if (spelled.length >= s1Data.answer.length || !s1Data.answer.startsWith(spelled)) {
-      handleStageFailure();
-      setSelectedCells([]);
+    const spelled = newSel.map(cell => grid[cell.r][cell.c]).join("").toUpperCase();
+    const match = s1Words.find(w => w.word.toUpperCase() === spelled);
+
+    if (match) {
+      if (!foundWords.includes(spelled)) {
+        const nf = [...foundWords, spelled];
+        setFoundWords(nf);
+        setSelectedCells([]);
+        if (nf.length === s1Words.length) {
+          handleStageSuccess();
+        }
+      } else {
+        setSelectedCells([]); // Already found
+      }
+    } else {
+      // Check if it's still a potential prefix
+      const potential = s1Words.some(w => w.word.toUpperCase().startsWith(spelled));
+      if (!potential || spelled.length > 10) {
+        handleStageFailure();
+        setSelectedCells([]);
+      }
     }
   };
 
@@ -281,7 +304,7 @@ export function Level5() {
             exit={{ opacity: 0, scale: 1.05 }}
             className="w-full flex justify-center items-center"
           >
-            {!s1Data || !s2Data || !s3Data || !s4Data ? (
+            {s1Words.length === 0 || !s2Data || !s3Data || !s4Data ? (
               <Cpu className="w-12 h-12 text-[#00ffff] animate-spin" />
             ) : (
               <div className="w-full max-w-2xl">
@@ -292,33 +315,35 @@ export function Level5() {
                     <div className="flex items-center justify-between border-b border-[#00ff9f]/20 pb-2">
                       <div className="flex items-center gap-3 text-[#00ff9f]">
                         <Search className="w-5 h-5" />
-                        <h3 className="uppercase tracking-[0.2em] font-bold">Level 1: Encryption Query</h3>
+                        <h3 className="uppercase tracking-[0.2em] font-bold">Level 1: Encryption Query ({foundWords.length}/{s1Words.length})</h3>
                       </div>
                       <button onClick={() => setShowHint(true)} className="text-[10px] text-[#00ff9f] hover:underline uppercase font-bold flex items-center gap-1">
                         <Lightbulb className="w-3 h-3" /> Get Hint
                       </button>
                     </div>
 
-                    <div className="text-center">
-                      <p className="text-xl md:text-2xl font-bold text-white italic">"{s1Data.question}"</p>
-                      {showHint && (
-                        <div className="mt-2 text-sm text-[#00ff9f] font-mono italic animate-pulse">
-                          💡 Hint: {s1Data.hint}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {s1Words.map((w, i) => (
+                        <div key={i} className={cn("p-2 border rounded-sm text-center transition-all",
+                          foundWords.includes(w.word.toUpperCase()) ? "border-[#00ff00] bg-[#00ff00]/10 text-[#00ff00]" : "border-white/10 text-white/50")}>
+                          <p className="text-xs italic leading-tight">"{w.clue}"</p>
+                          {foundWords.includes(w.word.toUpperCase()) && <p className="text-xs font-bold mt-1 uppercase">{w.word}</p>}
                         </div>
-                      )}
+                      ))}
                     </div>
 
                     <div className="flex justify-center">
-                      <div className="grid grid-cols-6 gap-1 bg-black/80 p-2 border border-[#00ff9f]/40 box-glow rounded-sm w-fit">
+                      <div className="grid grid-cols-8 gap-0.5 md:gap-1 bg-black/80 p-2 border border-[#00ff9f]/40 box-glow rounded-sm w-fit">
                         {grid.map((row, r) => (
                           row.map((char, c) => {
                             const selected = selectedCells.some(cell => cell.r === r && cell.c === c);
+                            const isPartofFound = foundWords.some(fw => fw.includes(char)); // Simplification, not perfect highlighting but okay for now
                             return (
                               <button
                                 key={`${r}-${c}`}
                                 onClick={() => handleCellClick(r, c)}
                                 className={cn(
-                                  "w-10 h-10 md:w-12 md:h-12 flex items-center justify-center font-mono text-xl font-black border transition-colors",
+                                  "w-8 h-8 md:w-10 md:h-10 flex items-center justify-center font-mono text-lg font-black border transition-colors",
                                   selected
                                     ? "bg-[#00ffff] text-black border-[#00ffff] shadow-[0_0_10px_#00ffff]"
                                     : "bg-[#051105] text-[#00ff00] border-[#00ff00]/20 hover:border-[#00ffff] hover:text-[#00ffff]"
@@ -334,7 +359,7 @@ export function Level5() {
 
                     <div className="text-center mt-4 h-12 flex items-center justify-center">
                       {selectedCells.length > 0 && (
-                        <div className="text-2xl font-mono font-bold tracking-[0.5em] text-[#00ffff] uppercase bg-black px-4 py-2 border border-[#00ffff]/30">
+                        <div className="text-xl font-mono font-bold tracking-[0.3em] text-[#00ffff] uppercase bg-black px-4 py-2 border border-[#00ffff]/30">
                           {selectedCells.map(cell => grid[cell.r][cell.c]).join("")}
                         </div>
                       )}

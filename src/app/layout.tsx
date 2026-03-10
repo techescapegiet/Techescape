@@ -3,6 +3,8 @@ import { Share_Tech_Mono } from "next/font/google";
 import "./globals.css";
 import { GameProvider } from "@/context/GameContext";
 import { ClientLayout } from "@/components/ui/ClientLayout";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const shareTechMono = Share_Tech_Mono({
   variable: "--font-share-tech-mono",
@@ -34,6 +36,8 @@ export default function RootLayout({
             </ClientLayout>
           </main>
         </GameProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

@@ -72,13 +72,13 @@ export function Level3() {
 
         if (error) {
           console.error("Partner details fetch error", error);
-          setPartnerQuestions(getMCQs("1st Year", "Computer Science"));
+          setPartnerQuestions(getMCQs("1st Year", "cse"));
           return;
         }
 
         const keys: any = Array.isArray(data?.access_keys) ? data?.access_keys[0] : data?.access_keys;
         const pYear = keys?.academic_year || "1st Year";
-        const pDept = keys?.department || "Computer Science";
+        const pDept = keys?.department || "cse";
 
         // Partner uses the REVERSE offset
         const partnerOffset = session.role === "host" ? 3 : 0;

@@ -16,7 +16,7 @@ export default function RegisterPage() {
         roll: "",
         email: "",
         year: "1st Year",
-        dept: "Computer Science"
+        dept: "cse"
     });
     const [isRegistering, setIsRegistering] = useState(false);
     const [isChecking, setIsChecking] = useState(true);
@@ -209,11 +209,12 @@ export default function RegisterPage() {
                                     onChange={(e) => setFormData({ ...formData, dept: e.target.value })}
                                     className="w-full bg-black/60 border border-[#00ff00]/20 p-3 text-[#00ff00] font-mono focus:border-[#00ff00] outline-none transition-all appearance-none cursor-pointer"
                                 >
-                                    <option>Computer Science</option>
-                                    <option>Information Tech</option>
-                                    <option>Electronics</option>
-                                    <option>Mechanical</option>
-                                    <option>Civil</option>
+                                    <option value="cse">Computer Science (CSE)</option>
+                                    <option value="csM">CSM (AI & ML)</option>
+                                    <option value="csd">CSD (Design)</option>
+                                    <option value="ece">Electronics (ECE)</option>
+                                    <option value="ce">Civil (CE)</option>
+                                    <option value="mech">Mechanical (MECH)</option>
                                 </select>
                             </div>
 
