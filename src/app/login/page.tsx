@@ -41,37 +41,37 @@ export default function LoginPage() {
 
   if (!isEventLive) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center max-w-lg mx-auto w-full p-4">
+      <div className="flex-1 flex flex-col items-center justify-center max-w-lg mx-auto w-full px-4 py-6">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-full bg-[#110000] border-2 border-[#ff003c] p-10 box-glow text-center"
+          className="w-full bg-[#110000] border-2 border-[#ff003c] p-6 md:p-10 box-glow text-center"
         >
-          <div className="flex justify-center mb-6">
-            <div className="p-4 rounded-full border border-[#ff003c] bg-[#ff003c]/10 animate-pulse">
-              <ShieldAlert className="w-16 h-16 text-[#ff003c]" />
+          <div className="flex justify-center mb-4 md:mb-6">
+            <div className="p-3 md:p-4 rounded-full border border-[#ff003c] bg-[#ff003c]/10 animate-pulse">
+              <ShieldAlert className="w-10 h-10 md:w-16 md:h-16 text-[#ff003c]" />
             </div>
           </div>
-          <h1 className="text-4xl font-black italic tracking-tighter text-white mb-4">
+          <h1 className="text-2xl md:text-4xl font-black italic tracking-tighter text-white mb-3 md:mb-4">
             <GlitchText text="SYSTEM OFFLINE" />
           </h1>
-          <p className="text-sm uppercase tracking-[0.2em] text-[#ff003c] font-bold mb-10 leading-relaxed">
+          <p className="text-xs md:text-sm uppercase tracking-[0.15em] md:tracking-[0.2em] text-[#ff003c] font-bold mb-6 md:mb-10 leading-relaxed">
             WAIT FOR THE EVENT<br />MISSION DASHBOARD IS NOT ONLINE
           </p>
 
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             <button
               onClick={() => checkEventStatus()}
-              className="w-full bg-[#ff003c] text-white py-4 font-black uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-all flex items-center justify-center gap-3"
+              className="w-full bg-[#ff003c] text-white py-3 md:py-4 font-black uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-all flex items-center justify-center gap-2 md:gap-3"
             >
               <RefreshCw className="w-4 h-4" /> RE-CHECK STATUS
             </button>
 
-            <div className="pt-6 border-t border-white/10">
-              <p className="text-[10px] text-white/40 uppercase tracking-widest mb-4 font-bold">Registration Portal is Open</p>
+            <div className="pt-4 md:pt-6 border-t border-white/10">
+              <p className="text-[10px] text-white/40 uppercase tracking-widest mb-3 md:mb-4 font-bold">Registration Portal is Open</p>
               <button
                 onClick={() => router.push("/register")}
-                className="w-full bg-[#00ffff] text-black py-4 font-black uppercase tracking-widest text-xs hover:bg-white transition-all flex items-center justify-center gap-2"
+                className="w-full bg-[#00ffff] text-black py-3 md:py-4 font-black uppercase tracking-widest text-xs hover:bg-white transition-all flex items-center justify-center gap-2"
               >
                 <UserPlus className="w-4 h-4" /> GET YOUR ACCESS PIN
               </button>
@@ -83,30 +83,30 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center max-w-lg mx-auto w-full">
+    <div className="flex-1 flex flex-col items-center justify-center max-w-lg mx-auto w-full px-4 py-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full bg-[#001100] border border-[#00ff00]/50 p-8 box-glow relative"
+        className="w-full bg-[#001100] border border-[#00ff00]/50 p-6 md:p-8 box-glow relative"
       >
         <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#00ff00] to-transparent"></div>
 
-        <div className="flex justify-center mb-6">
-          <div className="p-4 rounded-full border border-[#00ff00] bg-[#00ff00]/10 box-glow">
-            <KeyRound className="w-12 h-12 text-[#00ff00]" />
+        <div className="flex justify-center mb-4 md:mb-6">
+          <div className="p-3 md:p-4 rounded-full border border-[#00ff00] bg-[#00ff00]/10 box-glow">
+            <KeyRound className="w-8 h-8 md:w-12 md:h-12 text-[#00ff00]" />
           </div>
         </div>
 
-        <h1 className="text-3xl font-bold text-center mb-2">
+        <h1 className="text-2xl md:text-3xl font-bold text-center mb-2">
           <GlitchText text="SYSTEM LOGIN" />
         </h1>
-        <p className="text-center opacity-70 mb-8 border-b border-[#00ff00]/30 pb-4">
+        <p className="text-center opacity-70 mb-6 md:mb-8 border-b border-[#00ff00]/30 pb-3 md:pb-4 text-xs md:text-base">
           ENTER AUTHORIZED TOKEN TO ACCESS MISSION DASHBOARD
         </p>
 
-        <form onSubmit={handleLogin} className="space-y-6">
+        <form onSubmit={handleLogin} className="space-y-4 md:space-y-6">
           <div>
-            <label className="block text-sm font-bold uppercase tracking-widest mb-2 text-[#00ff00]">
+            <label className="block text-xs md:text-sm font-bold uppercase tracking-widest mb-2 text-[#00ff00]">
               Access Token
             </label>
             <input
@@ -114,13 +114,13 @@ export default function LoginPage() {
               value={token}
               onChange={(e) => setToken(e.target.value)}
               disabled={isAuthenticating}
-              className="w-full bg-black border border-[#00ff00] p-4 text-[#00ff00] font-mono text-xl uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-[#00ff00]/50 focus:border-[#00ff00] transition-all"
+              className="w-full bg-black border border-[#00ff00] p-3 md:p-4 text-[#00ff00] font-mono text-lg md:text-xl uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-[#00ff00]/50 focus:border-[#00ff00] transition-all"
               placeholder="_ _ _ _ _"
             />
-            {error && <p className="text-[#ff003c] text-sm mt-2 animate-pulse">{error}</p>}
+            {error && <p className="text-[#ff003c] text-xs md:text-sm mt-2 animate-pulse">{error}</p>}
           </div>
 
-          <div className="pt-4 h-12 relative flex flex-col items-center justify-center gap-4">
+          <div className="pt-2 md:pt-4 flex flex-col items-center justify-center gap-3 md:gap-4">
             {isAuthenticating ? (
               <TerminalText text="AUTHENTICATING..." speed={50} className="text-[#00ffff] font-bold" />
             ) : (

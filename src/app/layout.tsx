@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Share_Tech_Mono } from "next/font/google";
 import "./globals.css";
 import { GameProvider } from "@/context/GameContext";
+import { ClientLayout } from "@/components/ui/ClientLayout";
 
 const shareTechMono = Share_Tech_Mono({
   variable: "--font-share-tech-mono",
@@ -28,7 +29,9 @@ export default function RootLayout({
         <div className="crt-scanline pointer-events-none fixed inset-0 z-49"></div>
         <GameProvider>
           <main className="relative z-10 min-h-screen flex flex-col p-4 md:p-8">
-            {children}
+            <ClientLayout>
+              {children}
+            </ClientLayout>
           </main>
         </GameProvider>
       </body>

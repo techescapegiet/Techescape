@@ -29,13 +29,21 @@
   .text-glow {
     text-shadow: 0 0 5px var(--primary-glow), 0 0 10px var(--primary-glow);
   }
-  
+
   .text-glow-alert {
     text-shadow: 0 0 5px var(--alert-glow), 0 0 10px var(--alert-glow);
   }
 
+  .text-glow-cyan {
+    text-shadow: 0 0 5px var(--secondary-glow), 0 0 10px var(--secondary-glow), 0 0 20px var(--secondary-glow);
+  }
+
   .box-glow {
     box-shadow: 0 0 10px var(--primary-glow), inset 0 0 10px var(--primary-glow);
+  }
+
+  .box-glow-cyan {
+    box-shadow: 0 0 10px var(--secondary-glow), inset 0 0 10px var(--secondary-glow);
   }
 
   .border-glow {
@@ -63,6 +71,7 @@
   0% {
     transform: translateY(-100vh);
   }
+
   100% {
     transform: translateY(100vh);
   }
@@ -71,7 +80,7 @@
 .crt-scanline {
   width: 100%;
   height: 100px;
-  background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0, 255, 0, 0.2) 50%, rgba(0,0,0,0) 100%);
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(0, 255, 0, 0.2) 50%, rgba(0, 0, 0, 0) 100%);
   position: fixed;
   z-index: 49;
   opacity: 0.4;
@@ -83,19 +92,30 @@
 ::-webkit-scrollbar {
   width: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: #001100;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #00ff00;
   border: 1px solid #003300;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #00cc00;
 }
+
+/* --- Enhanced Animations --- */
+
 @keyframes slide-infinite {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .animate-slide-infinite {
@@ -103,11 +123,164 @@
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-5px);
+  }
+
+  75% {
+    transform: translateX(5px);
+  }
 }
 
 .animate-shake {
   animation: shake 0.2s ease-in-out infinite;
+}
+
+@keyframes flicker {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  10% {
+    opacity: 0.85;
+  }
+
+  20% {
+    opacity: 0.95;
+  }
+
+  30% {
+    opacity: 0.8;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 0.9;
+  }
+
+  80% {
+    opacity: 0.75;
+  }
+
+  90% {
+    opacity: 1;
+  }
+}
+
+.animate-flicker {
+  animation: flicker 3s ease-in-out infinite;
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes glitch-text {
+  0% {
+    text-shadow: 0 0 5px #00ff00;
+    clip-path: inset(0 0 0 0);
+  }
+
+  5% {
+    text-shadow: 3px 0 #ff003c, -3px 0 #00ffff;
+    clip-path: inset(40% 0 20% 0);
+  }
+
+  10% {
+    text-shadow: -3px 0 #ff003c, 3px 0 #00ffff;
+    clip-path: inset(20% 0 60% 0);
+  }
+
+  15% {
+    text-shadow: 0 0 5px #00ff00;
+    clip-path: inset(0 0 0 0);
+  }
+
+  100% {
+    text-shadow: 0 0 5px #00ff00;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.animate-glitch-text {
+  animation: glitch-text 5s ease-in-out infinite;
+}
+
+@keyframes gradient-shimmer {
+  0% {
+    background-position: -200% center;
+  }
+
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.animate-gradient-shimmer {
+  background-size: 200% auto;
+  animation: gradient-shimmer 3s linear infinite;
+}
+
+@keyframes sweep {
+  0% {
+    transform: translateX(-100%) skewX(-15deg);
+  }
+
+  100% {
+    transform: translateX(200%) skewX(-15deg);
+  }
+}
+
+.btn-sweep::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  transform: translateX(-100%) skewX(-15deg);
+}
+
+.btn-sweep:hover::after {
+  animation: sweep 0.6s ease-out;
+}
+
+@keyframes border-pulse {
+
+  0%,
+  100% {
+    border-color: rgba(0, 255, 0, 0.3);
+  }
+
+  50% {
+    border-color: rgba(0, 255, 0, 0.8);
+  }
+}
+
+.animate-border-pulse {
+  animation: border-pulse 2s ease-in-out infinite;
 }

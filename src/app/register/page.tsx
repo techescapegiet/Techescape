@@ -88,25 +88,25 @@ export default function RegisterPage() {
 
     if (!user) {
         return (
-            <div className="flex-1 flex flex-col items-center justify-center max-w-lg mx-auto w-full p-4">
+            <div className="flex-1 flex flex-col items-center justify-center max-w-lg mx-auto w-full px-4 py-6">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="w-full bg-black/40 backdrop-blur-xl border border-[#00ffff]/30 p-10 box-glow text-center"
+                    className="w-full bg-black/40 backdrop-blur-xl border border-[#00ffff]/30 p-6 md:p-10 box-glow text-center"
                 >
-                    <div className="flex justify-center mb-6">
-                        <div className="p-4 rounded-full border border-[#00ffff] bg-[#00ffff]/10">
-                            <LogIn className="w-12 h-12 text-[#00ffff]" />
+                    <div className="flex justify-center mb-4 md:mb-6">
+                        <div className="p-3 md:p-4 rounded-full border border-[#00ffff] bg-[#00ffff]/10">
+                            <LogIn className="w-8 h-8 md:w-12 md:h-12 text-[#00ffff]" />
                         </div>
                     </div>
-                    <h1 className="text-3xl font-black italic tracking-tighter text-white mb-2">
+                    <h1 className="text-2xl md:text-3xl font-black italic tracking-tighter text-white mb-2">
                         <GlitchText text="AUTH REQUIRED" />
                     </h1>
-                    <p className="text-xs uppercase tracking-[0.2em] text-[#00ffff]/60 font-bold mb-8">Sign in with Google to begin enrollment</p>
+                    <p className="text-[10px] md:text-xs uppercase tracking-[0.2em] text-[#00ffff]/60 font-bold mb-6 md:mb-8">Sign in with Google to begin enrollment</p>
 
                     <button
                         onClick={signInWithGoogle}
-                        className="w-full bg-white text-black py-4 font-black uppercase tracking-widest text-sm hover:bg-[#00ffff] transition-all flex items-center justify-center gap-3"
+                        className="w-full bg-white text-black py-3 md:py-4 font-black uppercase tracking-widest text-xs md:text-sm hover:bg-[#00ffff] transition-all flex items-center justify-center gap-3"
                     >
                         <img src="https://www.google.com/favicon.ico" className="w-4 h-4" alt="Google" />
                         Sign in with Google
@@ -237,7 +237,7 @@ export default function RegisterPage() {
                         key="result"
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="w-full bg-[#001100] border-2 border-[#00ffff] p-8 md:p-12 box-glow relative overflow-hidden text-center"
+                        className="w-full bg-[#001100] border-2 border-[#00ffff] p-6 md:p-12 box-glow relative overflow-hidden text-center"
                     >
                         <div className="absolute inset-0 bg-gradient-to-b from-[#00ffff]/5 to-transparent pointer-events-none" />
 
@@ -245,23 +245,23 @@ export default function RegisterPage() {
                             initial={{ rotate: -10, opacity: 0 }}
                             animate={{ rotate: 0, opacity: 1 }}
                             transition={{ delay: 0.2 }}
-                            className="inline-block p-5 rounded-3xl bg-[#00ffff]/10 mb-6 border border-[#00ffff]/30"
+                            className="inline-block p-3 md:p-5 rounded-3xl bg-[#00ffff]/10 mb-4 md:mb-6 border border-[#00ffff]/30"
                         >
-                            <Monitor className="w-20 h-20 text-[#00ffff]" />
+                            <Monitor className="w-12 h-12 md:w-20 md:h-20 text-[#00ffff]" />
                         </motion.div>
 
-                        <h2 className="text-4xl md:text-5xl font-black text-[#00ffff] text-glow mb-2 uppercase tracking-tighter italic">Assignment Locked</h2>
-                        <p className="opacity-60 font-mono text-xs tracking-[0.4em] uppercase mb-10">Verification ID: {user?.id.slice(0, 8)}</p>
+                        <h2 className="text-2xl md:text-5xl font-black text-[#00ffff] text-glow mb-2 uppercase tracking-tighter italic">Assignment Locked</h2>
+                        <p className="opacity-60 font-mono text-[8px] md:text-xs tracking-[0.2em] md:tracking-[0.4em] uppercase mb-6 md:mb-10">Verification ID: {user?.id.slice(0, 8)}</p>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-                            <div className="bg-black/80 border border-[#00ffff]/40 p-8 rounded-sm">
-                                <p className="text-[10px] text-[#00ffff]/60 font-bold uppercase tracking-widest mb-4">Terminal Identifier</p>
-                                <p className="text-6xl font-black text-white tracking-widest">{assignment.pcId}</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-8 md:mb-12">
+                            <div className="bg-black/80 border border-[#00ffff]/40 p-4 md:p-8 rounded-sm">
+                                <p className="text-[10px] text-[#00ffff]/60 font-bold uppercase tracking-widest mb-2 md:mb-4">Terminal Identifier</p>
+                                <p className="text-3xl md:text-6xl font-black text-white tracking-widest">{assignment.pcId}</p>
                             </div>
-                            <div className="bg-black/80 border border-[#00ff00]/40 p-8 rounded-sm relative group">
-                                <p className="text-[10px] text-[#00ff00]/60 font-bold uppercase tracking-widest mb-4">Secure Access PIN</p>
-                                <div className="flex items-center justify-center gap-4">
-                                    <p className="text-6xl font-black text-[#00ff00] tracking-widest">{assignment.pin}</p>
+                            <div className="bg-black/80 border border-[#00ff00]/40 p-4 md:p-8 rounded-sm relative group">
+                                <p className="text-[10px] text-[#00ff00]/60 font-bold uppercase tracking-widest mb-2 md:mb-4">Secure Access PIN</p>
+                                <div className="flex items-center justify-center gap-3 md:gap-4">
+                                    <p className="text-3xl md:text-6xl font-black text-[#00ff00] tracking-widest">{assignment.pin}</p>
                                     <button
                                         onClick={() => {
                                             navigator.clipboard.writeText(assignment.pin);
@@ -277,23 +277,23 @@ export default function RegisterPage() {
                             </div>
                         </div>
 
-                        <div className="bg-[#00ffff]/5 border border-[#00ffff]/20 p-6 rounded-sm text-left mb-10 space-y-4">
-                            <div className="flex gap-4">
-                                <div className="w-6 h-6 rounded-full bg-[#00ffff] text-black flex items-center justify-center font-bold text-xs shrink-0 mt-1">1</div>
-                                <p className="text-sm opacity-80 leading-relaxed font-mono italic">Locate your designated terminal <span className="text-white font-bold underline">[{assignment.pcId}]</span> in the main lab area.</p>
+                        <div className="bg-[#00ffff]/5 border border-[#00ffff]/20 p-4 md:p-6 rounded-sm text-left mb-6 md:mb-10 space-y-3 md:space-y-4">
+                            <div className="flex gap-3 md:gap-4">
+                                <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-[#00ffff] text-black flex items-center justify-center font-bold text-[10px] md:text-xs shrink-0 mt-0.5">1</div>
+                                <p className="text-xs md:text-sm opacity-80 leading-relaxed font-mono italic">Locate terminal <span className="text-white font-bold underline">[{assignment.pcId}]</span> in the lab.</p>
                             </div>
-                            <div className="flex gap-4">
-                                <div className="w-6 h-6 rounded-full bg-[#00ffff] text-black flex items-center justify-center font-bold text-xs shrink-0 mt-1">2</div>
-                                <p className="text-sm opacity-80 leading-relaxed font-mono italic">Input your secure 6-digit PIN <span className="text-white font-bold underline">[{assignment.pin}]</span> on the login interface.</p>
+                            <div className="flex gap-3 md:gap-4">
+                                <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-[#00ffff] text-black flex items-center justify-center font-bold text-[10px] md:text-xs shrink-0 mt-0.5">2</div>
+                                <p className="text-xs md:text-sm opacity-80 leading-relaxed font-mono italic">Enter PIN <span className="text-white font-bold underline">[{assignment.pin}]</span> on the login page.</p>
                             </div>
                         </div>
 
                         <div className="flex justify-center">
                             <button
                                 onClick={() => router.push("/login")}
-                                className="w-full max-w-md bg-[#00ffff] text-black py-4 font-black uppercase tracking-widest text-sm hover:bg-white transition-all flex items-center justify-center gap-3"
+                                className="w-full max-w-md bg-[#00ffff] text-black py-3 md:py-4 font-black uppercase tracking-widest text-xs md:text-sm hover:bg-white transition-all flex items-center justify-center gap-2 md:gap-3"
                             >
-                                Redirect to Start Mission <ArrowRight className="w-5 h-5" />
+                                Start Mission <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
                             </button>
                         </div>
 
