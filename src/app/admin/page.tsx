@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react";
 import { GlowingButton } from "@/components/ui/GlowingButton";
 import { TerminalText } from "@/components/ui/TerminalText";
-import { Shield, Eye, Trash2, Power, RefreshCw, Zap, AlertTriangle, Users } from "lucide-react";
+import { Shield, Eye, Trash2, Power, RefreshCw, Zap, AlertTriangle, Users, Download, Archive, Filter } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { exportToCSV, exportToPDF } from "@/lib/exportUtils";
 
 interface LivePlayer {
   id: string; // Session UUID
@@ -24,6 +25,9 @@ export default function AdminPage() {
   const [isLive, setIsLive] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isPurging, setIsPurging] = useState(false);
+  const [sortField, setSortField] = useState<keyof LivePlayer>("name");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [filterStatus, setFilterStatus] = useState<"ALL" | "ACTIVE" | "COMPLETED" | "FAILED">("ALL");
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,8 +112,8 @@ export default function AdminPage() {
     fetchPlayers();
   };
 
-  const globalPurge = async () => {
-    if (!confirm("CRITICAL WARNING: This will DELETE all player data and reset all PC assignments. Are you absolutely sure?")) return;
+  const globalPurge = async (skipConfirm = false) => {
+    if (!skipConfirm && !confirm("CRITICAL WARNING: This will DELETE all player data and reset all PC assignments. Are you absolutely sure?")) return;
 
     setIsPurging(true);
     try {
@@ -135,6 +139,19 @@ export default function AdminPage() {
     } finally {
       setIsPurging(false);
     }
+  };
+
+  const archiveAndPurge = async () => {
+    if (players.length === 0) {
+      alert("No data to archive.");
+      return;
+    }
+    if (!confirm("This will download a CSV archive of the current session and then PERMANENTLY PURGE all players. Proceed?")) return;
+
+    exportToCSV(players, `techescape-archive-${new Date().toISOString().split('T')[0]}.csv`);
+
+    // Adding slight delay so download initiates before UI freezes
+    setTimeout(() => globalPurge(true), 500);
   };
 
   const clearFailedPlayers = async () => {
@@ -175,6 +192,38 @@ export default function AdminPage() {
       };
     }
   }, [isAdmin]);
+
+  const handleSort = (field: keyof LivePlayer) => {
+    if (sortField === field) setSortDir(sortDir === "asc" ? "desc" : "asc");
+    else {
+      setSortField(field);
+      setSortDir("asc");
+    }
+  };
+
+  const sortedPlayers = [...players].sort((a, b) => {
+    let aVal = a[sortField];
+    let bVal = b[sortField];
+    if (sortField === "level") {
+      const getLexLevel = (l: any) => l === "TERMINATED" ? -1 : l === "RECONSTRUCTED" ? 99 : Number(l) || 0;
+      aVal = getLexLevel(a.level) as any;
+      bVal = getLexLevel(b.level) as any;
+    }
+    if (aVal < bVal) return sortDir === "asc" ? -1 : 1;
+    if (aVal > bVal) return sortDir === "asc" ? 1 : -1;
+    return 0;
+  }).filter(p => {
+    if (filterStatus === "ALL") return true;
+    return p.status === filterStatus;
+  });
+
+  // Calculate Node Distribution
+  const activePlayers = players.filter(p => p.status === 'ACTIVE');
+  const distribution = activePlayers.reduce((acc, p) => {
+    const lvl = p.level.toString();
+    acc[lvl] = (acc[lvl] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
 
   if (!isAdmin) {
     return (
@@ -222,7 +271,13 @@ export default function AdminPage() {
             <div className="text-xs font-mono opacity-50 uppercase">Live Feed Active</div>
           </div>
         </div>
-        <div className="flex items-center gap-3 w-full md:w-auto">
+        <div className="flex items-center gap-3 w-full md:w-auto flex-wrap">
+          <button onClick={() => exportToCSV(sortedPlayers)} className="px-4 py-2 border border-[#00ffff]/40 bg-[#00ffff]/10 text-[#00ffff] hover:bg-[#00ffff]/20 transition-all font-mono text-xs uppercase flex items-center gap-2">
+            <Download className="w-4 h-4" /> CSV
+          </button>
+          <button onClick={() => exportToPDF(sortedPlayers)} className="px-4 py-2 border border-[#00ffff]/40 bg-[#00ffff]/10 text-[#00ffff] hover:bg-[#00ffff]/20 transition-all font-mono text-xs uppercase flex items-center gap-2">
+            <Download className="w-4 h-4" /> PDF
+          </button>
           <GlowingButton
             variant={isLive ? "cyan" : "danger"}
             onClick={toggleEventLive}
@@ -239,29 +294,45 @@ export default function AdminPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="md:col-span-1 flex flex-col gap-4">
-          <div className="p-6 border border-[#00ff00]/30 bg-[#002200]/50 box-glow">
-            <div className="flex items-center justify-between mb-2">
-              <span className="opacity-70 text-xs uppercase tracking-widest">Active Operatives</span>
-              <Users className="w-4 h-4 text-[#00ff00]" />
+          <div className="p-4 border border-[#00ff00]/30 bg-[#002200]/50 box-glow">
+            <div className="flex items-center justify-between mb-1">
+              <span className="opacity-70 text-[10px] uppercase tracking-widest">Active Operatives</span>
+              <Users className="w-3 h-3 text-[#00ff00]" />
             </div>
-            <span className="text-5xl font-bold text-[#00ff00] text-glow">{players.filter(p => p.status === 'ACTIVE').length}</span>
+            <span className="text-3xl font-bold text-[#00ff00] text-glow">{players.filter(p => p.status === 'ACTIVE').length}</span>
           </div>
 
-          <div className="p-6 border border-[#00ffff]/30 bg-[#001122]/50 box-glow">
-            <div className="flex items-center justify-between mb-2">
-              <span className="opacity-70 text-xs uppercase tracking-widest">Mission Success</span>
-              <Zap className="w-4 h-4 text-[#00ffff]" />
+          <div className="p-4 border border-[#00ffff]/30 bg-[#001122]/50 box-glow">
+            <div className="flex items-center justify-between mb-1">
+              <span className="opacity-70 text-[10px] uppercase tracking-widest">Mission Success</span>
+              <Zap className="w-3 h-3 text-[#00ffff]" />
             </div>
-            <span className="text-5xl font-bold text-[#00ffff] text-glow">{players.filter(p => p.status === 'COMPLETED').length}</span>
+            <span className="text-3xl font-bold text-[#00ffff] text-glow">{players.filter(p => p.status === 'COMPLETED').length}</span>
           </div>
 
-          <div className="p-6 border border-[#ff003c]/30 bg-[#220000]/50 box-glow">
-            <h3 className="text-xs font-bold text-[#ff003c] uppercase mb-4 flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4" /> Danger Zone
+          <div className="p-4 border border-[#ff003c]/50 bg-[#220000]/80 box-glow">
+            <div className="flex items-center justify-between mb-1">
+              <span className="opacity-70 text-[10px] uppercase tracking-widest text-[#ffaaa]">Terminated</span>
+              <Trash2 className="w-3 h-3 text-[#ff003c]" />
+            </div>
+            <span className="text-3xl font-bold text-[#ff003c] text-glow">{players.filter(p => p.status === 'FAILED').length}</span>
+          </div>
+
+          <div className="p-4 border border-[#ff003c]/30 bg-black box-glow mt-auto">
+            <h3 className="text-[10px] font-bold text-[#ff003c] uppercase mb-3 flex items-center gap-2">
+              <AlertTriangle className="w-3 h-3" /> Danger Zone
             </h3>
             <div className="flex flex-col gap-2">
               <button
-                onClick={globalPurge}
+                onClick={archiveAndPurge}
+                disabled={isPurging || players.length === 0}
+                className="w-full py-3 border border-yellow-500 bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500 hover:text-white transition-all font-bold uppercase tracking-tighter text-sm flex items-center justify-center gap-2"
+              >
+                {isPurging ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Archive className="w-4 h-4" />}
+                Archive & Purge
+              </button>
+              <button
+                onClick={() => globalPurge(false)}
                 disabled={isPurging}
                 className="w-full py-3 border border-[#ff003c] bg-[#ff003c]/10 text-[#ff003c] hover:bg-[#ff003c] hover:text-white transition-all font-bold uppercase tracking-tighter text-sm flex items-center justify-center gap-2"
               >
@@ -281,31 +352,60 @@ export default function AdminPage() {
           </div>
         </div>
 
-        <div className="md:col-span-3 border border-[#00ff00]/20 bg-black/80 p-6 box-glow overflow-hidden flex flex-col">
-          <div className="flex justify-between items-center mb-6 border-b border-[#00ff00]/10 pb-4">
+        <div className="md:col-span-3 border border-[#00ff00]/20 bg-black/80 p-4 md:p-6 box-glow overflow-hidden flex flex-col">
+
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b border-[#00ff00]/10 pb-4">
             <h2 className="text-xl font-bold flex items-center gap-2">
               <Eye className="w-5 h-5 text-[#00ffff]" />
               <span className="text-glow-cyan uppercase tracking-wider">Live Session Oversight</span>
             </h2>
-            <button onClick={fetchPlayers} className="p-2 hover:bg-white/5 rounded-full transition-all">
-              <RefreshCw className={`w-4 h-4 opacity-50 ${loading ? 'animate-spin' : ''}`} />
-            </button>
+
+            <div className="flex flex-wrap items-center gap-2">
+              {(["ALL", "ACTIVE", "COMPLETED", "FAILED"] as const).map(status => (
+                <button
+                  key={status}
+                  onClick={() => setFilterStatus(status)}
+                  className={`px-3 py-1 text-[10px] font-bold uppercase font-mono border transition-all ${filterStatus === status
+                      ? "bg-white text-black border-white shadow-[0_0_10px_white]"
+                      : "bg-transparent text-white/50 border-white/20 hover:border-white/50 hover:text-white"
+                    }`}
+                >
+                  <Filter className="w-3 h-3 inline-block mr-1 opacity-50" />
+                  {status}
+                </button>
+              ))}
+              <div className="w-[1px] h-6 bg-white/20 mx-2" />
+              <button onClick={fetchPlayers} className="p-1 hover:bg-white/5 rounded transition-all ml-auto">
+                <RefreshCw className={`w-4 h-4 opacity-50 ${loading ? 'animate-spin' : ''}`} />
+              </button>
+            </div>
+          </div>
+
+          {/* Node Distribution */}
+          <div className="mb-6 flex gap-2 flex-wrap">
+            <div className="text-[10px] uppercase tracking-widest text-[#00ff00] font-bold mr-2 self-center">Node Distribution:</div>
+            {[1, 2, 3, 4, 5].map(lvl => (
+              <div key={lvl} className="flex items-center gap-2 px-3 py-1 bg-[#001100] border border-[#00ff00]/30 font-mono text-xs">
+                <span className="opacity-50 text-[10px]">N{lvl}:</span>
+                <span className="text-[#00ff00] font-bold">{distribution[lvl.toString()] || 0}</span>
+              </div>
+            ))}
           </div>
 
           <div className="overflow-x-auto flex-1">
             <table className="w-full text-left font-mono">
               <thead>
                 <tr className="text-[#00ffff] text-[10px] tracking-[0.2em] uppercase border-b border-[#00ffff]/20">
-                  <th className="py-4 px-4">Operative</th>
-                  <th className="py-4 px-4">Terminal</th>
-                  <th className="py-4 px-4">Node</th>
-                  <th className="py-4 px-4">ETA</th>
-                  <th className="py-4 px-4">Status</th>
+                  <th className="py-4 px-4 cursor-pointer hover:bg-white/5" onClick={() => handleSort("name")}>Operative {sortField === "name" && (sortDir === "asc" ? "↑" : "↓")}</th>
+                  <th className="py-4 px-4 cursor-pointer hover:bg-white/5" onClick={() => handleSort("pc_id")}>Terminal {sortField === "pc_id" && (sortDir === "asc" ? "↑" : "↓")}</th>
+                  <th className="py-4 px-4 cursor-pointer hover:bg-white/5" onClick={() => handleSort("level")}>Node {sortField === "level" && (sortDir === "asc" ? "↑" : "↓")}</th>
+                  <th className="py-4 px-4 cursor-pointer hover:bg-white/5" onClick={() => handleSort("timeRemaining")}>ETA {sortField === "timeRemaining" && (sortDir === "asc" ? "↑" : "↓")}</th>
+                  <th className="py-4 px-4 cursor-pointer hover:bg-white/5" onClick={() => handleSort("status")}>Status {sortField === "status" && (sortDir === "asc" ? "↑" : "↓")}</th>
                   <th className="py-4 px-4 text-right"> Purge</th>
                 </tr>
               </thead>
               <tbody>
-                {players.map((p) => (
+                {sortedPlayers.map((p) => (
                   <tr key={p.id} className="border-b border-white/5 hover:bg-white/5 transition-colors group">
                     <td className="py-4 px-4 font-bold text-white uppercase">{p.name}</td>
                     <td className="py-4 px-4 opacity-70 text-xs">{p.pc_id}</td>
@@ -326,13 +426,13 @@ export default function AdminPage() {
                         {p.status}
                       </span>
                     </td>
-                    <td className="py-4 px-4 text-right">
+                    <td className="py-4 px-4 text-right flex justify-end">
                       <button
                         onClick={() => kickPlayer(p.id, p.pc_id)}
-                        className="p-2 text-[#ff003c]/30 hover:text-[#ff003c] hover:bg-[#ff003c]/20 rounded transition-all opacity-0 group-hover:opacity-100"
+                        className="p-1 text-[#ff003c]/40 hover:text-white hover:bg-[#ff003c] border border-transparent hover:border-[#ff003c] transition-all opacity-0 group-hover:opacity-100"
                         title="Force Terminate"
                       >
-                        <Zap className="w-4 h-4 fill-[#ff003c]/20" />
+                        <Zap className="w-3 h-3" />
                       </button>
                     </td>
                   </tr>
