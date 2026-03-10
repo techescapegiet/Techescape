@@ -1,15 +1,51 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useGame } from "@/context/GameContext";
 import { PlayerCard } from "./PlayerCard";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Pages where the PlayerCard should NOT be shown
 const HIDDEN_CARD_PAGES = ["/", "/login", "/register", "/admin", "/failure"];
 
+// Pages where back navigation should be blocked
+const NO_BACK_PATTERNS = ["/level/", "/dashboard"];
+
 export function ClientLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
+    const router = useRouter();
+    const { player } = useGame();
     const showCard = !HIDDEN_CARD_PAGES.some(p => pathname === p);
+
+    // Block browser back button on level and dashboard pages
+    useEffect(() => {
+        const shouldBlock = NO_BACK_PATTERNS.some(p => pathname.startsWith(p));
+        if (!shouldBlock) return;
+
+        // Push a duplicate entry so pressing back stays on the same page
+        window.history.pushState(null, "", window.location.href);
+
+        const handlePopState = () => {
+            window.history.pushState(null, "", window.location.href);
+        };
+
+        window.addEventListener("popstate", handlePopState);
+        return () => window.removeEventListener("popstate", handlePopState);
+    }, [pathname]);
+
+    // Prevent accessing wrong levels — can only access current level
+    useEffect(() => {
+        if (!player) return;
+
+        const levelMatch = pathname.match(/^\/level\/(\d+)$/);
+        if (levelMatch) {
+            const requestedLevel = parseInt(levelMatch[1], 10);
+            if (requestedLevel !== player.currentLevel) {
+                router.replace(`/level/${player.currentLevel}`);
+            }
+        }
+    }, [pathname, player, router]);
 
     return (
         <>
