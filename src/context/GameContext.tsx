@@ -47,17 +47,11 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   // Sync player to Supabase using session history model
   const syncPlayerToSupabase = async (p: Player) => {
     try {
-      await supabase.from("players").upsert({
-        id: p.sessionId,
-        pc_id: p.id,
-        token: p.token,
+      await supabase.from("players").update({
         current_level: p.currentLevel,
         is_online: true,
-        last_seen: new Date().toISOString(),
-        user_id: user?.id,
-        roll_number: p.rollNumber,
-        status: 'active'
-      });
+        last_seen: new Date().toISOString()
+      }).eq("id", p.sessionId);
     } catch (error) {
       console.error("Error syncing player to Supabase:", error);
     }

@@ -5,9 +5,10 @@ import { useGame } from "@/context/GameContext";
 import { GlowingButton } from "@/components/ui/GlowingButton";
 import { TerminalText } from "@/components/ui/TerminalText";
 import { GlitchText } from "@/components/ui/GlitchText";
-import { UserPlus, Monitor, Key, ArrowRight, Printer, Mail, Hash, BookOpen, Building2, LogIn, LogOut } from "lucide-react";
+import { UserPlus, Monitor, Key, ArrowRight, Printer, Mail, Hash, BookOpen, Building2, LogIn, LogOut, Copy, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
     const [formData, setFormData] = useState({
@@ -21,7 +22,9 @@ export default function RegisterPage() {
     const [isChecking, setIsChecking] = useState(true);
     const [error, setError] = useState("");
     const [assignment, setAssignment] = useState<{ pcId: string; pin: string } | null>(null);
+    const [copied, setCopied] = useState(false);
     const { registerStudent, user, signInWithGoogle } = useGame();
+    const router = useRouter();
 
     useEffect(() => {
         const checkExisting = async () => {
@@ -255,9 +258,22 @@ export default function RegisterPage() {
                                 <p className="text-[10px] text-[#00ffff]/60 font-bold uppercase tracking-widest mb-4">Terminal Identifier</p>
                                 <p className="text-6xl font-black text-white tracking-widest">{assignment.pcId}</p>
                             </div>
-                            <div className="bg-black/80 border border-[#00ff00]/40 p-8 rounded-sm">
+                            <div className="bg-black/80 border border-[#00ff00]/40 p-8 rounded-sm relative group">
                                 <p className="text-[10px] text-[#00ff00]/60 font-bold uppercase tracking-widest mb-4">Secure Access PIN</p>
-                                <p className="text-6xl font-black text-[#00ff00] tracking-widest">{assignment.pin}</p>
+                                <div className="flex items-center justify-center gap-4">
+                                    <p className="text-6xl font-black text-[#00ff00] tracking-widest">{assignment.pin}</p>
+                                    <button
+                                        onClick={() => {
+                                            navigator.clipboard.writeText(assignment.pin);
+                                            setCopied(true);
+                                            setTimeout(() => setCopied(false), 2000);
+                                        }}
+                                        className="p-3 bg-[#00ff00]/10 hover:bg-[#00ff00]/20 border border-[#00ff00]/30 rounded-lg transition-all"
+                                        title="Copy PIN"
+                                    >
+                                        {copied ? <Check className="w-6 h-6 text-[#00ff00]" /> : <Copy className="w-6 h-6 text-[#00ff00]" />}
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -272,22 +288,12 @@ export default function RegisterPage() {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="flex justify-center">
                             <button
-                                onClick={() => window.print()}
-                                className="bg-white/5 border border-white/20 py-4 font-black uppercase tracking-widest text-[10px] hover:bg-white/10 transition-all flex items-center justify-center gap-3"
+                                onClick={() => router.push("/login")}
+                                className="w-full max-w-md bg-[#00ffff] text-black py-4 font-black uppercase tracking-widest text-sm hover:bg-white transition-all flex items-center justify-center gap-3"
                             >
-                                <Printer className="w-4 h-4" /> Download Clearance
-                            </button>
-                            <button
-                                onClick={async () => {
-                                    await supabase.auth.signOut();
-                                    setAssignment(null);
-                                    setFormData({ name: "", roll: "", email: "", year: "1st Year", dept: "Computer Science" });
-                                }}
-                                className="bg-[#00ffff] text-black py-4 font-black uppercase tracking-widest text-[10px] hover:bg-white transition-all flex items-center justify-center gap-2"
-                            >
-                                <LogOut className="w-4 h-4" /> Next Operative
+                                Redirect to Start Mission <ArrowRight className="w-5 h-5" />
                             </button>
                         </div>
 

@@ -8,38 +8,22 @@ import { CheckCircle2, XCircle, HelpCircle, Cpu, RefreshCcw, LayoutGrid, List, A
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-// 30 VERY EASY Questions for JNTUH 1st/2nd Year CSE with Hints
 const QUESTION_POOL = [
-  { question: "The brain of the computer.", answer: "CPU", hint: "Central Processing Unit" },
-  { question: "Volatile memory used for active programs.", answer: "RAM", hint: "Random Access Memory" },
-  { question: "Read-only memory.", answer: "ROM", hint: "Permanent storage for BIOS" },
-  { question: "Smallest unit of data (0 or 1).", answer: "BIT", hint: "Binary Digit" },
-  { question: "8 bits make one...", answer: "BYTE", hint: "Standard unit of storage" },
-  { question: "Base-2 numbering system.", answer: "BINARY", hint: "Uses only 0s and 1s" },
-  { question: "Language used to style web pages.", answer: "CSS", hint: "Cascading Style Sheets" },
-  { question: "Standard markup language for web pages.", answer: "HTML", hint: "HyperText Markup Language" },
-  { question: "Popular OOP language with 'Write Once, Run Anywhere'.", answer: "JAVA", hint: "Coffee logo" },
-  { question: "Data type storing whole numbers.", answer: "INT", hint: "Short for Integer" },
-  { question: "Data type for characters.", answer: "CHAR", hint: "Short for Character" },
-  { question: "Data type for true/false values.", answer: "BOOL", hint: "Named after George Boole" },
-  { question: "A sequence of characters.", answer: "STRING", hint: "Text data enclosed in quotes" },
-  { question: "Collection of data in contiguous memory.", answer: "ARRAY", hint: "Elements accessed by index" },
-  { question: "LIFO data structure.", answer: "STACK", hint: "Last In, First Out (like plates)" },
-  { question: "FIFO data structure.", answer: "QUEUE", hint: "First In, First Out (like a line)" },
-  { question: "A blueprint for creating objects in OOP.", answer: "CLASS", hint: "Defines properties and methods" },
-  { question: "An instance of a class.", answer: "OBJECT", hint: "A real-world entity in code" },
-  { question: "A variable storing a memory address.", answer: "POINTER", hint: "Used heavily in C/C++" },
-  { question: "A function that calls itself.", answer: "RECURSION", hint: "Requires a base case to stop" },
-  { question: "Standard language for databases.", answer: "SQL", hint: "Structured Query Language" },
-  { question: "Command to retrieve data in SQL.", answer: "SELECT", hint: "The most common SQL keyword" },
-  { question: "Translates high-level code to machine code.", answer: "COMPILER", hint: "Translates the whole program at once" },
-  { question: "A mistake in the code.", answer: "BUG", hint: "Grace Hopper found a real moth" },
-  { question: "Loop that runs a specific number of times.", answer: "FOR", hint: "Initialization, Condition, Increment" },
-  { question: "Loop that runs while a condition is true.", answer: "WHILE", hint: "Entry-controlled loop" },
-  { question: "Network of networks.", answer: "INTERNET", hint: "Global system of interconnected computers" },
-  { question: "Protocol for sending emails.", answer: "SMTP", hint: "Simple Mail Transfer Protocol" },
-  { question: "Protocol for secure web browsing.", answer: "HTTPS", hint: "Secure version of HTTP" },
-  { question: "Software used to view web pages.", answer: "BROWSER", hint: "Chrome, Firefox, Safari" },
+  { question: "Brain of computer", answer: "CPU", hint: "3 letters" },
+  { question: "Short-term memory", answer: "RAM", hint: "3 letters" },
+  { question: "Read Only Memory", answer: "ROM", hint: "3 letters" },
+  { question: "0 or 1", answer: "BIT", hint: "3 letters" },
+  { question: "Network of computers", answer: "WEB", hint: "Spider..." },
+  { question: "Universal Serial Bus", answer: "USB", hint: "3 letters" },
+  { question: "Find a mistake in code", answer: "BUG", hint: "Insect" },
+  { question: "Automated program", answer: "BOT", hint: "Robot" },
+  { question: "Apple Phone OS", answer: "IOS", hint: "iPhone" },
+  { question: "Local Area Network", answer: "LAN", hint: "3 letters" },
+  { question: "Website address", answer: "URL", hint: "Link" },
+  { question: "Database language", answer: "SQL", hint: "3 letters" },
+  { question: "Application Interface", answer: "API", hint: "3 letters" },
+  { question: "Picture element", answer: "PIX", hint: "Short for pixel" },
+  { question: "Developer mode", answer: "DEV", hint: "Short for developer" },
 ];
 
 const GRID_SIZE = 9;
@@ -77,30 +61,35 @@ export function Level1() {
       let attempts = 0;
       while (!placed && attempts < 150) {
         attempts++;
-        const direction = Math.random() > 0.5 ? 'horizontal' : 'vertical';
+        const directions = [
+          [0, 1],   // right
+          [1, 0],   // down
+          [0, -1],  // left
+          [-1, 0],  // up
+          [1, 1],   // down-right
+          [-1, -1], // up-left
+          [1, -1],  // down-left
+          [-1, 1]   // up-right
+        ];
+        const dir = directions[Math.floor(Math.random() * directions.length)];
+        const dr = dir[0];
+        const dc = dir[1];
+
         const row = Math.floor(Math.random() * GRID_SIZE);
         const col = Math.floor(Math.random() * GRID_SIZE);
 
-        if (direction === 'horizontal' && col + word.length <= GRID_SIZE) {
+        const endRow = row + (word.length - 1) * dr;
+        const endCol = col + (word.length - 1) * dc;
+
+        if (endRow >= 0 && endRow < GRID_SIZE && endCol >= 0 && endCol < GRID_SIZE) {
           let canPlace = true;
           for (let i = 0; i < word.length; i++) {
-            if (newGrid[row][col + i] !== "" && newGrid[row][col + i] !== word[i]) {
+            if (newGrid[row + i * dr][col + i * dc] !== "" && newGrid[row + i * dr][col + i * dc] !== word[i]) {
               canPlace = false; break;
             }
           }
           if (canPlace) {
-            for (let i = 0; i < word.length; i++) newGrid[row][col + i] = word[i];
-            placed = true;
-          }
-        } else if (direction === 'vertical' && row + word.length <= GRID_SIZE) {
-          let canPlace = true;
-          for (let i = 0; i < word.length; i++) {
-            if (newGrid[row + i][col] !== "" && newGrid[row + i][col] !== word[i]) {
-              canPlace = false; break;
-            }
-          }
-          if (canPlace) {
-            for (let i = 0; i < word.length; i++) newGrid[row + i][col] = word[i];
+            for (let i = 0; i < word.length; i++) newGrid[row + i * dr][col + i * dc] = word[i];
             placed = true;
           }
         }

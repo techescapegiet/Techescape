@@ -173,6 +173,33 @@ export function Level2() {
     }
   };
 
+  const useHint = () => {
+    if (success || timeLeft <= 5) return;
+    const currentQData = questions[currentQuestionIdx];
+    if (!currentQData) return;
+    const word = currentQData.word;
+    if (!word) return;
+
+    const unrevealed = word.split("").map((_, i) => i)
+      .filter(i => !revealedIndices.includes(i) && blanks[i] !== word[i]);
+
+    if (unrevealed.length > 0) {
+      const idx = unrevealed[Math.floor(Math.random() * unrevealed.length)];
+      setRevealedIndices(prev => [...prev, idx]);
+
+      const newBlanks = [...blanks];
+      newBlanks[idx] = word[idx];
+      setBlanks(newBlanks);
+
+      setTimeLeft(prev => Math.max(1, prev - 5));
+
+      if (newBlanks.every(b => b !== "")) {
+        // We delay the check slightly so state updates first
+        setTimeout(() => checkAnswer(newBlanks.join("")), 100);
+      }
+    }
+  };
+
   const checkAnswer = (attempt: string) => {
     const currentQData = questions[currentQuestionIdx];
     if (!currentQData) return;
@@ -268,9 +295,13 @@ export function Level2() {
         )}
 
         <div className="text-center mb-12 relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 border border-[#00ffff]/40 bg-[#00ffff]/10 text-[#00ffff] font-mono text-sm uppercase tracking-widest mb-6 rounded-full">
-            <Lightbulb className="w-4 h-4" /> Hint Provided
-          </div>
+          <button
+            onClick={useHint}
+            className="inline-flex items-center gap-2 px-4 py-1.5 border border-[#00ffff]/40 bg-[#00ffff]/10 hover:bg-[#00ffff]/20 hover:scale-105 active:scale-95 transition-all cursor-pointer text-[#00ffff] font-mono text-sm uppercase tracking-widest mb-6 rounded-full"
+            title="Reveal 1 letter (-5 seconds)"
+          >
+            <Lightbulb className="w-4 h-4" /> Use Hint (-5s)
+          </button>
           <h3 className="text-2xl md:text-3xl font-bold text-white leading-relaxed">
             "{currentQ.hint}"
           </h3>

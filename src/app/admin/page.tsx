@@ -137,6 +137,21 @@ export default function AdminPage() {
     }
   };
 
+  const clearFailedPlayers = async () => {
+    if (!confirm("Are you sure you want to permanently delete all FAILED sessions from the database?")) return;
+    setIsPurging(true);
+    try {
+      await supabase.from("players").delete().eq("status", "failed");
+      alert("Failed players cleared.");
+      fetchPlayers();
+    } catch (e) {
+      console.error(e);
+      alert("Clear failed. Check database permissions.");
+    } finally {
+      setIsPurging(false);
+    }
+  };
+
   useEffect(() => {
     if (isAdmin) {
       fetchLiveStatus();
@@ -244,15 +259,25 @@ export default function AdminPage() {
             <h3 className="text-xs font-bold text-[#ff003c] uppercase mb-4 flex items-center gap-2">
               <AlertTriangle className="w-4 h-4" /> Danger Zone
             </h3>
-            <button
-              onClick={globalPurge}
-              disabled={isPurging}
-              className="w-full py-3 border border-[#ff003c] bg-[#ff003c]/10 text-[#ff003c] hover:bg-[#ff003c] hover:text-white transition-all font-bold uppercase tracking-tighter text-sm flex items-center justify-center gap-2"
-            >
-              {isPurging ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
-              Emergency Purge
-            </button>
-            <p className="text-[10px] opacity-40 mt-2 text-center uppercase tracking-widest">Resets all stations for next round</p>
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={globalPurge}
+                disabled={isPurging}
+                className="w-full py-3 border border-[#ff003c] bg-[#ff003c]/10 text-[#ff003c] hover:bg-[#ff003c] hover:text-white transition-all font-bold uppercase tracking-tighter text-sm flex items-center justify-center gap-2"
+              >
+                {isPurging ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                Emergency Purge
+              </button>
+              <button
+                onClick={clearFailedPlayers}
+                disabled={isPurging}
+                className="w-full py-2 border border-orange-500 bg-orange-500/10 text-orange-500 hover:bg-orange-500 hover:text-white transition-all font-bold uppercase tracking-tighter text-xs flex items-center justify-center gap-2"
+              >
+                {isPurging ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
+                Clear Failed
+              </button>
+            </div>
+            <p className="text-[10px] opacity-40 mt-3 text-center uppercase tracking-widest">Resets all stations for next round</p>
           </div>
         </div>
 

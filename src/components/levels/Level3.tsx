@@ -302,7 +302,7 @@ export function Level3() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
+      <div className={cn("grid gap-6 flex-1", mode === "solo" ? "grid-cols-1 max-w-3xl mx-auto w-full" : "grid-cols-1 md:grid-cols-2")}>
         {/* Left Side: My Terminal */}
         <div className={cn(
           "border-2 p-6 flex flex-col bg-black transition-all",
@@ -365,51 +365,53 @@ export function Level3() {
         </div>
 
         {/* Right Side: Partner Terminal */}
-        <div className={cn(
-          "border-2 p-6 flex flex-col bg-[#000508]/80 transition-all border-dashed",
-          partnerAnswered ? "border-[#00ff00]/50" : "border-white/20"
-        )}>
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold opacity-50 tracking-widest uppercase">Partner Feed ({session?.partnerName || session?.partnerId})</h3>
-            {partnerAnswered && <CheckCircle2 className="w-6 h-6 text-[#00ff00]" />}
-          </div>
+        {mode !== "solo" && (
+          <div className={cn(
+            "border-2 p-6 flex flex-col bg-[#000508]/80 transition-all border-dashed",
+            partnerAnswered ? "border-[#00ff00]/50" : "border-white/20"
+          )}>
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-bold opacity-50 tracking-widest uppercase">Partner Feed ({session?.partnerName || session?.partnerId})</h3>
+              {partnerAnswered && <CheckCircle2 className="w-6 h-6 text-[#00ff00]" />}
+            </div>
 
-          <div className="flex-1 flex flex-col gap-4">
-            {partnerAnswered ? (
-              <div className="flex-1 flex flex-col items-center justify-center p-8 bg-black/40 text-center gap-6">
-                <div className="w-20 h-20 border-2 border-[#00ff00] rounded-full flex items-center justify-center border-t-transparent animate-spin" />
-                <p className="text-[#00ff00] font-mono tracking-widest uppercase">Partner Secured Fragment</p>
-              </div>
-            ) : (
-              <div className="flex flex-col flex-1">
-                <p className="text-sm opacity-50 italic mb-4">"{(session?.role === "host" ? GUEST_QUESTIONS : HOST_QUESTIONS)[currentStep].question}"</p>
-                <div className="grid grid-cols-1 gap-2 flex-1">
-                  {(session?.role === "host" ? GUEST_QUESTIONS : HOST_QUESTIONS)[currentStep].options.map((opt, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => sendPing(idx)}
-                      className={cn(
-                        "p-3 text-left border text-xs font-mono transition-all group relative",
-                        partnerSelection === idx ? "border-[#00ff00] bg-[#00ff00]/10 text-[#00ff00]" : "border-white/5 hover:border-white/20"
-                      )}
-                    >
-                      <span className="opacity-30 group-hover:opacity-100 transition-opacity absolute right-2 text-[8px] uppercase">Click to Suggest</span>
-                      <span className="mr-2 opacity-30">[{String.fromCharCode(65 + idx)}]</span> {opt}
-                    </button>
-                  ))}
+            <div className="flex-1 flex flex-col gap-4">
+              {partnerAnswered ? (
+                <div className="flex-1 flex flex-col items-center justify-center p-8 bg-black/40 text-center gap-6">
+                  <div className="w-20 h-20 border-2 border-[#00ff00] rounded-full flex items-center justify-center border-t-transparent animate-spin" />
+                  <p className="text-[#00ff00] font-mono tracking-widest uppercase">Partner Secured Fragment</p>
                 </div>
-                <div className="mt-4 flex items-center justify-center gap-2 text-[10px] font-mono opacity-50 animate-pulse">
-                  <Activity className="w-3 h-3 text-[#00ffff]" />
-                  SYNCING LIVE ACTIONS...
+              ) : (
+                <div className="flex flex-col flex-1">
+                  <p className="text-sm opacity-50 italic mb-4">"{(session?.role === "host" ? GUEST_QUESTIONS : HOST_QUESTIONS)[currentStep].question}"</p>
+                  <div className="grid grid-cols-1 gap-2 flex-1">
+                    {(session?.role === "host" ? GUEST_QUESTIONS : HOST_QUESTIONS)[currentStep].options.map((opt, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => sendPing(idx)}
+                        className={cn(
+                          "p-3 text-left border text-xs font-mono transition-all group relative",
+                          partnerSelection === idx ? "border-[#00ff00] bg-[#00ff00]/10 text-[#00ff00]" : "border-white/5 hover:border-white/20"
+                        )}
+                      >
+                        <span className="opacity-30 group-hover:opacity-100 transition-opacity absolute right-2 text-[8px] uppercase">Click to Suggest</span>
+                        <span className="mr-2 opacity-30">[{String.fromCharCode(65 + idx)}]</span> {opt}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="mt-4 flex items-center justify-center gap-2 text-[10px] font-mono opacity-50 animate-pulse">
+                    <Activity className="w-3 h-3 text-[#00ffff]" />
+                    SYNCING LIVE ACTIONS...
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          <div className="mt-6 p-4 border border-white/5 bg-black/20 text-[10px] font-mono opacity-30 uppercase">
-            Interactive link established. Click partner options to highlight them on their screen.
+            <div className="mt-6 p-4 border border-white/5 bg-black/20 text-[10px] font-mono opacity-30 uppercase">
+              Interactive link established. Click partner options to highlight them on their screen.
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
