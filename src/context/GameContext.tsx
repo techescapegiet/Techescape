@@ -11,8 +11,10 @@ export interface Player {
   token: string;
   currentLevel: number;
   fragments: string[];
-  startTime: number; // timestamp
+  startTime: number;
   rollNumber: string;
+  academicYear: string;
+  department: string;
 }
 
 interface GameContextType {
@@ -27,7 +29,8 @@ interface GameContextType {
   signInWithGoogle: () => Promise<void>;
   user: User | null;
   isEventLive: boolean;
-  checkEventStatus: () => Promise<boolean>;
+  isGameStarted: boolean;
+  checkEventStatus: () => Promise<{ isLive: boolean, isStarted: boolean }>;
   erasePlayerData: () => Promise<void>;
   handleMissionFailure: (reason: string) => Promise<void>;
 }
@@ -42,6 +45,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const [timeRemaining, setTimeRemaining] = useState(TOTAL_MISSION_TIME);
   const [user, setUser] = useState<User | null>(null);
   const [isEventLive, setIsEventLive] = useState(false);
+  const [isGameStarted, setIsGameStarted] = useState(false);
   const router = useRouter();
 
   // Sync player to Supabase using session history model
@@ -100,6 +104,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         filter: "id=eq.1"
       }, (payload) => {
         setIsEventLive(payload.new.is_live);
+        setIsGameStarted(payload.new.game_started || false);
       })
       .subscribe();
 
@@ -119,15 +124,16 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const checkEventStatus = async () => {
     const { data, error } = await supabase
       .from("event_settings")
-      .select("is_live")
+      .select("is_live, game_started")
       .eq("id", 1)
       .maybeSingle();
 
     if (data && !error) {
       setIsEventLive(data.is_live);
-      return data.is_live;
+      setIsGameStarted(data.game_started || false);
+      return { isLive: data.is_live, isStarted: data.game_started || false };
     }
-    return false;
+    return { isLive: false, isStarted: false };
   };
 
   const signInWithGoogle = async () => {
@@ -142,20 +148,42 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!player) return;
+    if (!isGameStarted) {
+      // Freeze timer at 1 hr if game hasn't started
+      setTimeRemaining(TOTAL_MISSION_TIME);
+      return;
+    }
+
+    // When game is started, sync local start time so the 60 min countdown begins perfectly across all devices
+    const savedPlayer = localStorage.getItem("escape_room_player");
+    let currentStartTime = player.startTime;
+
+    // If the timer was frozen (i.e., they logged in early), we override their local start time to NOW
+    if (savedPlayer) {
+      const parsed = JSON.parse(savedPlayer);
+      if (parsed.startTime < Date.now() - 3600000 && timeRemaining === TOTAL_MISSION_TIME) {
+        // It's a stale start time from an earlier login, reset it.
+        const newTime = Date.now();
+        currentStartTime = newTime;
+        const updatedPlayer = { ...parsed, startTime: newTime };
+        setPlayer(updatedPlayer);
+        localStorage.setItem("escape_room_player", JSON.stringify(updatedPlayer));
+      }
+    }
 
     const timer = setInterval(() => {
-      setTimeRemaining((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          handleMissionFailure("TIME EXPIRED: SYSTEM LOCKDOWN INITIATED");
-          return 0;
-        }
-        return prev - 1;
-      });
+      const elapsed = Math.floor((Date.now() - currentStartTime) / 1000);
+      const remaining = Math.max(0, TOTAL_MISSION_TIME - elapsed);
+      setTimeRemaining(remaining);
+
+      if (remaining <= 0) {
+        clearInterval(timer);
+        handleMissionFailure("TIME EXPIRED: SYSTEM LOCKDOWN INITIATED");
+      }
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [player]);
+  }, [player, isGameStarted]);
 
   const erasePlayerData = async () => {
     if (!player) return;
@@ -205,7 +233,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     try {
       const { data, error } = await supabase
         .from("access_keys")
-        .select("pc_id, roll_number")
+        .select("pc_id, roll_number, academic_year, department")
         .eq("pin", token.toUpperCase())
         .eq("is_assigned", true) // Only allow login if PC is currently registered
         .single();
@@ -223,19 +251,21 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         .maybeSingle();
 
       const newPlayer: Player = {
-        sessionId: sessionData?.id || "temp-" + Date.now(), // Fallback if session record missing
+        sessionId: sessionData?.id || "temp-" + Date.now(),
         id: data.pc_id,
         token: token.toUpperCase(),
         currentLevel: 1,
         fragments: [],
         startTime: Date.now(),
-        rollNumber: data.roll_number || sessionData?.roll_number || ""
+        rollNumber: data.roll_number || sessionData?.roll_number || "",
+        academicYear: data.academic_year || "1st Year",
+        department: data.department || "Computer Science"
       };
 
       setPlayer(newPlayer);
       localStorage.setItem("escape_room_player", JSON.stringify(newPlayer));
       await syncPlayerToSupabase(newPlayer);
-      router.push("/dashboard");
+      router.push("/lobby");
       return { success: true };
     } catch (err) {
       console.error("Login error:", err);
@@ -379,7 +409,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         currentLevel: 1,
         fragments: [],
         startTime: Date.now(),
-        rollNumber: details.roll.toUpperCase()
+        rollNumber: details.roll.toUpperCase(),
+        academicYear: details.year,
+        department: details.dept
       };
 
       setPlayer(newPlayer);
@@ -406,6 +438,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         signInWithGoogle,
         user,
         isEventLive,
+        isGameStarted,
         checkEventStatus,
         erasePlayerData,
         handleMissionFailure

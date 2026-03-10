@@ -8,58 +8,24 @@ import { CheckCircle2, Cpu, Zap, Search, ShieldCheck, Bug, Binary, Lightbulb, Ke
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-// Data Pools
-const S1_POOL = [
-  { answer: "BYTE", question: "8 BITS MAKE ONE...", hint: "Unit larger than a bit" },
-  { answer: "CPU", question: "BRAIN OF THE COMPUTER", hint: "Central Processing Unit" },
-  { answer: "RAM", question: "VOLATILE MEMORY", hint: "Random Access Memory" }
-];
+import {
+  getCrosswordWords,
+  getSemanticBlanks,
+  getMCQs,
+  getDebuggingChallenge,
+  AcademicYear,
+  Department,
+  MCQQuestion,
+  SemanticBlank,
+  CodeChallenge
+} from "@/lib/questionBank";
 
-const S2_POOL = [
-  { word: "DEBUG", hint: "Checking code for errors" },
-  { word: "ALGO", hint: "Step-by-step math steps" },
-  { word: "ARRAY", hint: "Contiguous memory block for items" }
-];
-
-const S3_POOL = [
-  { question: "Which data structure is LIFO?", options: ["Queue", "Stack", "Heap", "Tree"], correct: 1, hint: "Last In First Out" },
-  { question: "Standard Database Language?", options: ["Java", "HTML", "SQL", "C++"], correct: 2, hint: "Structured Query Language" },
-  { question: "Protocol for secure Websites?", options: ["HTTP", "FTP", "HTTPS", "SMTP"], correct: 2, hint: "S stands for Secure" }
-];
-
-const S4_POOL = [
-  {
-    brokenCode: `def greet():\n    print("Hello")\n\ngreet`,
-    fixedCode: `def greet():\n    print("Hello")\n\ngreet()`,
-    error: "Function not called",
-    hint: "Add parentheses to call the function.",
-    description: "Fix the function call",
-    lang: "python"
-  },
-  {
-    brokenCode: `int x = 5\nprintf("%d", x);`,
-    fixedCode: `int x = 5;\nprintf("%d", x);`,
-    error: "';' expected",
-    hint: "Missing semicolon.",
-    description: "Fix the syntax error",
-    lang: "c"
-  },
-  {
-    brokenCode: `String s = "Hi"\nSystem.out.println(s);`,
-    fixedCode: `String s = "Hi";\nSystem.out.println(s);`,
-    error: "';' expected",
-    hint: "Missing semicolon.",
-    description: "Fix the syntax error",
-    lang: "java"
-  }
-];
-
-function normalize(code: string): string {
+const normalize = (code: string): string => {
   return code.replace(/\r\n/g, "\n").replace(/\t/g, "    ").trim();
-}
+};
 
 export function Level5() {
-  const { completeLevel, handleMissionFailure } = useGame();
+  const { completeLevel, handleMissionFailure, player } = useGame();
 
   const [stage, setStage] = useState<number>(1);
   const [attempts, setAttempts] = useState(3);
@@ -88,14 +54,31 @@ export function Level5() {
   const [compileMsg, setCompileMsg] = useState("");
 
   useEffect(() => {
+    if (!player?.academicYear || !player?.department) return;
+
+    const year = player.academicYear as AcademicYear;
+    const dept = player.department as Department;
+
     // Init all stages data
-    const d1 = S1_POOL[Math.floor(Math.random() * S1_POOL.length)];
-    const d2 = S2_POOL[Math.floor(Math.random() * S2_POOL.length)];
-    const d3 = S3_POOL[Math.floor(Math.random() * S3_POOL.length)];
-    const d4 = S4_POOL[Math.floor(Math.random() * S4_POOL.length)];
+    // Use SemanticBlanks for Stage 1 too because it has hints/questions
+    const s1Pool = getSemanticBlanks(year, dept);
+    const d1Raw = s1Pool[Math.floor(Math.random() * s1Pool.length)];
+    const d1 = { answer: d1Raw.word, question: d1Raw.hint, hint: "Check your logic." };
+
+    const s2Pool = getSemanticBlanks(year, dept);
+    let d2 = s2Pool[Math.floor(Math.random() * s2Pool.length)];
+    // Ensure d2 is different from d1 if possible
+    if (d2.word === d1.answer && s2Pool.length > 1) {
+      d2 = s2Pool.find(p => p.word !== d1.answer) || d2;
+    }
+
+    const mcqs = getMCQs(year, dept);
+    const d3 = mcqs[Math.floor(Math.random() * mcqs.length)];
+
+    const d4 = getDebuggingChallenge(year, dept);
 
     setS1Data(d1); setS2Data(d2); setS3Data(d3); setS4Data(d4);
-    setUserCode(d4.brokenCode);
+    setUserCode(d4.initialCode);
 
     // Build grid for S1 (6x6)
     const newGrid: string[][] = Array(6).fill(null).map(() => Array(6).fill(""));
@@ -137,7 +120,7 @@ export function Level5() {
     }
     setRevealedIndices(rev);
     setBlanks(d2.word.split("").map((ch, i) => rev.includes(i) ? ch : ""));
-  }, []);
+  }, [player]);
 
   const handleStageSuccess = () => {
     if (stage < 4) {
@@ -231,14 +214,17 @@ export function Level5() {
   // S4 logic
   const handleS4Compile = () => {
     const u = normalize(userCode);
-    const f = normalize(s4Data.fixedCode);
-    if (u === f) {
+    const isCorrect = Array.isArray(s4Data.expectedSolutionSnippet)
+      ? s4Data.expectedSolutionSnippet.some((s: string) => u.includes(normalize(s)))
+      : u.includes(normalize(s4Data.expectedSolutionSnippet as string));
+
+    if (isCorrect) {
       setCompileResult("success");
       setCompileMsg("✓ Compilation success.");
       setTimeout(() => handleStageSuccess(), 1000);
     } else {
       setCompileResult("error");
-      setCompileMsg(`✗ Compilation failed. ${s4Data.error}`);
+      setCompileMsg(`✗ Logic or Syntax error detected.`);
       handleStageFailure();
       setTimeout(() => setCompileResult("idle"), 2000);
     }
@@ -421,7 +407,7 @@ export function Level5() {
                       <p className="text-xl md:text-2xl font-bold text-white mb-6">"{s3Data.question}"</p>
                       {showHint && (
                         <div className="mb-6 mx-auto w-fit p-2 border border-[#00ff00]/30 bg-[#00ff00]/5 text-[#00ff00] font-mono text-sm italic">
-                          💡 Hint: {s3Data.hint}
+                          💡 Hint: {s3Data.explanation || "Think about the core concept."}
                         </div>
                       )}
                     </div>
@@ -446,7 +432,7 @@ export function Level5() {
                     <div className="flex items-center justify-between border-b border-[#ff003c]/20 pb-2">
                       <div className="flex items-center gap-3 text-[#ff003c]">
                         <Bug className="w-5 h-5" />
-                        <h3 className="uppercase tracking-[0.2em] font-bold">Level 4: Critical Patching</h3>
+                        <h3 className="uppercase tracking-[0.2em] font-bold">Level 4: {s4Data.title}</h3>
                       </div>
                       <button onClick={() => setShowHint(true)} className="text-[10px] text-[#ff003c] hover:underline uppercase font-bold flex items-center gap-1">
                         <Lightbulb className="w-3 h-3" /> Get Hint
@@ -460,7 +446,7 @@ export function Level5() {
 
                     {showHint && (
                       <div className="p-2 border border-[#ff003c]/30 bg-[#ff003c]/5 text-[#ff003c] font-mono text-xs italic">
-                        💡 Hint: {s4Data.hint}
+                        💡 Hint: {s4Data.errorHint}
                       </div>
                     )}
 
@@ -470,7 +456,7 @@ export function Level5() {
                           <div className="w-2.5 h-2.5 rounded-full bg-[#ff003c]" />
                           <div className="w-2.5 h-2.5 rounded-full bg-[#ffaa00]" />
                           <div className="w-2.5 h-2.5 rounded-full bg-[#00ff00]" />
-                          <span className="ml-2 text-[10px] text-white/30 font-mono uppercase">main.{s4Data.lang}</span>
+                          <span className="ml-2 text-[10px] text-white/30 font-mono uppercase">main.{s4Data.language.toLowerCase() === "python" ? "py" : s4Data.language.toLowerCase() === "java" ? "java" : "c"}</span>
                         </div>
                       </div>
                       <div className="flex-1 flex overflow-auto">

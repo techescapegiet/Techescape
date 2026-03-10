@@ -1,38 +1,20 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useGame } from "@/context/GameContext";
-import { GlowingButton } from "@/components/ui/GlowingButton";
-import { TerminalText } from "@/components/ui/TerminalText";
-import { CheckCircle2, XCircle, HelpCircle, Cpu, RefreshCcw, LayoutGrid, List, AlertTriangle, Lightbulb } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useGame } from '@/context/GameContext';
+import { TerminalText } from '@/components/ui/TerminalText';
+import { GlitchText } from '@/components/ui/GlitchText';
+import { ShieldAlert, CheckCircle2, Lock, Unlock, Zap, Timer, BrainCircuit, Activity, LayoutGrid, AlertTriangle, List, HelpCircle } from 'lucide-react';
+import { getCrosswordWords, AcademicYear, Department } from '@/lib/questionBank';
 import { cn } from "@/lib/utils";
 
-const QUESTION_POOL = [
-  { question: "Brain of computer", answer: "CPU", hint: "3 letters" },
-  { question: "Short-term memory", answer: "RAM", hint: "3 letters" },
-  { question: "Read Only Memory", answer: "ROM", hint: "3 letters" },
-  { question: "0 or 1", answer: "BIT", hint: "3 letters" },
-  { question: "Network of computers", answer: "WEB", hint: "Spider..." },
-  { question: "Universal Serial Bus", answer: "USB", hint: "3 letters" },
-  { question: "Find a mistake in code", answer: "BUG", hint: "Insect" },
-  { question: "Automated program", answer: "BOT", hint: "Robot" },
-  { question: "Apple Phone OS", answer: "IOS", hint: "iPhone" },
-  { question: "Local Area Network", answer: "LAN", hint: "3 letters" },
-  { question: "Website address", answer: "URL", hint: "Link" },
-  { question: "Database language", answer: "SQL", hint: "3 letters" },
-  { question: "Application Interface", answer: "API", hint: "3 letters" },
-  { question: "Picture element", answer: "PIX", hint: "Short for pixel" },
-  { question: "Developer mode", answer: "DEV", hint: "Short for developer" },
-];
-
-const GRID_SIZE = 9;
+const GRID_SIZE = 12;
 const LEVEL_TIME = 360; // 6 minutes in seconds
 
 export function Level1() {
-  const { completeLevel, logout, handleMissionFailure } = useGame();
+  const { completeLevel, handleMissionFailure, player } = useGame();
 
-  const [questions, setQuestions] = useState<typeof QUESTION_POOL>([]);
   const [grid, setGrid] = useState<string[][]>([]);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
   const [selectedCells, setSelectedCells] = useState<{ r: number; c: number }[]>([]);
@@ -42,21 +24,23 @@ export function Level1() {
   const [isInitializing, setIsInitializing] = useState(true);
   const [timeLeft, setTimeLeft] = useState(LEVEL_TIME);
 
+  // Dynamically load words based on player's syllabus
+  const targetWords = useMemo(() => {
+    if (!player) return ["ALGORITHM"]; // Safe fallback
+    return getCrosswordWords(player.academicYear as AcademicYear, player.department as Department).slice(0, 6);
+  }, [player]);
+
   const skipLevel = () => {
     setSuccess(true);
-    setTimeout(() => completeLevel("STACK"), 1000);
+    setTimeout(() => completeLevel(targetWords[0]), 1000);
   };
 
   const initializeGame = useCallback(() => {
     setIsInitializing(true);
-    const shuffledPool = [...QUESTION_POOL].sort(() => Math.random() - 0.5);
-    const selected = shuffledPool.slice(0, 7);
-    setQuestions(selected);
 
     const newGrid: string[][] = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(""));
 
-    selected.forEach((q) => {
-      const word = q.answer.toUpperCase();
+    targetWords.forEach((word) => {
       let placed = false;
       let attempts = 0;
       while (!placed && attempts < 150) {
@@ -110,7 +94,7 @@ export function Level1() {
     setErrorFlash(false);
     setTimeLeft(LEVEL_TIME);
     setTimeout(() => setIsInitializing(false), 800);
-  }, []);
+  }, [targetWords]);
 
   useEffect(() => {
     initializeGame();
@@ -134,7 +118,8 @@ export function Level1() {
     }
   }, [timeLeft, success, handleMissionFailure]);
 
-  const currentWord = questions[currentQuestionIdx]?.answer || "";
+  const currentWord = targetWords[currentQuestionIdx] || "";
+  const currentWordLength = currentWord.length;
 
   const handleCellClick = (r: number, c: number) => {
     if (success || isInitializing || timeLeft <= 0) return;
@@ -153,11 +138,11 @@ export function Level1() {
     if (spelled === currentWord) {
       setFoundWords([...foundWords, currentWord]);
       setSelectedCells([]);
-      if (currentQuestionIdx < questions.length - 1) {
+      if (currentQuestionIdx < targetWords.length - 1) {
         setCurrentQuestionIdx(currentQuestionIdx + 1);
       } else {
         setSuccess(true);
-        setTimeout(() => completeLevel("STACK"), 3000);
+        setTimeout(() => completeLevel(targetWords[0]), 3000);
       }
     } else if (spelled.length >= currentWord.length || !currentWord.startsWith(spelled)) {
       setErrorFlash(true);
@@ -175,9 +160,9 @@ export function Level1() {
   };
 
   const getTimerColor = () => {
-    if (timeLeft <= 60) return "text-[#ff0000]"; // Red under 1 min
-    if (timeLeft <= 180) return "text-[#ffff00]"; // Yellow under 3 mins
-    return "text-[#00ff00]"; // Green
+    if (timeLeft <= 60) return "text-[#ff0000]";
+    if (timeLeft <= 180) return "text-[#ffff00]";
+    return "text-[#00ff00]";
   };
 
   const isCritical = timeLeft <= 30;
@@ -185,8 +170,8 @@ export function Level1() {
   if (isInitializing) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center">
-        <RefreshCcw className="w-16 h-16 mb-4 animate-spin text-[#00ff00]" />
-        <h2 className="text-xl font-mono tracking-widest uppercase text-[#00ff00]">Bypassing 9x9 Encryption Layer...</h2>
+        <BrainCircuit className="w-16 h-16 mb-4 animate-spin text-[#00ff00]" />
+        <h2 className="text-xl font-mono tracking-widest uppercase text-[#00ff00]">Generating 12x12 Security Matrix...</h2>
       </div>
     );
   }
@@ -195,9 +180,9 @@ export function Level1() {
     return (
       <div className="flex flex-col items-center justify-center p-12 mt-12 border-2 border-[#00ff00] bg-[#002200]/50 box-glow text-center rounded-lg">
         <CheckCircle2 className="w-24 h-24 text-[#00ff00] mb-6 animate-pulse" />
-        <h2 className="text-4xl font-bold text-[#00ff00] text-glow mb-4">NODE 1 BYPASSED</h2>
+        <h2 className="text-4xl font-bold text-[#00ff00] text-glow mb-4">MATRIX BYPASSED</h2>
         <div className="text-5xl font-mono font-bold text-[#00ffff] tracking-[0.5em] bg-black p-8 border-2 border-[#00ffff]">
-          STACK
+          {targetWords[0]}
         </div>
       </div>
     );
@@ -205,35 +190,56 @@ export function Level1() {
 
   return (
     <div className={cn("flex flex-col h-full mt-4 gap-6 max-w-7xl mx-auto w-full transition-all duration-300", isCritical && "animate-pulse")}>
-      {/* Header */}
       <div className="border-b-2 border-[#00ff00]/30 pb-4 flex justify-between items-center px-2">
         <div className="flex items-center gap-4">
           <motion.div
             animate={isCritical ? { rotate: [0, -2, 2, -2, 2, 0] } : {}}
             transition={{ repeat: Infinity, duration: 0.2 }}
           >
-            <Cpu className={cn("w-10 h-10", getTimerColor(), isCritical && "animate-pulse")} />
+            <ShieldAlert className={cn("w-10 h-10", getTimerColor(), isCritical && "animate-pulse")} />
           </motion.div>
           <div>
             <h2 className={cn("text-3xl font-black italic tracking-tighter flex items-center gap-3 drop-shadow-[0_0_10px_currentColor]", getTimerColor())}>
-              9X9 SECURITY MATRIX
+              12X12 SECURITY MATRIX
             </h2>
-            <p className="text-xs opacity-50 uppercase tracking-widest mt-1">JNTUH YEAR 01-02 CURRICULUM ENCRYPTION</p>
+            <p className="text-xs opacity-50 uppercase tracking-widest mt-1">JNTUH {player?.academicYear} {player?.department} CURRICULUM ENCRYPTION</p>
           </div>
         </div>
 
         <div className="flex items-center gap-8">
           <div className="text-right border-r border-white/20 pr-8">
-            <span className="text-xs opacity-50 block uppercase text-white/40">Encryption Strength</span>
-            <div className="flex items-center gap-3">
-              <span className="text-xl font-bold text-[#00ffff]">EASY_MODE</span>
-              <button
-                onClick={skipLevel}
-                className="bg-white/5 hover:bg-white/10 text-white/30 hover:text-white/60 text-[9px] px-2 py-0.5 rounded border border-white/10 transition-colors uppercase font-mono"
-              >
-                Skip
-              </button>
+            <div className="flex items-center gap-2 mb-4">
+              <BrainCircuit className="w-5 h-5 text-[#00ffff]" />
+              <h2 className="text-[#00ffff] font-bold tracking-widest uppercase">Target Syllabus Lexicon</h2>
             </div>
+            <div className="grid grid-cols-3 gap-3">
+              {targetWords.map((word) => {
+                const isFound = foundWords.includes(word);
+                const isActive = word === currentWord && !isFound;
+                return (
+                  <div
+                    key={word}
+                    className={cn(
+                      "flex items-center gap-2 text-xs font-mono uppercase tracking-widest p-2 rounded-sm",
+                      isFound
+                        ? "bg-[#00ff00]/10 text-[#00ff00] border border-[#00ff00]"
+                        : isActive
+                          ? "bg-[#00ffff]/10 text-[#00ffff] border border-[#00ffff] box-glow"
+                          : "bg-black/20 text-white/30 border border-white/10"
+                    )}
+                  >
+                    {isFound ? <CheckCircle2 className="w-3 h-3" /> : isActive ? <Unlock className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
+                    <span>{word}</span>
+                  </div>
+                );
+              })}
+            </div>
+            <button
+              onClick={skipLevel}
+              className="bg-white/5 hover:bg-white/10 text-white/30 hover:text-white/60 text-[9px] px-2 py-0.5 mt-2 rounded border border-white/10 transition-colors uppercase font-mono"
+            >
+              Skip
+            </button>
           </div>
 
           <div className={cn("flex flex-col items-center p-3 border-2 min-w-[140px] box-glow",
@@ -271,19 +277,17 @@ export function Level1() {
         transition={{ repeat: Infinity, duration: 0.1 }}
         className="flex flex-col lg:flex-row gap-8 items-stretch flex-1"
       >
-        {/* LEFT: 9x9 CROSSWORD GRID */}
         <div className="flex-1 flex flex-col gap-4">
           <div className="flex items-center gap-2 text-[#00ff00] font-bold text-xs uppercase tracking-[0.2em] mb-1">
             <LayoutGrid className="w-4 h-4" /> Active Grid
           </div>
           <div
             className={cn(
-              "grid grid-cols-9 gap-1.5 p-4 bg-black/80 border-2 border-[#00ff00]/40 box-glow rounded-sm grow aspect-square lg:aspect-auto relative overflow-hidden",
+              "grid grid-cols-12 gap-1.5 p-4 bg-black/80 border-2 border-[#00ff00]/40 box-glow rounded-sm grow aspect-square lg:aspect-auto relative overflow-hidden",
               errorFlash && "border-[#ff003c] bg-[#330000]/30 shadow-[0_0_20px_#ff003c]",
               isCritical && "border-red-600 shadow-[inset_0_0_50px_rgba(255,0,0,0.4)]"
             )}
           >
-            {/* Scanned Lines / Glitch Effect for Critical State */}
             {isCritical && (
               <div className="absolute inset-0 pointer-events-none opacity-20 bg-[repeating-linear-gradient(0deg,rgba(255,0,0,0.1),rgba(255,0,0,0.1)_1px,transparent_1px,transparent_2px)] animate-pulse" />
             )}
@@ -309,49 +313,40 @@ export function Level1() {
           </div>
         </div>
 
-        {/* RIGHT: QUESTION & ACTIVE ANSWER */}
         <div className="w-full lg:w-[450px] flex flex-col gap-6">
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2 text-[#00ffff] font-bold text-xs uppercase tracking-[0.2em]">
-              <HelpCircle className="w-4 h-4" /> Active Query
+              <HelpCircle className="w-4 h-4" /> Search the Matrix for:
             </div>
-            <div className={cn("border-2 p-6 box-glow rounded-sm min-h-[160px] flex flex-col justify-between transition-colors relative overflow-hidden",
+            <div className={cn("border-2 p-6 box-glow rounded-sm min-h-[160px] flex flex-col justify-center items-center transition-colors relative overflow-hidden",
               isCritical ? "border-red-600 bg-red-950/20" : "border-[#00ffff]/40 bg-[#001122]/60")}>
 
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentQuestionIdx}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="space-y-4"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 1.1 }}
+                  className="space-y-4 text-center"
                 >
-                  <p className="text-xl font-bold text-white leading-relaxed">
-                    {questions[currentQuestionIdx]?.question}
+                  <p className="text-4xl tracking-[0.3em] font-black text-white leading-relaxed">
+                    {currentWord}
                   </p>
-
-                  {/* Hint Section */}
-                  <div className="flex items-start gap-2 text-[#00ffff] bg-black/40 p-3 border border-[#00ffff]/20 rounded-sm">
-                    <Lightbulb className="w-4 h-4 mt-0.5 shrink-0" />
-                    <p className="text-sm font-mono opacity-80 italic">
-                      Hint: {questions[currentQuestionIdx]?.hint}
-                    </p>
-                  </div>
                 </motion.div>
               </AnimatePresence>
 
-              <div className="mt-6 flex flex-wrap gap-2">
-                {currentWord.split("").map((_, i) => (
+              <div className="mt-6 flex flex-wrap justify-center gap-2">
+                {Array.from({ length: Math.max(1, currentWordLength) }).map((_, i) => (
                   <div
                     key={i}
                     className={cn(
-                      "w-10 h-12 border-2 flex items-center justify-center font-mono text-xl font-bold",
+                      "w-10 h-12 border-2 flex items-center justify-center font-mono text-xl font-bold rounded-sm",
                       selectedCells[i]
-                        ? "border-[#00ffff] bg-[#00ffff]/20 text-[#00ffff] text-glow"
+                        ? "border-[#00ffff] bg-[#00ffff]/20 text-[#00ffff] text-glow shadow-[0_0_10px_#00ffff]"
                         : "border-[#00ffff]/20 bg-black/40 text-[#00ffff]/20"
                     )}
                   >
-                    {selectedCells[i] ? grid[selectedCells[i].r][selectedCells[i].c] : "?"}
+                    {selectedCells[i] ? grid[selectedCells[i].r][selectedCells[i].c] : "_"}
                   </div>
                 ))}
               </div>
@@ -360,10 +355,10 @@ export function Level1() {
 
           <div className="flex flex-col gap-3 flex-1">
             <div className="flex items-center gap-2 text-[#00ff00] font-bold text-xs uppercase tracking-[0.2em]">
-              <List className="w-4 h-4" /> Progress Log ( {currentQuestionIdx + 1} / 7 )
+              <List className="w-4 h-4" /> Progress Log ( {currentQuestionIdx + 1} / 6 )
             </div>
             <div className="flex flex-col gap-2 overflow-y-auto max-h-[350px] pr-2 scrollbar-thin scrollbar-thumb-[#00ff00]/20">
-              {questions.map((q, i) => (
+              {targetWords.map((word, i) => (
                 <div
                   key={i}
                   className={cn(
@@ -377,7 +372,7 @@ export function Level1() {
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-[10px] w-4">{i + 1}.</span>
-                    <span>{i < currentQuestionIdx ? q.answer : i === currentQuestionIdx ? "EXECUTING..." : "PENDING"}</span>
+                    <span>{i < currentQuestionIdx ? word : i === currentQuestionIdx ? "EXECUTING..." : "PENDING"}</span>
                   </div>
                   {i < currentQuestionIdx && <CheckCircle2 className="w-4 h-4" />}
                 </div>
@@ -390,7 +385,7 @@ export function Level1() {
               isCritical ? "border-red-600 text-red-500 bg-red-950/20 shadow-[0_0_10px_#ff0000]" : "border-[#00ff00]/20 text-[#00ff00]/60 bg-black/50")}>
               &gt; STATUS: {isCritical ? "BREAKDOWN_DETECTED" : "MATRIX_STABLE"}<br />
               &gt; GAME_OVER_PENALTY: LOGOUT_ON_EXPIRY<br />
-              &gt; ENCRYPTION: 30_EASY_MODE_POOL
+              &gt; ENCRYPTION: JNTUH_SYLLABUS_POOL
             </div>
           </div>
         </div>

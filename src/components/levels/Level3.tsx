@@ -9,59 +9,7 @@ import { cn } from "@/lib/utils";
 import { CollabLobby } from "./CollabLobby";
 import { supabase } from "@/lib/supabase";
 
-const ALL_HOST_QUESTIONS = [
-  { id: 1, question: "Which layer handles end-to-end data transfer?", options: ["Physical", "Network", "Transport", "Session"], correct: 2, hint: "TCP lives here." },
-  { id: 2, question: "Function of a Semaphore?", options: ["Storage", "Sync", "Memory", "Routing"], correct: 1, hint: "Process coordination." },
-  { id: 3, question: "Which structure uses LIFO?", options: ["Queue", "Stack", "Heap", "List"], correct: 1, hint: "Like stacking plates." },
-  { id: 4, question: "What does CPU stand for?", options: ["Central Process Unit", "Central Processing Unit", "Computer Process Unit", "Central Program Unit"], correct: 1, hint: "The brain of a computer." },
-  { id: 5, question: "Which is NOT an OOP concept?", options: ["Encapsulation", "Polymorphism", "Compilation", "Inheritance"], correct: 2, hint: "One is a build step." },
-  { id: 6, question: "What does HTML stand for?", options: ["Hyper Text Markup Language", "High Tech Modern Language", "Hyper Transfer Markup Language", "Home Tool Markup Language"], correct: 0, hint: "Used for web pages." },
-  { id: 7, question: "Which is a NoSQL database?", options: ["MySQL", "PostgreSQL", "MongoDB", "Oracle"], correct: 2, hint: "Document-based." },
-  { id: 8, question: "What does RAM stand for?", options: ["Read Access Memory", "Random Access Memory", "Run Access Memory", "Rapid Access Memory"], correct: 1, hint: "Temporary storage." },
-  { id: 9, question: "Binary of decimal 5?", options: ["110", "101", "100", "111"], correct: 1, hint: "4+1." },
-  { id: 10, question: "Which protocol is for email?", options: ["HTTP", "FTP", "SMTP", "SSH"], correct: 2, hint: "Simple Mail..." },
-  { id: 11, question: "What is an Array?", options: ["Key-value pairs", "Contiguous memory block", "Linked nodes", "Tree structure"], correct: 1, hint: "Indexed elements." },
-  { id: 12, question: "What does OS stand for?", options: ["Open Source", "Operating System", "Output Stream", "Online Service"], correct: 1, hint: "Manages hardware." },
-  { id: 13, question: "Which sorting is O(n log n)?", options: ["Bubble Sort", "Merge Sort", "Selection Sort", "Insertion Sort"], correct: 1, hint: "Divide and conquer." },
-  { id: 14, question: "What is TCP?", options: ["Transfer Control Protocol", "Transmission Control Protocol", "Total Connection Protocol", "Transport Code Protocol"], correct: 1, hint: "Reliable data delivery." },
-  { id: 15, question: "Which is a loop keyword?", options: ["class", "for", "return", "import"], correct: 1, hint: "Iteration." },
-  { id: 16, question: "What does API stand for?", options: ["Application Programming Interface", "Advanced Program Integration", "Applied Protocol Interface", "Auto Program Input"], correct: 0, hint: "Software communication." },
-  { id: 17, question: "What is 1 byte?", options: ["4 bits", "8 bits", "16 bits", "2 bits"], correct: 1, hint: "Standard data unit." },
-  { id: 18, question: "Which is a version control tool?", options: ["Docker", "Git", "Node", "Webpack"], correct: 1, hint: "Track code changes." },
-  { id: 19, question: "What does DNS do?", options: ["Encrypts data", "Translates domain names", "Sends emails", "Stores files"], correct: 1, hint: "Domain Name..." },
-  { id: 20, question: "Which language is used for Android?", options: ["Swift", "Kotlin", "Ruby", "Perl"], correct: 1, hint: "JetBrains created it." },
-];
-
-const ALL_GUEST_QUESTIONS = [
-  { id: 1, question: "Secure way to transfer files?", options: ["HTTP", "FTP", "SFTP", "SMTP"], correct: 2, hint: "Secure FTP." },
-  { id: 2, question: "Clear all records fast in SQL?", options: ["DELETE", "DROP", "TRUNCATE", "REMOVE"], correct: 2, hint: "Starts with T." },
-  { id: 3, question: "What is DHCP?", options: ["Dynamic Host Config", "Digital Host Control", "Data Host Config", "Direct Host Config"], correct: 0, hint: "Assigns IP addresses." },
-  { id: 4, question: "Which is a CSS framework?", options: ["React", "Angular", "Bootstrap", "Node"], correct: 2, hint: "Responsive design." },
-  { id: 5, question: "What does URL stand for?", options: ["Uniform Resource Locator", "Universal Resource Link", "Unified Resource Location", "User Resource Locator"], correct: 0, hint: "Web address." },
-  { id: 6, question: "Which is a primary key rule?", options: ["Can be null", "Must be unique", "Can be duplicate", "Optional"], correct: 1, hint: "Identifies rows." },
-  { id: 7, question: "What is a Firewall?", options: ["Antivirus", "Network security", "Database", "Compiler"], correct: 1, hint: "Blocks unwanted traffic." },
-  { id: 8, question: "What does CSS stand for?", options: ["Computer Style Sheets", "Cascading Style Sheets", "Colorful Style Sheets", "Creative Style Sheets"], correct: 1, hint: "Styles web pages." },
-  { id: 9, question: "Which port is for HTTPS?", options: ["80", "443", "21", "3306"], correct: 1, hint: "Secure HTTP." },
-  { id: 10, question: "What is IPv6?", options: ["64-bit address", "128-bit address", "32-bit address", "256-bit address"], correct: 1, hint: "Newer IP version." },
-  { id: 11, question: "What does IDE stand for?", options: ["Integrated Development Environment", "Internet Data Exchange", "Internal Design Engine", "Interactive Debug Editor"], correct: 0, hint: "Code editor." },
-  { id: 12, question: "Which is a frontend framework?", options: ["Django", "Flask", "React", "Express"], correct: 2, hint: "Made by Facebook." },
-  { id: 13, question: "What is a compiler?", options: ["Runs code line by line", "Translates to machine code", "Debugs code", "Links libraries"], correct: 1, hint: "Whole program at once." },
-  { id: 14, question: "What does JSON stand for?", options: ["Java Standard Object Notation", "JavaScript Object Notation", "Joint Source Open Network", "Java Serialized Object Name"], correct: 1, hint: "Data format." },
-  { id: 15, question: "Which is a cloud provider?", options: ["GitHub", "AWS", "VS Code", "npm"], correct: 1, hint: "Amazon's cloud." },
-  { id: 16, question: "What is a Boolean?", options: ["Number type", "True/False type", "String type", "Array type"], correct: 1, hint: "Two possible values." },
-  { id: 17, question: "What does SSH stand for?", options: ["Secure Shell", "Simple Shell", "System Shell", "Standard Shell"], correct: 0, hint: "Remote access." },
-  { id: 18, question: "Which is NOT a data type?", options: ["int", "float", "loop", "char"], correct: 2, hint: "One is a control flow." },
-  { id: 19, question: "What is REST?", options: ["Database type", "API architecture", "Programming language", "Network protocol"], correct: 1, hint: "Representational State Transfer." },
-  { id: 20, question: "Which SQL joins all matching rows?", options: ["LEFT JOIN", "RIGHT JOIN", "INNER JOIN", "CROSS JOIN"], correct: 2, hint: "Only matching rows." },
-];
-
-function pickRandom<T>(arr: T[], count: number): T[] {
-  const shuffled = [...arr].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, count);
-}
-
-const HOST_QUESTIONS = pickRandom(ALL_HOST_QUESTIONS, 3);
-const GUEST_QUESTIONS = pickRandom(ALL_GUEST_QUESTIONS, 3);
+import { getMCQs, AcademicYear, Department, MCQQuestion } from "@/lib/questionBank";
 
 interface OnlinePlayer {
   id: string; // Session UUID
@@ -89,6 +37,44 @@ export function Level3() {
   const [success, setSuccess] = useState(false);
   const [errorFlash, setErrorFlash] = useState(false);
   const [showHint, setShowHint] = useState(false);
+
+  // Dynamic Syllabus Questions
+  const [myQuestions, setMyQuestions] = useState<MCQQuestion[]>([]);
+  const [partnerQuestions, setPartnerQuestions] = useState<MCQQuestion[]>([]);
+
+  // Setup My Questions
+  useEffect(() => {
+    if (player?.academicYear && player?.department) {
+      setMyQuestions(getMCQs(player.academicYear as AcademicYear, player.department as Department));
+    }
+  }, [player]);
+
+  // Setup Partner Questions
+  useEffect(() => {
+    if (mode === "collab" && session?.partnerId) {
+      const fetchPartnerData = async () => {
+        const { data, error } = await supabase
+          .from("players")
+          .select("access_keys(academic_year, department)")
+          .eq("id", session.partnerId)
+          .single();
+
+        if (error) {
+          console.error("Partner details fetch error", error);
+          // Fallback to our own questions or 1st year CS
+          setPartnerQuestions(getMCQs("1st Year", "Computer Science"));
+          return;
+        }
+
+        const keys: any = Array.isArray(data?.access_keys) ? data?.access_keys[0] : data?.access_keys;
+        const pYear = keys?.academic_year || "1st Year";
+        const pDept = keys?.department || "Computer Science";
+
+        setPartnerQuestions(getMCQs(pYear as AcademicYear, pDept as Department));
+      };
+      fetchPartnerData();
+    }
+  }, [mode, session]);
 
   const skipLevel = async () => {
     if (mode === "collab" && session) {
@@ -178,7 +164,7 @@ export function Level3() {
     if (selected === null) return;
 
     if (mode === "solo") {
-      const isCorrect = selected === HOST_QUESTIONS[currentStep].correct;
+      const isCorrect = selected === myQuestions[currentStep].correct;
       if (isCorrect) {
         if (currentStep < 2) {
           setCurrentStep(currentStep + 1);
@@ -197,9 +183,7 @@ export function Level3() {
 
     if (!session) return;
     // Handle collaborative answer submission
-
-    const questions = session.role === "host" ? HOST_QUESTIONS : GUEST_QUESTIONS;
-    const isCorrect = selected === questions[currentStep].correct;
+    const isCorrect = selected === myQuestions[currentStep].correct;
 
     if (!isCorrect) {
       // Wrong answer resets BOTH for that step and subtracts attempt
@@ -309,8 +293,7 @@ export function Level3() {
     );
   }
 
-  const questions = mode === "collab" ? (session?.role === "host" ? HOST_QUESTIONS : GUEST_QUESTIONS) : HOST_QUESTIONS;
-  const q = questions[currentStep];
+  const q = myQuestions[currentStep];
 
   if (!q) return null;
 
@@ -367,7 +350,7 @@ export function Level3() {
               </p>
               {showHint && (
                 <div className="mb-6 p-2 bg-[#00ffff]/5 border border-[#00ffff]/20 text-[#00ffff] text-xs italic animate-pulse">
-                  HINT: {q.hint || "Try to think about the core concept."}
+                  HINT: {q.explanation || "Try to think about the core concept."}
                 </div>
               )}
               <div className="grid grid-cols-1 gap-4">
@@ -425,9 +408,9 @@ export function Level3() {
                 </div>
               ) : (
                 <div className="flex flex-col flex-1">
-                  <p className="text-sm opacity-50 italic mb-4">"{(session?.role === "host" ? GUEST_QUESTIONS : HOST_QUESTIONS)[currentStep].question}"</p>
+                  <p className="text-sm opacity-50 italic mb-4">"{partnerQuestions[currentStep]?.question || "..."}"</p>
                   <div className="grid grid-cols-1 gap-2 flex-1">
-                    {(session?.role === "host" ? GUEST_QUESTIONS : HOST_QUESTIONS)[currentStep].options.map((opt, idx) => (
+                    {partnerQuestions[currentStep]?.options.map((opt, idx) => (
                       <button
                         key={idx}
                         onClick={() => sendPing(idx)}

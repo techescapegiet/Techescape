@@ -23,6 +23,7 @@ export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [players, setPlayers] = useState<LivePlayer[]>([]);
   const [isLive, setIsLive] = useState(false);
+  const [isGameStarted, setIsGameStarted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isPurging, setIsPurging] = useState(false);
   const [sortField, setSortField] = useState<keyof LivePlayer>("name");
@@ -39,10 +40,13 @@ export default function AdminPage() {
   const fetchLiveStatus = async () => {
     const { data } = await supabase
       .from("event_settings")
-      .select("is_live")
+      .select("is_live, game_started")
       .eq("id", 1)
       .maybeSingle();
-    if (data) setIsLive(data.is_live);
+    if (data) {
+      setIsLive(data.is_live);
+      setIsGameStarted(data.game_started || false);
+    }
   };
 
   const toggleEventLive = async () => {
@@ -53,6 +57,27 @@ export default function AdminPage() {
       .eq("id", 1);
 
     if (!error) setIsLive(newStatus);
+  };
+
+  const initiateProtocol = async () => {
+    if (!isLive) {
+      alert("Event must be online (GO LIVE) before initiating the protocol.");
+      return;
+    }
+    const msg = isGameStarted
+      ? "End the current game session? (This does NOT wipe data, just stops the global timer)"
+      : "This will pull ALL waiting operatives from the lobby into Level 1 and sync their 60-minute timers. PROCEED?";
+
+    if (!confirm(msg)) return;
+
+    const newStatus = !isGameStarted;
+    const { error } = await supabase
+      .from("event_settings")
+      .update({ game_started: newStatus })
+      .eq("id", 1);
+
+    if (!error) setIsGameStarted(newStatus);
+    else console.error(error);
   };
 
   const fetchPlayers = async () => {
@@ -267,8 +292,8 @@ export default function AdminPage() {
           </h1>
           <div className="flex items-center gap-4 mt-2">
             <div className="text-[#00ffff] font-bold tracking-widest text-sm uppercase">Event: GIET Escape Room</div>
-            <div className="w-2 h-2 rounded-full bg-[#ff003c] animate-pulse" />
-            <div className="text-xs font-mono opacity-50 uppercase">Live Feed Active</div>
+            <div className={`w-2 h-2 rounded-full ${isLive ? "bg-[#ff003c] animate-pulse" : "bg-gray-500"}`} />
+            <div className="text-xs font-mono opacity-50 uppercase">{isLive ? "Live Feed Active" : "Offline / Locked"}</div>
           </div>
         </div>
         <div className="flex items-center gap-3 w-full md:w-auto flex-wrap">
@@ -278,6 +303,16 @@ export default function AdminPage() {
           <button onClick={() => exportToPDF(sortedPlayers)} className="px-4 py-2 border border-[#00ffff]/40 bg-[#00ffff]/10 text-[#00ffff] hover:bg-[#00ffff]/20 transition-all font-mono text-xs uppercase flex items-center gap-2">
             <Download className="w-4 h-4" /> PDF
           </button>
+
+          <GlowingButton
+            variant={isGameStarted ? "danger" : "cyan"}
+            onClick={initiateProtocol}
+            className="flex-1 md:flex-none py-2 px-6 shadow-[0_0_20px_#00ffff]"
+          >
+            <Power className="w-4 h-4 mr-2" />
+            {isGameStarted ? "HALT EVENT PROTOCOL" : "INITIATE PROTOCOL (START GAME)"}
+          </GlowingButton>
+
           <GlowingButton
             variant={isLive ? "cyan" : "danger"}
             onClick={toggleEventLive}
@@ -366,8 +401,8 @@ export default function AdminPage() {
                   key={status}
                   onClick={() => setFilterStatus(status)}
                   className={`px-3 py-1 text-[10px] font-bold uppercase font-mono border transition-all ${filterStatus === status
-                      ? "bg-white text-black border-white shadow-[0_0_10px_white]"
-                      : "bg-transparent text-white/50 border-white/20 hover:border-white/50 hover:text-white"
+                    ? "bg-white text-black border-white shadow-[0_0_10px_white]"
+                    : "bg-transparent text-white/50 border-white/20 hover:border-white/50 hover:text-white"
                     }`}
                 >
                   <Filter className="w-3 h-3 inline-block mr-1 opacity-50" />

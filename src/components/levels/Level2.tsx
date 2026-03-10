@@ -9,46 +9,14 @@ import { CheckCircle2, ShieldAlert, Cpu, Timer, Lightbulb, Keyboard } from "luci
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-// Dictionary of 30 Computer Science words with hints
-const WORD_POOL = [
-  { word: "ALGORITHM", hint: "Step-by-step instructions to solve a problem" },
-  { word: "RECURSION", hint: "A function that calls itself" },
-  { word: "DATABASE", hint: "An organized collection of structured information" },
-  { word: "FRAMEWORK", hint: "A platform for developing software applications" },
-  { word: "INTERFACE", hint: "A shared boundary across which two components exchange information" },
-  { word: "COMPILER", hint: "Translates high-level source code to machine code" },
-  { word: "VARIABLE", hint: "A storage location paired with an associated symbolic name" },
-  { word: "DEBUGGING", hint: "The process of identifying and removing errors" },
-  { word: "ENCRYPTION", hint: "Process of converting information into a secret code" },
-  { word: "FRONTEND", hint: "The graphical user interface of a website" },
-  { word: "BACKEND", hint: "The data access layer and server-side logic" },
-  { word: "PROTOCOL", hint: "A set of rules for data communication (e.g., HTTP)" },
-  { word: "OPERATING", hint: "Prefix for 'System' - manages hardware and software" },
-  { word: "INHERITANCE", hint: "OOP concept where a class derives from another" },
-  { word: "POLYMORPHISM", hint: "OOP concept meaning 'many forms'" },
-  { word: "ENCAPSULATION", hint: "Binding data and functions into a single unit" },
-  { word: "DICTIONARY", hint: "Data structure storing key-value pairs (Python)" },
-  { word: "LINKEDLIST", hint: "Linear data structure where elements point to the next" },
-  { word: "PROCESSOR", hint: "The electronic circuitry that executes instructions (CPU)" },
-  { word: "BANDWIDTH", hint: "Maximum rate of data transfer across a given path" },
-  { word: "ITERATION", hint: "Repetition of a computational procedure (looping)" },
-  { word: "REPOSITORY", hint: "A central location in which data is stored and managed (Git)" },
-  { word: "EXCEPTION", hint: "An event that disrupts normal code flow (Error handling)" },
-  { word: "PARAMETER", hint: "A variable used to pass information into a function" },
-  { word: "ATTRIBUTE", hint: "A specification that defines a property of an object" },
-  { word: "FUNCTIONS", hint: "Blocks of organized, reusable code" },
-  { word: "BOOLEAN", hint: "A data type with only true or false values" },
-  { word: "SYNTAX", hint: "The set of rules that defines combinations of symbols" },
-  { word: "SEMANTICS", hint: "The meaning or logic behind code" },
-  { word: "TERMINAL", hint: "A text-based interface to the operating system" },
-];
+import { getSemanticBlanks, AcademicYear, Department } from "@/lib/questionBank";
 
 const LEVEL_TIME = 60; // 60 seconds per question
 
 export function Level2() {
-  const { completeLevel, logout, handleMissionFailure } = useGame();
+  const { completeLevel, logout, handleMissionFailure, player } = useGame();
 
-  const [questions, setQuestions] = useState<typeof WORD_POOL>([]);
+  const [questions, setQuestions] = useState<{ word: string; hint: string }[]>([]);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
   const [blanks, setBlanks] = useState<string[]>([]);
   const [revealedIndices, setRevealedIndices] = useState<number[]>([]);
@@ -66,11 +34,13 @@ export function Level2() {
 
   // Initialize Game
   useEffect(() => {
+    if (!player) return;
+    const syllabusPool = getSemanticBlanks(player.academicYear as AcademicYear, player.department as Department);
     // Pick 5 random words
-    const shuffled = [...WORD_POOL].sort(() => Math.random() - 0.5);
+    const shuffled = [...syllabusPool].sort(() => Math.random() - 0.5);
     const selected = shuffled.slice(0, 5);
     setQuestions(selected.map(q => ({ word: q.word || "UNKNOWN", hint: q.hint })));
-  }, []);
+  }, [player]);
 
   // Setup current question
   useEffect(() => {
