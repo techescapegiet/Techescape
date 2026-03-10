@@ -32,7 +32,7 @@ export function Level1() {
 
   const skipLevel = () => {
     setSuccess(true);
-    setTimeout(() => completeLevel(targetEntries[0].word), 1000);
+    setTimeout(() => completeLevel("SYSTEM"), 1000);
   };
 
   const initializeGame = useCallback(() => {
@@ -143,7 +143,7 @@ export function Level1() {
         setCurrentQuestionIdx(currentQuestionIdx + 1);
       } else {
         setSuccess(true);
-        setTimeout(() => completeLevel(targetEntries[0].word), 3000);
+        setTimeout(() => completeLevel("SYSTEM"), 3000);
       }
     } else if (spelled.length >= currentWord.length || !currentWord.startsWith(spelled)) {
       setErrorFlash(true);
@@ -185,6 +185,7 @@ export function Level1() {
         <div className="text-5xl font-mono font-bold text-[#00ffff] tracking-[0.5em] bg-black p-8 border-2 border-[#00ffff]">
           {targetEntries[0].word}
         </div>
+        <div className="text-white/40 font-mono mt-4">FRAGMENT RECOVERED: SYSTEM</div>
       </div>
     );
   }

@@ -100,7 +100,7 @@ export function Level3() {
       }).eq("id", session.id);
     } else {
       setSuccess(true);
-      setTimeout(() => completeLevel("BINARY"), 1000);
+      setTimeout(() => completeLevel("LOGIC"), 1000);
     }
   };
 
@@ -116,6 +116,14 @@ export function Level3() {
         filter: `id=eq.${session.id}`
       }, (payload) => {
         const data = payload.new;
+
+        // Handle step advancement resets
+        if (data.current_step > currentStep) {
+          setSelected(null);
+          setShowHint(false);
+          setPartnerSelection(null);
+        }
+
         setCurrentStep(data.current_step);
         setAttempts(data.attempts_left);
         setHostAnswered(data.host_answered);
@@ -124,7 +132,7 @@ export function Level3() {
 
         if (data.status === "completed") {
           setSuccess(true);
-          setTimeout(() => completeLevel("BINARY"), 3000);
+          setTimeout(() => completeLevel("LOGIC"), 3000);
         } else if (data.status === "failed") {
           handleMissionFailure("SHIELD REJECTION: COLLABORATION FAILED");
         }
@@ -146,6 +154,26 @@ export function Level3() {
       supabase.removeChannel(channel);
     };
   }, [mode, session, player?.sessionId, completeLevel]);
+
+  // Reactive Sync Controller: Only the Host coordinates step progression to prevent race conditions
+  useEffect(() => {
+    if (mode === "collab" && session?.role === "host" && hostAnswered && guestAnswered) {
+      const advanceStep = async () => {
+        if (currentStep < 2) {
+          await supabase.from("collab_sessions").update({
+            current_step: currentStep + 1,
+            host_answered: false,
+            guest_answered: false
+          }).eq("id", session.id);
+        } else {
+          await supabase.from("collab_sessions").update({
+            status: "completed"
+          }).eq("id", session.id);
+        }
+      };
+      advanceStep();
+    }
+  }, [mode, session, hostAnswered, guestAnswered, currentStep]);
 
   // Broadcast selection when it changes
   useEffect(() => {
@@ -220,33 +248,10 @@ export function Level3() {
       return;
     }
 
-    // Correct answer - update our flag
+    // Correct answer - update ONLY our individual flag
+    // The reactive useEffect above will handle moving to the next step once both are true
     const update: any = session.role === "host" ? { host_answered: true } : { guest_answered: true };
-
-    // Check if both answered correct after this update
-    const bothAnswered = (session.role === "host" ? true : hostAnswered) &&
-      (session.role === "guest" ? true : guestAnswered);
-
-    if (bothAnswered) {
-      if (currentStep < 2) {
-        // Go to next question
-        await supabase.from("collab_sessions").update({
-          ...update,
-          current_step: currentStep + 1,
-          host_answered: false,
-          guest_answered: false
-        }).eq("id", session.id);
-        setShowHint(false);
-      } else {
-        // Finish level
-        await supabase.from("collab_sessions").update({
-          ...update,
-          status: "completed"
-        }).eq("id", session.id);
-      }
-    } else {
-      await supabase.from("collab_sessions").update(update).eq("id", session.id);
-    }
+    await supabase.from("collab_sessions").update(update).eq("id", session.id);
 
     setSelected(null);
   };
@@ -258,7 +263,7 @@ export function Level3() {
         <h2 className="text-4xl font-bold text-[#00ff00] text-glow mb-4">AUTHENTICATION SUCCESSFUL</h2>
         <p className="text-xl mb-6 text-white">{session ? "COLLAB" : "SOLO"} CODE WORD RECOVERED:</p>
         <div className="text-5xl font-mono font-bold text-[#00ffff] tracking-widest bg-black p-6 border border-[#00ffff]">
-          <TerminalText text="BINARY" />
+          <TerminalText text="LOGIC" />
         </div>
       </div>
     );

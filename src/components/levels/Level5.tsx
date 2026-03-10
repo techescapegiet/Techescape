@@ -129,7 +129,7 @@ export function Level5() {
       setErrorFlash(false);
     } else {
       setSuccess(true);
-      setTimeout(() => completeLevel("SYSTEM"), 3000);
+      setTimeout(() => completeLevel("SYNTAX"), 3000);
     }
   };
 
@@ -237,7 +237,7 @@ export function Level5() {
         <h2 className="text-4xl font-bold text-[#00ff00] text-glow mb-4">ULTIMATE GAUNTLET COMPLETE</h2>
         <p className="text-xl mb-6 text-white">FINAL CODE WORD RECOVERED:</p>
         <div className="text-5xl font-mono font-bold text-[#00ffff] tracking-widest bg-black p-6 border border-[#00ffff]">
-          <TerminalText text="SYSTEM" />
+          <TerminalText text="SYNTAX" />
         </div>
       </div>
     );
@@ -441,7 +441,7 @@ export function Level5() {
 
                     <div className="border border-[#00ffff]/20 bg-black/40 p-3 rounded-sm">
                       <h3 className="text-[10px] text-[#00ffff]/50 uppercase tracking-widest font-bold mb-1">OBJECTIVE</h3>
-                      <p className="text-sm font-bold text-white">{s4Data.description}</p>
+                      <p className="text-sm font-bold text-white">Debug the code to pass the integration test.</p>
                     </div>
 
                     {showHint && (

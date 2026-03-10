@@ -718,71 +718,105 @@ export interface CodeChallenge {
 const L4_POOL: Record<AcademicYear, Record<Department, CodeChallenge[]>> = {
     "1st Year": {
         "Computer Science": [
-            { id: "c1", language: "C", title: "Pointer Dereference", brokenCode: "int main() {\n  int x = 10;\n  int *p = &x;\n  printf(\"%d\", p); // Error\n}", initialCode: "int main() {\n  int x = 10;\n  int *p = &x;\n  printf(\"%d\", p); // Print the value pointed to by p\n  return 0;\n}", expectedSolutionSnippet: "printf(\"%d\", *p)", errorHint: "Use the dereference operator (*)." }
+            { id: "c_p1", language: "C", title: "Pointer Dereference", brokenCode: "int main() {\n  int x = 10;\n  int *p = &x;\n  printf(\"%d\", p); // Error\n}", initialCode: "int main() {\n  int x = 10;\n  int *p = &x;\n  printf(\"%d\", p);\n  return 0;\n}", expectedSolutionSnippet: "printf(\"%d\", *p)", errorHint: "Use the dereference operator (*)." },
+            { id: "c_p2", language: "C", title: "Array OOB", brokenCode: "int a[5];\na[5] = 10; // Error", initialCode: "int main() {\n  int a[5];\n  a[5] = 10;\n  return 0;\n}", expectedSolutionSnippet: "a[4]", errorHint: "Array indices for size 5 are 0-4." },
+            { id: "c_p3", language: "C", title: "Missing Semicolon", brokenCode: "int x = 5\nreturn 0;", initialCode: "int main() {\n  int x = 5\n  return 0;\n}", expectedSolutionSnippet: "int x = 5;", errorHint: "Statements in C must end with a semicolon." }
         ],
         "Information Tech": [
-            { id: "c1", language: "C", title: "Pointer Dereference", brokenCode: "int main() {\n  int x = 10;\n  int *p = &x;\n  printf(\"%d\", p); // Error\n}", initialCode: "int main() {\n  int x = 10;\n  int *p = &x;\n  printf(\"%d\", p);\n  return 0;\n}", expectedSolutionSnippet: "*p", errorHint: "Use the dereference operator (*)." }
+            { id: "it_p1", language: "C", title: "Pointer deref", brokenCode: "int *p; *p = 5;", initialCode: "int main() {\n  int x = 0;\n  int *p = &x;\n  *p = 5;\n  return 0;\n}", expectedSolutionSnippet: "p = &x", errorHint: "Initialize the pointer before dereferencing." },
+            { id: "it_p2", language: "C", title: "Format Specifier", brokenCode: "float f = 1.0; printf(\"%d\", f);", initialCode: "int main() {\n  float f = 1.0;\n  printf(\"%d\", f);\n  return 0;\n}", expectedSolutionSnippet: "%f", errorHint: "Use %f for float." }
         ],
         "Electronics": [
-            { id: "c1", language: "C", title: "Missing Semicolon", brokenCode: "int main() {\n  int x = 5\n  return 0;\n}", initialCode: "int main() {\n  int x = 5\n  return 0;\n}", expectedSolutionSnippet: "int x = 5;", errorHint: "Statements in C must end with a semicolon." }
+            { id: "ece_p1", language: "C", title: "Loop logic", brokenCode: "for(i=0; i<10; i--)", initialCode: "int main() {\n  for(int i=0; i<10; i--) {\n    printf(\"%d\", i);\n  }\n  return 0;\n}", expectedSolutionSnippet: "i++", errorHint: "Ensure the loop terminates." },
+            { id: "ece_p2", language: "Logic (Civil/Mech)", title: "Ohm's Law", brokenCode: "V = I / R", initialCode: "float V = I / R;", expectedSolutionSnippet: "I * R", errorHint: "Voltage is current times resistance." }
         ],
         "Mechanical": [
-            { id: "c1", language: "C", title: "Missing Semicolon", brokenCode: "int main() {\n  int x = 5\n  return 0;\n}", initialCode: "int main() {\n  int x = 5\n  return 0;\n}", expectedSolutionSnippet: "int x = 5;", errorHint: "Statements in C must end with a semicolon." }
+            { id: "mech_p1", language: "C", title: "Main Signature", brokenCode: "void main()", initialCode: "void main() {\n  return 0;\n}", expectedSolutionSnippet: "int main", errorHint: "In standard C, main returns int." },
+            { id: "mech_p2", language: "Logic (Civil/Mech)", title: "Density", brokenCode: "rho = m * V", initialCode: "float rho = m * V;", expectedSolutionSnippet: "m / V", errorHint: "Density is mass divided by volume." }
         ],
         "Civil": [
-            { id: "c1", language: "C", title: "Missing Semicolon", brokenCode: "int main() {\n  int x = 5\n  return 0;\n}", initialCode: "int main() {\n  int x = 5\n  return 0;\n}", expectedSolutionSnippet: "int x = 5;", errorHint: "Statements in C must end with a semicolon." }
+            { id: "civ_p1", language: "C", title: "Missing include", brokenCode: "printf(\"Hello\"); // no stdio", initialCode: "#include <stdlib.h>\nint main() {\n  printf(\"Hello\");\n  return 0;\n}", expectedSolutionSnippet: "#include <stdio.h>", errorHint: "Add the standard I/O header." },
+            { id: "civ_p2", language: "Logic (Civil/Mech)", title: "Force Formula", brokenCode: "F = m / a", initialCode: "float F = m / a;", expectedSolutionSnippet: "m * a", errorHint: "Force equals mass times acceleration." }
         ],
         "CSM": [
-            { id: "py1", language: "Python", title: "List Indexing", brokenCode: "l = [1, 2, 3]\nprint(l[3])", initialCode: "l = [1, 2, 3]\nprint(l[3])", expectedSolutionSnippet: ["l[2]", "l[0]", "l[1]"], errorHint: "Indices in Python are 0-based. The last element is at index 2." }
+            { id: "csm_p1", language: "Python", title: "Indentation", brokenCode: "if True:\nprint(1)", initialCode: "if True:\nprint(1)", expectedSolutionSnippet: "    print", errorHint: "Python uses indentation for blocks." },
+            { id: "csm_p2", language: "Python", title: "Type Conversion", brokenCode: "int('abc')", initialCode: "s = '123'\nx = int(s)\nprint(x)", expectedSolutionSnippet: "int(s)", errorHint: "Convert a numeric string to int." }
         ]
     },
     "2nd Year": {
         "Computer Science": [
-            { id: "cs2", language: "Java", title: "Array Index out of bounds", brokenCode: "int[] arr = {1, 2, 3};\nfor(int i=0; i<=arr.length; i++) {\n  print(arr[i]);\n}", initialCode: "int[] arr = {1, 2, 3};\nfor(int i=0; i<=arr.length; i++) {\n  System.out.println(arr[i]);\n}", expectedSolutionSnippet: ["i<arr.length", "i < arr.length"], errorHint: "Array indices are 0-based. arr.length is out of bounds." }
+            { id: "cs2_p1", language: "Java", title: "Array index", brokenCode: "int[] a={1}; a[1]=2;", initialCode: "int[] a = {1};\na[0] = 2;", expectedSolutionSnippet: "a[0]", errorHint: "Indices start at 0." },
+            { id: "cs2_p2", language: "Java", title: "Null check", brokenCode: "String s; s.len();", initialCode: "String s = \"\";\nSystem.out.println(s.length());", expectedSolutionSnippet: ["\"\"", "new String"], errorHint: "Initialize the string." },
+            { id: "cs2_p3", language: "Java", title: "Class access", brokenCode: "private int x; // in another class", initialCode: "class A { public int x; }\nA obj = new A(); obj.x = 5;", expectedSolutionSnippet: "public", errorHint: "Private members aren't accessible from outside." }
         ],
         "Information Tech": [
-            { id: "cs2", language: "Java", title: "Array Index out of bounds", brokenCode: "int[] arr = {1, 2, 3};\nfor(int i=0; i<=arr.length; i++) {\n  print(arr[i]);\n}", initialCode: "int[] arr = {1, 2, 3};\nfor(int i=0; i<=arr.length; i++) {\n  System.out.println(arr[i]);\n}", expectedSolutionSnippet: ["i<arr.length", "i < arr.length"], errorHint: "Array indices are 0-based. arr.length is out of bounds." }
+            { id: "it2_p1", language: "Java", title: "Main method", brokenCode: "public void main", initialCode: "public static void main(String[] args) {\n}", expectedSolutionSnippet: "static", errorHint: "Java's entry point must be static." },
+            { id: "it2_p2", language: "Java", title: "String equals", brokenCode: "if (s1 == \"test\")", initialCode: "String s1 = \"test\";\nif (s1.equals(\"test\")) {\n}", expectedSolutionSnippet: "equals", errorHint: "Use .equals() for string content comparison." }
         ],
         "Electronics": [
-            { id: "c1", language: "C", title: "Logical Error", brokenCode: "if (a = 5) { // intent is comparison\n}", initialCode: "int a = 0;\nif (a = 5) {\n  printf(\"Equal\");\n}", expectedSolutionSnippet: "a == 5", errorHint: "Use == for comparison, not assignment." }
+            { id: "ece2_p1", language: "C", title: "Pointer Arith", brokenCode: "p++ // size mismatch", initialCode: "int a[2];\nint *p = a;\n*(p+1) = 5;", expectedSolutionSnippet: "+1", errorHint: "Index using p+1." },
+            { id: "ece2_p2", language: "C", title: "Bitwise OR", brokenCode: "x || y // intent bitwise", initialCode: "unsigned char x = 0x01;\nunsigned char y = 0x02;\nunsigned char z = x | y;", expectedSolutionSnippet: "|", errorHint: "Use | for bitwise OR." }
         ],
         "Mechanical": [
-            { id: "logic1", language: "Logic (Civil/Mech)", title: "Pseudocode Formula", brokenCode: "Area = pi * r \n// intent is area of circle", initialCode: "Area = pi * r", expectedSolutionSnippet: ["r * r", "r^2", "r * r;"], errorHint: "Area of a circle is pi times the radius squared." }
+            { id: "mech2_p1", language: "Logic (Civil/Mech)", title: "Efficiency", brokenCode: "Eff = In / Out", initialCode: "float Eff = Power_Out / Power_In;", expectedSolutionSnippet: "Out / In", errorHint: "Efficiency is Output/Input." },
+            { id: "mech2_p2", language: "C", title: "Math.h", brokenCode: "pow(2,3) // no math.h", initialCode: "#include <math.h>\nint main() {\n  double x = pow(2,3);\n  return 0;\n}", expectedSolutionSnippet: "#include <math.h>", errorHint: "POW needs math.h." }
         ],
         "Civil": [
-            { id: "logic1", language: "Logic (Civil/Mech)", title: "Pseudocode Formula", brokenCode: "Area = pi * r \n// intent is area of circle", initialCode: "Area = pi * r", expectedSolutionSnippet: ["r * r", "r^2", "r * r;"], errorHint: "Area of a circle is pi times the radius squared." }
+            { id: "civ2_p1", language: "Logic (Civil/Mech)", title: "Bending Moment", brokenCode: "M = F + d", initialCode: "float M = F * d;", expectedSolutionSnippet: "F * d", errorHint: "Moment is force times distance." },
+            { id: "civ2_p2", language: "C", title: "Scanf error", brokenCode: "scanf(\"%d\", n);", initialCode: "int n;\nscanf(\"%d\", &n);", expectedSolutionSnippet: "&n", errorHint: "Scanf needs the address operator &." }
         ],
         "CSM": [
-            { id: "py2", language: "Python", title: "Variable Scope", brokenCode: "def add():\n  x = 5\nadd()\nprint(x)", initialCode: "x = 0\ndef add():\n  global x\n  x = 5\nadd()\nprint(x)", expectedSolutionSnippet: "global x", errorHint: "To modify a variable outside a function, use the 'global' keyword." }
+            { id: "csm2_p1", language: "Python", title: "Dictionary keys", brokenCode: "d[key]", initialCode: "d = {'a': 1}\nval = d.get('a')", expectedSolutionSnippet: "get", errorHint: "Use .get() or ensure key exists." },
+            { id: "csm2_p2", language: "Python", title: "Lambda", brokenCode: "f = lambda x: x*x", initialCode: "f = lambda x: x*x\nprint(f(5))", expectedSolutionSnippet: "x*x", errorHint: "Square the input." }
         ]
     },
     "3rd Year": {
         "Computer Science": [
-            { id: "cs3", language: "Python", title: "Indentation Error", brokenCode: "def greet():\nprint(\"Hello\")", initialCode: "def greet():\nprint(\"Hello\")", expectedSolutionSnippet: "    print", errorHint: "Python relies on indentation to define blocks. Add spaces." }
+            { id: "cs3_p1", language: "Python", title: "List comprehension", brokenCode: "[x for x in l if x=2]", initialCode: "l = [1,2,3]\nnew_l = [x for x in l if x == 2]", expectedSolutionSnippet: "== 2", errorHint: "Use == for comparison." },
+            { id: "cs3_p2", language: "Python", title: "File close", brokenCode: "f = open('t.txt')", initialCode: "with open('file.txt', 'r') as f:\n    data = f.read()", expectedSolutionSnippet: "with", errorHint: "Use 'with' block for auto-close." },
+            { id: "cs3_p3", language: "Python", title: "Decorator", brokenCode: "@dec def f():", initialCode: "def dec(func):\n    return func\n\n@dec\ndef my_func():\n    pass", expectedSolutionSnippet: "@dec", errorHint: "Correct decorator syntax." }
         ],
         "Information Tech": [
-            { id: "cs3", language: "Python", title: "Indentation Error", brokenCode: "def greet():\nprint(\"Hello\")", initialCode: "def greet():\nprint(\"Hello\")", expectedSolutionSnippet: "    print", errorHint: "Python relies on indentation to define blocks. Add spaces." }
+            { id: "it3_p1", language: "Python", title: "Slicing", brokenCode: "s[5:1]", initialCode: "s = 'hello'\nsub = s[0:2]", expectedSolutionSnippet: "0:2", errorHint: "Start index should be less than end index." },
+            { id: "it3_p2", language: "Python", title: "Global var", brokenCode: "x=1; def f(): x=2", initialCode: "x = 1\ndef f():\n    global x\n    x = 2", expectedSolutionSnippet: "global", errorHint: "Use 'global' keyword." }
         ],
         "Electronics": [
-            { id: "c2", language: "C", title: "Missing Return Type", brokenCode: "main() {\n  return 0;\n}", initialCode: "main() {\n  return 0;\n}", expectedSolutionSnippet: "int main", errorHint: "Standard C requires an explicit return type for main()." }
+            { id: "ece3_p1", language: "C", title: "Struct access", brokenCode: "s->val // if s is object", initialCode: "struct Node { int val; };\nstruct Node s;\ns.val = 10;", expectedSolutionSnippet: "s.val", errorHint: "Use . for objects, -> for pointers." },
+            { id: "ece3_p2", language: "C", title: "Type cast", brokenCode: "int x = (int)\"5\";", initialCode: "int x = atoi(\"5\");", expectedSolutionSnippet: "atoi", errorHint: "Use atoi to convert string to int." }
         ],
         "Mechanical": [
-            { id: "logic2", language: "Logic (Civil/Mech)", title: "Unit Conversion Logic", brokenCode: "meters = km / 1000", initialCode: "meters = km / 1000", expectedSolutionSnippet: "* 1000", errorHint: "To convert kilometers to meters, you multiply by 1000." }
+            { id: "mech3_p1", language: "Logic (Civil/Mech)", title: "Heat Transfer", brokenCode: "Q = m * c / dT", initialCode: "float Q = m * c * dT;", expectedSolutionSnippet: "m * c * dT", errorHint: "Heat is mass * specific heat * delta T." },
+            { id: "mech3_p2", language: "C", title: "Const error", brokenCode: "const int x=5; x=6;", initialCode: "const int x = 5;\n// x = 6; // remove this", expectedSolutionSnippet: "//", errorHint: "Cannot modify a constant." }
         ],
         "Civil": [
-            { id: "logic2", language: "Logic (Civil/Mech)", title: "Unit Conversion Logic", brokenCode: "meters = km / 1000", initialCode: "meters = km / 1000", expectedSolutionSnippet: "* 1000", errorHint: "To convert kilometers to meters, you multiply by 1000." }
+            { id: "civ3_p1", language: "Logic (Civil/Mech)", title: "Hydraulic Head", brokenCode: "H = P/rho + g", initialCode: "float H = P/(rho * g) + z;", expectedSolutionSnippet: "rho * g", errorHint: "Pressure head involves rho*g." },
+            { id: "civ3_p2", language: "C", title: "Bool type", brokenCode: "bool x = true; // no stdbool", initialCode: "#include <stdbool.h>\nbool x = true;", expectedSolutionSnippet: "#include <stdbool.h>", errorHint: "Include stdbool.h for bool type in C." }
         ],
         "CSM": [
-            { id: "ml1", language: "Python", title: "Learning Rate Issue", brokenCode: "model.compile(optimizer=tf.keras.optimizers.Adam(lr=100))", initialCode: "model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001))", expectedSolutionSnippet: ["0.001", "0.01", "0.0001"], errorHint: "A learning rate of 100 is too high. Try something like 0.001." }
+            { id: "csm3_p1", language: "Python", title: "NumPy shape", brokenCode: "a.reshape(3,3) // for size 10", initialCode: "import numpy as np\na = np.arange(9)\nb = a.reshape(3, 3)", expectedSolutionSnippet: "(3, 3)", errorHint: "Ensure new shape matches size." },
+            { id: "csm3_p2", language: "Python", title: "LR parameter", brokenCode: "Adam(lr=0.01) // old param", initialCode: "from tensorflow.keras.optimizers import Adam\nopt = Adam(learning_rate=0.001)", expectedSolutionSnippet: "learning_rate", errorHint: "Use learning_rate instead of lr." }
         ]
     },
     "4th Year": {
-        "Computer Science": [{ id: "cs3", language: "Python", title: "Indentation Error", brokenCode: "def greet():\nprint(\"Hello\")", initialCode: "def greet():\nprint(\"Hello\")", expectedSolutionSnippet: "    print", errorHint: "Python relies on indentation to define blocks. Add spaces." }],
-        "Information Tech": [{ id: "cs3", language: "Python", title: "Indentation Error", brokenCode: "def greet():\nprint(\"Hello\")", initialCode: "def greet():\nprint(\"Hello\")", expectedSolutionSnippet: "    print", errorHint: "Python relies on indentation to define blocks. Add spaces." }],
-        "Electronics": [{ id: "c2", language: "C", title: "Missing Return Type", brokenCode: "main() {\n  return 0;\n}", initialCode: "main() {\n  return 0;\n}", expectedSolutionSnippet: "int main", errorHint: "Standard C requires an explicit return type for main()." }],
-        "Mechanical": [{ id: "logic2", language: "Logic (Civil/Mech)", title: "Unit Conversion Logic", brokenCode: "meters = km / 1000", initialCode: "meters = km / 1000", expectedSolutionSnippet: "* 1000", errorHint: "To convert kilometers to meters, you multiply by 1000." }],
-        "Civil": [{ id: "logic2", language: "Logic (Civil/Mech)", title: "Unit Conversion Logic", brokenCode: "meters = km / 1000", initialCode: "meters = km / 1000", expectedSolutionSnippet: "* 1000", errorHint: "To convert kilometers to meters, you multiply by 1000." }],
-        "CSM": [{ id: "ml1", language: "Python", title: "Learning Rate Issue", brokenCode: "model.compile(optimizer=tf.keras.optimizers.Adam(lr=100))", initialCode: "model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001))", expectedSolutionSnippet: ["0.001", "0.01", "0.0001"], errorHint: "A learning rate of 100 is too high. Try something like 0.001." }]
+        "Computer Science": [
+            { id: "cs4_p1", language: "Python", title: "Async await", brokenCode: "def f(): await g()", initialCode: "async def f():\n    await g()", expectedSolutionSnippet: "async def", errorHint: "Await requires an async function." },
+            { id: "cs4_p2", language: "Python", title: "Set ops", brokenCode: "s.add([1,2])", initialCode: "s = set()\ns.add(1)", expectedSolutionSnippet: "add(1)", errorHint: "Cannot add list to set." }
+        ],
+        "Information Tech": [
+            { id: "it4_p1", language: "Python", title: "Flask route", brokenCode: "@app.route(methods=['GET'])", initialCode: "@app.route('/', methods=['GET'])", expectedSolutionSnippet: "'/'", errorHint: "Missing path in route." }
+        ],
+        "Electronics": [
+            { id: "ece4_p1", language: "C", title: "Memcpy overlap", brokenCode: "memcpy(s, s+1, 10);", initialCode: "memmove(s, s+1, 10);", expectedSolutionSnippet: "memmove", errorHint: "Use memmove for overlapping regions." }
+        ],
+        "Mechanical": [
+            { id: "mech4_p1", language: "Logic (Civil/Mech)", title: "Mach No", brokenCode: "M = c / v", initialCode: "float Mach = v / c;", expectedSolutionSnippet: "v / c", errorHint: "Mach is velocity over sound speed." }
+        ],
+        "Civil": [
+            { id: "civ4_p1", language: "Logic (Civil/Mech)", title: "Reynolds", brokenCode: "Re = mu / (rho*v*d)", initialCode: "float Re = (rho * v * d) / mu;", expectedSolutionSnippet: "rho * v * d", errorHint: "Reynolds number formula error." }
+        ],
+        "CSM": [
+            { id: "csm4_p1", language: "Python", title: "PyTorch Grad", brokenCode: "x.grad = None", initialCode: "optimizer.zero_grad()", expectedSolutionSnippet: "zero_grad", errorHint: "Use zero_grad() to reset gradients." }
+        ]
     }
 };
 

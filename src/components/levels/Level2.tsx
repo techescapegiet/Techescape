@@ -27,7 +27,7 @@ export function Level2() {
 
   const skipLevel = () => {
     setSuccess(true);
-    setTimeout(() => completeLevel("LOGIC"), 1000);
+    setTimeout(() => completeLevel("BINARY"), 1000);
   };
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -179,7 +179,7 @@ export function Level2() {
         setCurrentQuestionIdx(prev => prev + 1);
       } else {
         setSuccess(true);
-        setTimeout(() => completeLevel("LOGIC"), 3000); // Level 2 codeword
+        setTimeout(() => completeLevel("BINARY"), 3000); // Level 2 codeword
       }
     } else {
       setIsError(true);
@@ -195,7 +195,7 @@ export function Level2() {
         <CheckCircle2 className="w-24 h-24 text-[#00ff00] mb-6 animate-pulse" />
         <h2 className="text-4xl font-bold text-[#00ff00] text-glow mb-4">NODE 2 BYPASSED</h2>
         <div className="text-5xl font-mono font-bold text-[#00ffff] tracking-[0.5em] bg-black p-8 border-2 border-[#00ffff]">
-          LOGIC
+          BINARY
         </div>
       </div>
     );

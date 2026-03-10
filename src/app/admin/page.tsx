@@ -26,6 +26,8 @@ export default function AdminPage() {
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isPurging, setIsPurging] = useState(false);
+  const [isFinalizing, setIsFinalizing] = useState(false);
+  const [isAuthWiping, setIsAuthWiping] = useState(false);
   const [sortField, setSortField] = useState<keyof LivePlayer>("name");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [filterStatus, setFilterStatus] = useState<"ALL" | "ACTIVE" | "COMPLETED" | "FAILED">("ALL");
@@ -173,17 +175,70 @@ export default function AdminPage() {
     }
   };
 
-  const archiveAndPurge = async () => {
+  const finalizeBatch = async () => {
     if (players.length === 0) {
-      alert("No data to archive.");
+      const confirmEmpty = confirm("No active players found. Proceed with resetting all stations and starting a new batch?");
+      if (!confirmEmpty) return;
+    } else {
+      if (!confirm("This will ARCHIVE current player results into the database and reset all PC stations for a new batch. Proceed?")) return;
+    }
+
+    setIsFinalizing(true);
+    try {
+      const { error } = await supabase.rpc('archive_and_purge_batch');
+      if (error) throw error;
+      alert("Batch Finalized & Archived Successfully.");
+      fetchPlayers();
+    } catch (e: any) {
+      console.error(e);
+      alert("Finalization failed: " + e.message);
+    } finally {
+      setIsFinalizing(false);
+    }
+  };
+
+  const wipeAuthUsers = async () => {
+    if (!confirm("CRITICAL: This will permanently delete all Google-authenticated player accounts from the Supabase Auth list. This is usually done AFTER the entire event is over. Proceed?")) return;
+
+    setIsAuthWiping(true);
+    try {
+      const { error } = await supabase.rpc('delete_non_admin_users');
+      if (error) throw error;
+      alert("Auth list cleared successfully.");
+    } catch (e: any) {
+      console.error(e);
+      alert("Auth Wipe Failed: " + e.message + "\n\nNote: Ensure you have run the database_setup.sql in Supabase Dashboard.");
+    } finally {
+      setIsAuthWiping(false);
+    }
+  };
+
+  const downloadFullArchive = async () => {
+    const { data, error } = await supabase
+      .from("player_archives")
+      .select("*")
+      .order("archived_at", { ascending: false });
+
+    if (error) {
+      alert("Failed to fetch archives: " + error.message);
       return;
     }
-    if (!confirm("This will download a CSV archive of the current session and then PERMANENTLY PURGE all players. Proceed?")) return;
 
-    exportToCSV(players, `techescape-archive-${new Date().toISOString().split('T')[0]}.csv`);
+    if (!data || data.length === 0) {
+      alert("No archived data found.");
+      return;
+    }
 
-    // Adding slight delay so download initiates before UI freezes
-    setTimeout(() => globalPurge(true), 500);
+    const formatted = data.map(d => ({
+      id: d.id,
+      pc_id: d.academic_year || "N/A", // Reusing field for export
+      name: d.operative_name,
+      level: d.final_node,
+      status: d.status,
+      timeRemaining: new Date(d.archived_at).toLocaleString()
+    }));
+
+    exportToCSV(formatted, `techescape-master-archive-${new Date().toISOString().split('T')[0]}.csv`);
   };
 
   const clearFailedPlayers = async () => {
@@ -366,28 +421,33 @@ export default function AdminPage() {
             </h3>
             <div className="flex flex-col gap-2">
               <button
-                onClick={archiveAndPurge}
-                disabled={isPurging || players.length === 0}
+                onClick={finalizeBatch}
+                disabled={isFinalizing || isPurging}
                 className="w-full py-3 border border-yellow-500 bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500 hover:text-white transition-all font-bold uppercase tracking-tighter text-sm flex items-center justify-center gap-2"
               >
-                {isPurging ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Archive className="w-4 h-4" />}
-                Archive & Purge
+                {isFinalizing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Archive className="w-4 h-4" />}
+                Finalize Batch & Archive
+              </button>
+              <button
+                onClick={downloadFullArchive}
+                className="w-full py-2 border border-[#00ffff] bg-[#00ffff]/10 text-[#00ffff] hover:bg-[#00ffff] hover:text-white transition-all font-bold uppercase tracking-tighter text-xs flex items-center justify-center gap-2"
+              >
+                <Download className="w-4 h-4" /> Download History
+              </button>
+              <button
+                onClick={wipeAuthUsers}
+                disabled={isAuthWiping}
+                className="w-full py-2 border border-purple-500 bg-purple-500/10 text-purple-500 hover:bg-purple-500 hover:text-white transition-all font-bold uppercase tracking-tighter text-xs flex items-center justify-center gap-2"
+              >
+                {isAuthWiping ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Shield className="w-3 h-3" />}
+                Wipe Google Auth List
               </button>
               <button
                 onClick={() => globalPurge(false)}
-                disabled={isPurging}
-                className="w-full py-3 border border-[#ff003c] bg-[#ff003c]/10 text-[#ff003c] hover:bg-[#ff003c] hover:text-white transition-all font-bold uppercase tracking-tighter text-sm flex items-center justify-center gap-2"
+                disabled={isPurging || isFinalizing}
+                className="w-full py-2 border border-[#ff003c] bg-[#ff003c]/10 text-[#ff003c] hover:bg-[#ff003c] hover:text-white transition-all font-bold uppercase tracking-tighter text-[10px] flex items-center justify-center gap-2"
               >
-                {isPurging ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
-                Emergency Purge
-              </button>
-              <button
-                onClick={clearFailedPlayers}
-                disabled={isPurging}
-                className="w-full py-2 border border-orange-500 bg-orange-500/10 text-orange-500 hover:bg-orange-500 hover:text-white transition-all font-bold uppercase tracking-tighter text-xs flex items-center justify-center gap-2"
-              >
-                {isPurging ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
-                Clear Failed
+                <Trash2 className="w-3 h-3" /> Emergency Wipe
               </button>
             </div>
             <p className="text-[10px] opacity-40 mt-3 text-center uppercase tracking-widest">Resets all stations for next round</p>

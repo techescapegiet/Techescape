@@ -56,7 +56,7 @@ export function Level4() {
       setCompileResult("success");
       setCompileMsg("✓ Compilation successful. All tests passed.");
       setSuccess(true);
-      setTimeout(() => completeLevel("SYNTAX"), 2000);
+      setTimeout(() => completeLevel("STACK"), 2000);
     } else {
       const remaining = attempts - 1;
       setAttempts(remaining);
@@ -77,7 +77,7 @@ export function Level4() {
         <CheckCircle2 className="w-16 h-16 md:w-24 md:h-24 text-[#00ff00] mb-4 md:mb-6 animate-pulse" />
         <h2 className="text-2xl md:text-4xl font-bold text-[#00ff00] text-glow mb-4">ALL BUGS RESOLVED</h2>
         <div className="text-3xl md:text-5xl font-mono font-bold text-[#00ffff] tracking-widest bg-black p-4 md:p-6 border border-[#00ffff]">
-          SYNTAX
+          STACK
         </div>
       </div>
     );
