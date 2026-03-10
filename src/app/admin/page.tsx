@@ -57,6 +57,10 @@ export default function AdminPage() {
       .eq("id", 1);
 
     if (!error) setIsLive(newStatus);
+    else {
+      console.error(error);
+      alert("FAILED TO TOGGLE LIVE STATUS: " + error.message);
+    }
   };
 
   const initiateProtocol = async () => {
@@ -77,7 +81,10 @@ export default function AdminPage() {
       .eq("id", 1);
 
     if (!error) setIsGameStarted(newStatus);
-    else console.error(error);
+    else {
+      console.error(error);
+      alert("PROTOCOL FAILURE: " + error.message);
+    }
   };
 
   const fetchPlayers = async () => {

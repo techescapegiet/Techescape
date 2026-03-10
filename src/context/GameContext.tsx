@@ -103,10 +103,13 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         table: "event_settings",
         filter: "id=eq.1"
       }, (payload) => {
+        console.log("EVENT SETTINGS UPDATED:", payload.new);
         setIsEventLive(payload.new.is_live);
         setIsGameStarted(payload.new.game_started || false);
       })
-      .subscribe();
+      .subscribe((status) => {
+        console.log("Supabase Realtime Status:", status);
+      });
 
     // Heartland keep-alive
     const interval = setInterval(() => {
