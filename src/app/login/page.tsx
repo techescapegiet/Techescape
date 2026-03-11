@@ -115,7 +115,7 @@ export default function LoginPage() {
               onChange={(e) => setToken(e.target.value)}
               disabled={isAuthenticating}
               className="w-full bg-black border border-[#00ff00] p-3 md:p-4 text-[#00ff00] font-mono text-lg md:text-xl uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-[#00ff00]/50 focus:border-[#00ff00] transition-all"
-              placeholder="_ _ _ _ _"
+              placeholder="_ _ _ _ _ _"
             />
             {error && <p className="text-[#ff003c] text-xs md:text-sm mt-2 animate-pulse">{error}</p>}
           </div>

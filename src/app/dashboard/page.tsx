@@ -11,6 +11,7 @@ import { Shield, Server, Activity, Lock, Database, Cpu, Zap, CheckCircle2, List 
 import { motion, type Easing } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { LEVEL_BRIEFINGS } from "@/lib/questionBank";
+import { CyberAvatar } from "@/components/ui/CyberAvatar";
 
 const easeOut: Easing = [0.0, 0.0, 0.2, 1];
 
@@ -80,13 +81,19 @@ export default function DashboardPage() {
         variants={fadeUp}
         className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-[#00ff00]/30 pb-4 gap-4"
       >
-        <div>
-          <h1 className="text-3xl font-bold flex items-center gap-3 text-glow animate-flicker">
-            <Shield className="w-8 h-8 animate-float" />
-            MISSION CONTROL
-          </h1>
-          <div className="text-[#00ffff] mt-2 font-bold tracking-widest">
-            OPERATIVE IDENTIFICATION: <span className="text-white">{player.id}</span>
+        <div className="flex items-center gap-4">
+          <CyberAvatar seed={player.id} size="lg" className="border-[#00ffff]/50 shadow-[0_0_15px_rgba(0,255,255,0.2)]" />
+          <div>
+            <h1 className="text-3xl font-bold flex items-center gap-3 text-glow animate-flicker">
+              <Shield className="w-8 h-8 animate-float" />
+              MISSION CONTROL
+            </h1>
+            <div className="text-[#00ffff] mt-2 font-bold tracking-widest">
+              OPERATIVE IDENTIFICATION: <span className="text-white">{player.id.substring(0, 8).toUpperCase()}...</span>
+            </div>
+            <div className="text-xs text-[#00ff00]/70 font-mono mt-1 opacity-80 uppercase">
+              // Digital Soul Imprint Verified
+            </div>
           </div>
         </div>
 

@@ -212,6 +212,28 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     return () => clearInterval(timer);
   }, [player?.id, isGameStarted, globalStartTime]);
 
+  // Dynamic Theme Engine: Updates global CSS variables based on level
+  useEffect(() => {
+    if (!player) {
+      document.documentElement.style.setProperty("--accent-glow", "#00ffff");
+      document.documentElement.style.setProperty("--bg-depth", "rgba(0, 17, 34, 0.8)");
+      return;
+    }
+
+    const themes: Record<number, { glow: string; depth: string }> = {
+      1: { glow: "#00ffff", depth: "rgba(0, 17, 34, 0.8)" },  // Cyan
+      2: { glow: "#00ff88", depth: "rgba(0, 34, 17, 0.8)" },  // Seafoam
+      3: { glow: "#0088ff", depth: "rgba(0, 8, 34, 0.8)" },   // Deep Blue
+      4: { glow: "#ff8800", depth: "rgba(34, 17, 0, 0.8)" },   // Amber
+      5: { glow: "#ff003c", depth: "rgba(34, 0, 8, 0.8)" },    // Alert Red
+      6: { glow: "#ffffff", depth: "rgba(10, 10, 10, 0.9)" },  // White/Black
+    };
+
+    const currentTheme = themes[player.currentLevel] || themes[1];
+    document.documentElement.style.setProperty("--accent-glow", currentTheme.glow);
+    document.documentElement.style.setProperty("--bg-depth", currentTheme.depth);
+  }, [player?.currentLevel]);
+
   const erasePlayerData = async () => {
     if (!player) return;
     try {
@@ -303,36 +325,44 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const completeLevel = async (fragment: string) => {
     if (!player) return;
     
-    setPlayer(prev => {
-      if (!prev) return null;
-      // Prevent duplicates
-      const newFragments = prev.fragments.includes(fragment) 
-        ? prev.fragments 
-        : [...prev.fragments, fragment];
+    // 1. Calculate the new state first
+    const newFragments = player.fragments.includes(fragment) 
+      ? player.fragments 
+      : [...player.fragments, fragment];
 
-      const updated = {
-        ...prev,
-        currentLevel: prev.currentLevel + 1,
-        fragments: newFragments,
-      };
-      
-      localStorage.setItem("escape_room_player", JSON.stringify(updated));
-      syncPlayerToSupabase(updated);
-      
-      // Perform navigation after state update logic
-      if (updated.currentLevel > 5) {
-        supabase.from("players").update({
-          status: "completed",
-          last_seen: new Date().toISOString()
-        }).eq("id", updated.sessionId).then(() => {
-          router.push("/reconstruct");
-        });
-      } else {
-        router.push("/dashboard");
-      }
-      
-      return updated;
+    const updatedPlayer = {
+      ...player,
+      currentLevel: player.currentLevel + 1,
+      fragments: newFragments,
+    };
+
+    // 2. Perform state update
+    setPlayer(updatedPlayer);
+    
+    // 3. Side Effects (Outside of rendering/updating)
+    localStorage.setItem("escape_room_player", JSON.stringify(updatedPlayer));
+    syncPlayerToSupabase(updatedPlayer);
+    
+    // Update Level Logs in Supabase
+    const levelKey = player.currentLevel.toString();
+    supabase.rpc('update_player_level_logs', {
+      player_id: updatedPlayer.sessionId,
+      level_key: levelKey,
+      timestamp: new Date().toISOString()
     });
+
+    // 4. Perform navigation
+    if (updatedPlayer.currentLevel > 5) {
+      // Entering Reconstruction
+      await supabase.from("players").update({
+        status: "active",
+        last_seen: new Date().toISOString()
+      }).eq("id", updatedPlayer.sessionId);
+      
+      router.push("/reconstruct");
+    } else {
+      router.push("/dashboard");
+    }
   };
 
 

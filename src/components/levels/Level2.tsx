@@ -24,6 +24,7 @@ export function Level2() {
   const [timeLeft, setTimeLeft] = useState(LEVEL_TIME);
   const [success, setSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [isCorrectFlash, setIsCorrectFlash] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
 
   const skipLevel = () => {
@@ -179,15 +180,20 @@ export function Level2() {
     if (!currentQData) return;
     const word = currentQData.word;
     if (attempt === word) {
-      if (currentQuestionIdx < questions.length - 1) {
-        setCurrentQuestionIdx(prev => prev + 1);
-      } else {
-        setSuccess(true);
-        if (!isCompleting) {
-          setIsCompleting(true);
-          setTimeout(() => completeLevel("BINARY"), 3000); // Level 2 codeword
+      setIsError(false);
+      setIsCorrectFlash(true);
+      setTimeout(() => {
+        setIsCorrectFlash(false);
+        if (currentQuestionIdx < questions.length - 1) {
+          setCurrentQuestionIdx(prev => prev + 1);
+        } else {
+          setSuccess(true);
+          if (!isCompleting) {
+            setIsCompleting(true);
+            setTimeout(() => completeLevel("BINARY"), 3000); // Level 2 codeword
+          }
         }
-      }
+      }, 500);
     } else {
       setIsError(true);
       // Don't auto-clear, let user correct it
@@ -264,7 +270,8 @@ export function Level2() {
       {/* Main Challenge Area */}
       <div className={cn("border-2 p-8 md:p-12 relative overflow-hidden transition-colors duration-300",
         isError ? "border-red-500 bg-red-950/20 shadow-[inset_0_0_50px_rgba(255,0,0,0.2)]" :
-          "border-[#00ffff]/30 bg-[#001122]/80 box-glow"
+          isCorrectFlash ? "border-[#00ff00] bg-[#00ff00]/20 shadow-[inset_0_0_50px_rgba(0,255,0,0.4)]" :
+            "border-[#00ffff]/30 bg-[#001122]/80 box-glow"
       )}>
 
         {isError && (
@@ -301,9 +308,11 @@ export function Level2() {
                   "w-12 h-16 md:w-16 md:h-20 text-center text-3xl md:text-4xl font-mono font-black border-b-4 focus:outline-none transition-all",
                   isRevealed
                     ? "bg-transparent border-[#00ff00]/50 text-[#00ff00] cursor-not-allowed"
-                    : isError
-                      ? "bg-red-900/40 border-red-500 text-red-500 focus:border-red-400"
-                      : "bg-[#002244]/50 border-[#00ffff] text-white focus:bg-[#00ffff]/10 focus:border-white focus:shadow-[0_4px_15px_#00ffff]"
+                    : isCorrectFlash
+                      ? "bg-[#00ff00]/40 border-[#00ff00] text-white shadow-[0_0_15px_#00ff00]"
+                      : isError
+                        ? "bg-red-900/40 border-red-500 text-red-500 focus:border-red-400"
+                        : "bg-[#002244]/50 border-[#00ffff] text-white focus:bg-[#00ffff]/10 focus:border-white focus:shadow-[0_4px_15px_#00ffff]"
                 )}
               />
             );

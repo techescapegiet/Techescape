@@ -3,15 +3,17 @@
 import { useState, useEffect } from "react";
 import { GlowingButton } from "@/components/ui/GlowingButton";
 import { TerminalText } from "@/components/ui/TerminalText";
-import { Shield, Eye, Trash2, Power, RefreshCw, Zap, AlertTriangle, Users, Download, Archive, Filter } from "lucide-react";
+import { Shield, Eye, Trash2, Power, RefreshCw, Zap, AlertTriangle, Users, Download, Archive, Filter, Activity } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { exportToCSV, exportToPDF } from "@/lib/exportUtils";
+import { CyberAvatar } from "@/components/ui/CyberAvatar";
 
 interface LivePlayer {
   id: string; // Session UUID
   pc_id: string;
   name: string;
+  roll_number: string;
   level: number | string;
   status: string;
   timeRemaining: string;
@@ -137,6 +139,7 @@ export default function AdminPage() {
           id: p.id,
           pc_id: p.pc_id || "N/A",
           name: (Array.isArray(p.access_keys) ? p.access_keys[0]?.assigned_to : p.access_keys?.assigned_to) || "Unknown",
+          roll_number: (Array.isArray(p.access_keys) ? p.access_keys[0]?.roll_number : p.access_keys?.roll_number) || "",
           level: p.status === 'failed' ? "TERMINATED" : p.status === 'completed' ? "RECONSTRUCTED" : p.current_level,
           status: p.status.toUpperCase(),
           timeRemaining: `${mins}:${secs.toString().padStart(2, '0')}`
@@ -504,15 +507,33 @@ export default function AdminPage() {
             </div>
           </div>
 
-          {/* Node Distribution */}
-          <div className="mb-6 flex gap-2 flex-wrap">
-            <div className="text-[10px] uppercase tracking-widest text-[#00ff00] font-bold mr-2 self-center">Node Distribution:</div>
-            {[1, 2, 3, 4, 5].map(lvl => (
-              <div key={lvl} className="flex items-center gap-2 px-3 py-1 bg-[#001100] border border-[#00ff00]/30 font-mono text-xs">
-                <span className="opacity-50 text-[10px]">N{lvl}:</span>
-                <span className="text-[#00ff00] font-bold">{distribution[lvl.toString()] || 0}</span>
-              </div>
-            ))}
+          <div className="mb-8">
+            <h3 className="text-[10px] font-bold text-[#00ff00] uppercase mb-4 flex items-center gap-2">
+              <Activity className="w-4 h-4" /> Operative Deployment Density
+            </h3>
+            <div className="grid grid-cols-5 gap-1 h-32 items-end border-b border-[#00ff00]/20 pb-2">
+              {[1, 2, 3, 4, 5].map(lvl => {
+                const count = distribution[lvl.toString()] || 0;
+                const height = activePlayers.length > 0 ? (count / activePlayers.length) * 100 : 0;
+                const colors = ["#00ffff", "#00ff88", "#0088ff", "#ff8800", "#ff003c"];
+                return (
+                  <div key={lvl} className="relative group flex flex-col items-center flex-1">
+                    <div 
+                      className="w-full transition-all duration-1000 ease-out box-glow" 
+                      style={{ 
+                        height: `${Math.max(2, height)}%`, 
+                        backgroundColor: colors[lvl-1],
+                        boxShadow: `0 0 15px ${colors[lvl-1]}44`
+                      }} 
+                    />
+                    <div className="absolute -top-6 text-[10px] font-mono text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                      Node {lvl}: {count}
+                    </div>
+                    <div className="text-[8px] font-mono mt-2 opacity-50 uppercase tracking-tighter">N{lvl}</div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           <div className="overflow-x-auto flex-1">
@@ -530,7 +551,13 @@ export default function AdminPage() {
               <tbody>
                 {sortedPlayers.map((p) => (
                   <tr key={p.id} className="border-b border-white/5 hover:bg-white/5 transition-colors group">
-                    <td className="py-4 px-4 font-bold text-white uppercase">{p.name}</td>
+                    <td className="py-4 px-4 font-bold text-white uppercase flex items-center gap-3">
+                      <CyberAvatar seed={p.id} size="sm" />
+                      <div className="flex flex-col">
+                        <span>{p.name}</span>
+                        {p.roll_number && <span className="text-[10px] opacity-50 font-mono tracking-wider">{p.roll_number}</span>}
+                      </div>
+                    </td>
                     <td className="py-4 px-4 opacity-70 text-xs">{p.pc_id}</td>
                     <td className="py-4 px-4 font-bold text-[#00ffff] shadow-inner">
                       {p.level === "RECONSTRUCTED" ?

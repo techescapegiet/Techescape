@@ -433,15 +433,21 @@ export function Level3() {
                     className={cn(
                       "p-4 text-left border font-mono transition-all relative overflow-hidden",
                       selected === idx ? "border-[#00ffff] bg-[#00ffff]/20 text-[#00ffff]" : "border-[#00ffff]/20 hover:bg-[#00ffff]/10",
-                      pingedIndex === idx && "animate-pulse border-[#ff003c] bg-[#ff003c]/10"
+                      pingedIndex === idx && "border-[#ff003c]"
                     )}
                   >
                     {pingedIndex === idx && (
-                      <div className="absolute top-0 right-0 bg-[#ff003c] text-white text-[8px] px-2 py-0.5 font-bold animate-bounce">
-                        LOOK HERE!
-                      </div>
+                      <>
+                        <div className="absolute top-0 right-0 bg-[#ff003c] text-white text-[10px] px-2 py-0.5 font-bold animate-pulse shadow-[0_0_10px_#ff003c]">
+                          PARTNER SUGGESTION
+                        </div>
+                        <span className="absolute inset-0 border-2 border-[#ff003c] rounded-sm animate-ping opacity-75 pointer-events-none z-0" />
+                        <span className="absolute inset-0 bg-[#ff003c]/20 animate-pulse pointer-events-none z-0" />
+                      </>
                     )}
-                    <span className="mr-4 opacity-50">[{String.fromCharCode(65 + idx)}]</span> {opt}
+                    <span className="relative z-10">
+                      <span className="mr-4 opacity-50">[{String.fromCharCode(65 + idx)}]</span> {opt}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -469,14 +475,20 @@ export function Level3() {
           )}>
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-lg font-bold opacity-50 tracking-widest uppercase">Partner Feed ({session?.partnerName || session?.partnerId})</h3>
-              {partnerAnswered && <CheckCircle2 className="w-6 h-6 text-[#00ff00]" />}
+              {partnerAnswered && <CheckCircle2 className="w-6 h-6 text-[#00ff00] animate-pulse drop-shadow-[0_0_8px_rgba(0,255,0,0.8)]" />}
             </div>
 
             <div className="flex-1 flex flex-col gap-4">
               {partnerAnswered ? (
-                <div className="flex-1 flex flex-col items-center justify-center p-8 bg-black/40 text-center gap-6">
-                  <div className="w-20 h-20 border-2 border-[#00ff00] rounded-full flex items-center justify-center border-t-transparent animate-spin" />
-                  <p className="text-[#00ff00] font-mono tracking-widest uppercase">Partner Secured Fragment</p>
+                <div className="flex-1 flex flex-col items-center justify-center p-8 bg-black/40 text-center gap-6 relative overflow-hidden border border-[#00ff00]/30 box-glow">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,0,0.1)_0%,transparent_70%)] animate-pulse" />
+                  <div className="w-20 h-20 border-2 border-[#00ff00] rounded-full flex items-center justify-center border-t-transparent animate-spin">
+                    <CheckCircle2 className="w-8 h-8 text-[#00ff00]" />
+                  </div>
+                  <div className="relative z-10">
+                    <p className="text-[#00ff00] font-mono tracking-widest uppercase font-bold text-lg drop-shadow-[0_0_5px_rgba(0,255,0,0.5)]">Partner Secured Fragment</p>
+                    <p className="text-[#00ff00]/60 text-[10px] uppercase tracking-widest animate-pulse mt-2">Waiting for your synchrony...</p>
+                  </div>
                 </div>
               ) : (
                 <div className="flex flex-col flex-1">

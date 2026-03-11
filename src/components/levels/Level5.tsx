@@ -20,10 +20,10 @@ import {
   CodeChallenge
 } from "@/lib/questionBank";
 
-const normalize = (code: string) => {
+const normalize = (code: string): string => {
   return code
-    .replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '') // Remove comments
-    .replace(/\s+/g, '')                      // Remove all whitespace
+    .replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '$1') // Remove comments safely
+    .replace(/\s+/g, "")                                  // Remove all whitespace
     .trim();
 };
 
@@ -67,7 +67,9 @@ export function Level5() {
     // Init all stages data
     const s1WordsPool = getCrosswordWords(year, dept);
     const shuffledS1 = [...s1WordsPool].sort(() => 0.5 - Math.random());
-    setS1Words([shuffledS1[0]]); // exactly one word for Stage 1
+    // MASHUP IMPROVEMENT: Use 2 words for Stage 1 instead of 1
+    const s1ActiveWords = shuffledS1.slice(0, 2);
+    setS1Words(s1ActiveWords); 
     setFoundWords([]);
 
     const s2Pool = getSemanticBlanks(year, dept);
@@ -91,7 +93,7 @@ export function Level5() {
     const gridSize = 8;
     const newGrid: string[][] = Array(gridSize).fill(null).map(() => Array(gridSize).fill(""));
 
-    [shuffledS1[0]].forEach(w => {
+    s1ActiveWords.forEach(w => {
       let placed = false;
       let limit = 0;
       const word = w.word.toUpperCase();

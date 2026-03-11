@@ -18,6 +18,7 @@ export function Level1() {
   const [grid, setGrid] = useState<string[][]>([]);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
   const [selectedCells, setSelectedCells] = useState<{ r: number; c: number }[]>([]);
+  const [foundCells, setFoundCells] = useState<{ r: number; c: number }[]>([]);
   const [foundWords, setFoundWords] = useState<string[]>([]);
   const [success, setSuccess] = useState(false);
   const [errorFlash, setErrorFlash] = useState(false);
@@ -94,6 +95,7 @@ export function Level1() {
     setGrid(newGrid);
     setCurrentQuestionIdx(0);
     setSelectedCells([]);
+    setFoundCells([]);
     setFoundWords([]);
     setSuccess(false);
     setErrorFlash(false);
@@ -166,6 +168,7 @@ export function Level1() {
 
     if (spelled === currentWord) {
       setFoundWords([...foundWords, currentWord]);
+      setFoundCells([...foundCells, ...newSelection]);
       setSelectedCells([]);
       if (currentQuestionIdx < targetEntries.length - 1) {
         setCurrentQuestionIdx(currentQuestionIdx + 1);
@@ -188,6 +191,9 @@ export function Level1() {
 
   const isSelected = (r: number, c: number) =>
     selectedCells.some(cell => cell.r === r && cell.c === c);
+
+  const isFound = (r: number, c: number) =>
+    foundCells.some(cell => cell.r === r && cell.c === c);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -339,8 +345,10 @@ export function Level1() {
                     "w-full h-full aspect-square flex items-center justify-center font-mono text-xl font-black border-2 transition-all duration-75 relative group",
                     isSelected(r, c)
                       ? "bg-[#00ffff] text-black border-[#00ffff] shadow-[0_0_15px_#00ffff]"
-                      : "bg-[#051105] text-[#00ff00] border-[#00ff00]/20 hover:border-[#00ffff] hover:text-[#00ffff] hover:bg-[#00ffff]/10",
-                    isCritical && !isSelected(r, c) && "border-red-900/40 text-red-500/60"
+                      : isFound(r, c)
+                        ? "bg-[#00ff00]/40 text-[#00ff00] border-[#00ff00] shadow-[0_0_10px_#00ff00]"
+                        : "bg-[#051105] text-[#00ff00] border-[#00ff00]/20 hover:border-[#00ffff] hover:text-[#00ffff] hover:bg-[#00ffff]/10",
+                    isCritical && !isSelected(r, c) && !isFound(r, c) && "border-red-900/40 text-red-500/60"
                   )}
                 >
                   {char}

@@ -99,14 +99,14 @@ export default function ReconstructPage() {
     setLoadingLb(true);
     const { data } = await supabase
       .from("players")
-      .select(`id, created_at, updated_at, roll_number, access_keys(assigned_to)`)
+      .select(`id, created_at, completed_at, last_seen, roll_number, access_keys(assigned_to)`)
       .eq("status", "completed")
-      .order("updated_at", { ascending: true });
+      .order("completed_at", { ascending: true });
 
     if (data) {
       const formatted: LeaderboardEntry[] = data.map((p: any) => {
         const start = new Date(p.created_at).getTime();
-        const end = new Date(p.updated_at).getTime();
+        const end = p.completed_at ? new Date(p.completed_at).getTime() : new Date(p.updated_at || p.last_seen).getTime();
         const dur = Math.floor((end - start) / 1000);
         const m = Math.floor(dur / 60);
         const s = dur % 60;
@@ -185,6 +185,15 @@ export default function ReconstructPage() {
     if (JSON.stringify(slots) === JSON.stringify(CORRECT_ORDER)) {
       setSuccess(true);
       setError(false);
+      
+      // Stop the timer by updating status and completed_at in DB
+      if (player?.sessionId) {
+        await supabase.from("players").update({
+          status: "completed",
+          completed_at: new Date().toISOString()
+        }).eq("id", player.sessionId);
+      }
+
       await fetchLeaderboard();
     } else {
       const rem = attemptsLeft - 1;

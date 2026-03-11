@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function FailurePage() {
     const { player, erasePlayerData } = useGame();
     const router = useRouter();
-    const [stage, setStage] = useState<"initial" | "purging" | "complete">("initial");
+    const [stage, setStage] = useState<"signalLoss" | "initial" | "purging" | "complete">("signalLoss");
     const [progress, setProgress] = useState(0);
     const [logs, setLogs] = useState<string[]>([]);
     const [tempId, setTempId] = useState("");
@@ -26,6 +26,11 @@ export default function FailurePage() {
     }, [player, router, stage]);
 
     useEffect(() => {
+        if (stage === "signalLoss") {
+            const timer = setTimeout(() => setStage("initial"), 3000);
+            return () => clearTimeout(timer);
+        }
+
         if (stage === "initial") {
             const timer = setTimeout(() => setStage("purging"), 3000);
             return () => clearTimeout(timer);
@@ -78,9 +83,58 @@ export default function FailurePage() {
     return (
         <div className="min-h-screen bg-black text-[#ff003c] flex flex-col items-center justify-center p-6 font-mono overflow-hidden relative">
             {/* Background Glitch Overlay */}
-            <div className="absolute inset-0 opacity-10 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-50 contrast-150" />
+            <div className="absolute inset-0 opacity-20 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-50 contrast-150 animate-[pulse_0.1s_infinite]" />
+            <div className="absolute inset-0 bg-black opacity-40 pointer-events-none mix-blend-overlay" />
+            
+            {/* CRT Scanline Overlay */}
+            <div className="absolute inset-0 pointer-events-none opacity-20 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
 
             <AnimatePresence mode="wait">
+                {stage === "signalLoss" && (
+                    <motion.div
+                        key="signalLoss"
+                        exit={{ opacity: 0, scale: 0.9, filter: "brightness(0)" }}
+                        transition={{ duration: 0.5 }}
+                        className="fixed inset-0 flex items-center justify-center bg-black z-50 overflow-hidden"
+                    >
+                        {/* Static Noise */}
+                        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-[3] contrast-[2] animate-[pulse_0.05s_infinite] opacity-50 mix-blend-screen pointer-events-none" />
+                        
+                        {/* Glitching Text Block */}
+                        <motion.div
+                            initial={{ scale: 1, filter: "brightness(1) contrast(1)", opacity: 1 }}
+                            animate={{
+                                x: [0, -10, 10, -5, 5, 0],
+                                y: [0, 5, -5, 10, -10, 0]
+                            }}
+                            transition={{ duration: 0.2, repeat: Infinity, repeatType: "mirror" }}
+                            className="bg-black/80 border-y-8 border-white/50 w-full py-12 flex items-center justify-center z-10 backdrop-blur-sm shadow-[0_0_50px_rgba(255,255,255,0.2)]"
+                        >
+                            <h1 className="text-6xl md:text-[120px] font-black text-white mix-blend-difference tracking-tighter uppercase whitespace-nowrap animate-pulse" style={{ textShadow: "5px 0 0 red, -5px 0 0 blue" }}>
+                                NO SIGNAL
+                            </h1>
+                        </motion.div>
+
+                        <div className="absolute top-10 left-10 text-white font-mono text-xl animate-pulse">AV-1</div>
+                        <div className="absolute bottom-10 right-10 text-white font-mono text-xl opacity-50">{new Date().toLocaleTimeString()}</div>
+                        
+                        {/* SMPTE Color Bars glitching behind */}
+                        <motion.div 
+                          className="absolute inset-0 flex opacity-20 pointer-events-none"
+                          animate={{ x: [0, -20, 20, 0] }}
+                          transition={{ duration: 0.1, repeat: Infinity }}
+                        >
+                            <div className="flex-1 bg-white" />
+                            <div className="flex-1 bg-yellow-400" />
+                            <div className="flex-1 bg-[#00ffff]" />
+                            <div className="flex-1 bg-[#00ff00]" />
+                            <div className="flex-1 bg-[#ff00ff]" />
+                            <div className="flex-1 bg-[#ff003c]" />
+                            <div className="flex-1 bg-blue-600" />
+                        </motion.div>
+                    </motion.div>
+                )}
+
                 {stage === "initial" && (
                     <motion.div
                         key="initial"

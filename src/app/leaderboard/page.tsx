@@ -13,6 +13,7 @@ interface LeaderboardEntry {
   name: string;
   time: string;
   score: number;
+  levelLogs?: Record<string, string>;
   current?: boolean;
 }
 
@@ -26,18 +27,18 @@ export default function LeaderboardPage() {
     const { data, error } = await supabase
       .from("players")
       .select(`
-        id,
-        created_at,
-        updated_at,
+        completed_at,
+        last_seen,
+        level_logs,
         access_keys (assigned_to)
       `)
       .eq("status", "completed")
-      .order("updated_at", { ascending: true });
+      .order("completed_at", { ascending: true });
 
     if (data && !error) {
       const formatted: LeaderboardEntry[] = data.map((p: any) => {
         const start = new Date(p.created_at).getTime();
-        const end = new Date(p.updated_at).getTime();
+        const end = p.completed_at ? new Date(p.completed_at).getTime() : new Date(p.updated_at || p.last_seen || Date.now()).getTime();
         const durationSecs = Math.floor((end - start) / 1000);
 
         const mins = Math.floor(durationSecs / 60);
@@ -51,6 +52,7 @@ export default function LeaderboardPage() {
           name: (Array.isArray(p.access_keys) ? p.access_keys[0]?.assigned_to : p.access_keys?.assigned_to) || "Unknown Operative",
           time: `${mins}:${secs.toString().padStart(2, '0')}`,
           score: score,
+          levelLogs: p.level_logs,
           current: player?.sessionId === p.id
         };
       });
@@ -74,8 +76,12 @@ export default function LeaderboardPage() {
   }, [player?.sessionId]);
 
   return (
-    <div className="flex-1 w-full max-w-4xl mx-auto flex flex-col mt-6 gap-6 p-4">
-      <div className="text-center mb-8">
+    <div className="flex-1 w-full max-w-4xl mx-auto flex flex-col mt-6 gap-6 p-4 relative">
+      {/* Background Glitch & Scanline Overlays */}
+      <div className="fixed inset-0 pointer-events-none opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay z-0 animate-[pulse_0.1s_infinite]" />
+      <div className="fixed inset-0 pointer-events-none opacity-20 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%] z-0" />
+
+      <div className="text-center mb-8 relative z-10">
         <Trophy className="w-20 h-20 mx-auto mb-4 text-[#00ff00] glow" />
         <h1 className="text-4xl md:text-5xl font-bold mb-2 text-[#00ffff] text-glow uppercase tracking-tighter">Mission Debrief</h1>
         <div className="opacity-80 py-2">
@@ -83,10 +89,17 @@ export default function LeaderboardPage() {
         </div>
       </div>
 
-      <div className="border border-[#00ff00]/50 bg-[#001100]/80 p-6 md:p-10 box-glow mb-8 backdrop-blur-sm">
+      <div className="border border-[#00ff00]/50 bg-[#001100]/80 p-6 md:p-10 box-glow mb-8 backdrop-blur-sm relative z-10">
         <h2 className="text-2xl font-bold border-b border-[#00ff00]/30 pb-6 mb-8 flex items-center justify-between uppercase tracking-widest">
-          <span className="text-[#00ff00]">Top Ranking Operatives</span>
-          <Clock className="w-6 h-6 text-[#00ffff] animate-pulse" />
+          <div className="flex items-center gap-4 flex-wrap">
+            <span className="text-[#00ff00]">Top Ranking Operatives</span>
+            {!loading && (
+              <span className="text-[10px] bg-[#00ff00]/10 border border-[#00ff00]/50 px-2 py-1 text-[#00ff00] font-mono tracking-widest shadow-[0_0_10px_rgba(0,255,0,0.2)]">
+                TOTAL SECURED: {entries.length}
+              </span>
+            )}
+          </div>
+          <Clock className="w-6 h-6 text-[#00ffff] animate-pulse shrink-0" />
         </h2>
 
         {loading ? (
@@ -103,25 +116,39 @@ export default function LeaderboardPage() {
             </div>
 
             {entries.map((entry, idx) => (
-              <div
-                key={entry.id}
-                className={`flex items-center px-6 py-5 border transition-all hover:scale-[1.01] duration-300 ${entry.current
-                    ? "border-[#00ffff] bg-[#00ffff]/10 text-white font-bold shadow-[0_0_20px_rgba(0,255,255,0.2)]"
-                    : "border-[#00ff00]/20 bg-black/40 text-[#a0ffa0]"
-                  }`}
-              >
-                <div className="flex-1 flex gap-5 items-center">
-                  <span className={`text-2xl font-black w-8 ${idx < 3 ? 'text-[#ffd700]' : 'opacity-30'}`}>
-                    {idx + 1}
-                  </span>
-                  <div className="flex flex-col">
-                    <span className="text-xl tracking-wider uppercase font-bold">{entry.name}</span>
-                    {entry.current && <span className="text-[10px] text-[#00ffff] font-black tracking-widest">[YOU ARE HERE]</span>}
+                <div
+                  key={entry.id}
+                  className={`flex flex-col border transition-all hover:scale-[1.01] duration-300 ${entry.current
+                      ? "border-[#00ffff] bg-[#00ffff]/10 text-white font-bold shadow-[0_0_20px_rgba(0,255,255,0.2)]"
+                      : "border-[#00ff00]/20 bg-black/40 text-[#a0ffa0]"
+                    }`}
+                >
+                  <div className="flex items-center px-6 py-5">
+                    <div className="flex-1 flex gap-5 items-center">
+                      <span className={`text-2xl font-black w-8 ${idx < 3 ? 'text-[#ffd700]' : 'opacity-30'}`}>
+                        {idx + 1}
+                      </span>
+                      <div className="flex flex-col">
+                        <span className="text-xl tracking-wider uppercase font-bold">{entry.name}</span>
+                        {entry.current && <span className="text-[10px] text-[#00ffff] font-black tracking-widest">[YOU ARE HERE]</span>}
+                      </div>
+                    </div>
+                    <div className="flex-[0.5] text-center font-mono text-xl text-[#00ffff]">{entry.time}</div>
+                    <div className="flex-[0.5] text-right font-mono text-xl font-bold tracking-tighter">{entry.score.toLocaleString()}</div>
                   </div>
+                  
+                  {/* Phase 10: Breach Timeline */}
+                  {entry.levelLogs && Object.keys(entry.levelLogs).length > 0 && (
+                    <div className="px-6 pb-4 pt-0 border-t border-white/5 flex gap-1 overflow-hidden">
+                      {Object.entries(entry.levelLogs).sort((a,b) => Number(a[0]) - Number(b[0])).map(([lvl, ts], i) => (
+                        <div key={lvl} className="flex-1 group relative">
+                          <div className="h-1 bg-[#00ffff]/30 group-hover:bg-[#00ffff] transition-colors" />
+                          <div className="text-[8px] font-mono opacity-40 uppercase mt-1">L{lvl}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <div className="flex-[0.5] text-center font-mono text-xl text-[#00ffff]">{entry.time}</div>
-                <div className="flex-[0.5] text-right font-mono text-xl font-bold tracking-tighter">{entry.score.toLocaleString()}</div>
-              </div>
             ))}
 
             {entries.length === 0 && (
