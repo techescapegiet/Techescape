@@ -242,7 +242,8 @@ export function Level3() {
         }
       } else {
         setErrorFlash(true);
-        handleMissionFailure("SOLO INFILTRATION DETECTED AND NEUTRALIZED");
+        setTimeout(() => setErrorFlash(false), 800);
+        setSelected(null);
       }
       return;
     }
@@ -254,13 +255,11 @@ export function Level3() {
     if (!isCorrect) {
       // Wrong answer resets BOTH for that step and subtracts attempt
       const newAttempts = attempts - 1;
-      const newStatus = newAttempts <= 0 ? "failed" : "active";
-
+      // We don't fail anymore, just let them keep trying
       await supabase.from("collab_sessions").update({
         attempts_left: newAttempts,
         host_answered: false,
         guest_answered: false,
-        status: newStatus
       }).eq("id", session.id);
 
       setErrorFlash(true);
@@ -357,9 +356,9 @@ export function Level3() {
         </div>
         <div className="flex items-center gap-6">
           <div className="text-right">
-            <div className="text-xs uppercase text-[#ff003c] font-bold">Shield Stability</div>
-            <div className={cn("font-mono text-xl", attempts === 1 ? "text-[#ff003c] animate-pulse" : "text-[#00ff00]")}>
-              {attempts}/3 CYCLES REMAINING
+            <div className="text-xs uppercase text-[#00ffff] font-bold">Protocol</div>
+            <div className="font-mono text-xl text-[#00ff00] uppercase">
+              RECOVER FRAGMENT
             </div>
           </div>
           <div className="h-10 w-[2px] bg-white/10" />

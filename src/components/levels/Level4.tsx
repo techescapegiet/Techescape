@@ -215,9 +215,18 @@ export function Level4() {
         {/* Right Panel: Console & Info (2/5) */}
         <div className="lg:col-span-2 flex flex-col gap-3 md:gap-4">
           {/* Task Info */}
-          <div className="border border-[#00ffff]/20 bg-black/40 p-3 md:p-4 rounded-sm">
-            <h3 className="text-[10px] text-[#00ffff]/50 uppercase tracking-widest font-bold mb-2">OBJECTIVE ({currentChallenge.title})</h3>
-            <p className="text-sm md:text-base font-bold text-white">Fix the broken code to pass the checks.</p>
+          <div className="border border-[#00ffff]/20 bg-black/40 p-3 md:p-4 rounded-sm flex justify-between items-center">
+            <div>
+              <h3 className="text-[10px] text-[#00ffff]/50 uppercase tracking-widest font-bold mb-2">OBJECTIVE ({currentChallenge.title})</h3>
+              <p className="text-sm md:text-base font-bold text-white">Fix the broken code to pass the checks.</p>
+            </div>
+            <button 
+              onClick={() => setShowHint(true)}
+              disabled={showHint}
+              className="text-[#00ffff] hover:text-white transition-colors"
+            >
+              <Lightbulb className="w-5 h-5" />
+            </button>
           </div>
 
           {/* Error / Console Output */}

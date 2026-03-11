@@ -45,59 +45,60 @@ export const LEVEL_BRIEFINGS: Record<number, { title: string; objective: string;
 export interface L1Word {
     word: string;
     clue: string;
+    hint?: string;
 }
 
 const L1_WORDS: Record<AcademicYear, Record<Department, L1Word[]>> = {
     "1st Year": {
         "cse": [
-            { word: "ALGO", clue: "Steps to solve a problem." },
-            { word: "CODE", clue: "Translates code to machine language." },
-            { word: "PTR", clue: "Stores a memory address." },
-            { word: "ARRAY", clue: "List of items in memory." },
-            { word: "FUNC", clue: "Reusable block of code." },
-            { word: "VAR", clue: "Named storage in memory." },
-            { word: "SYNTAX", clue: "Rules of a language." },
-            { word: "BINARY", clue: "Base-2 number system." }
+            { word: "ALGO", clue: "Steps to solve a problem.", hint: "Short for ALGORITHM." },
+            { word: "CODE", clue: "Translates code to machine language.", hint: "Sounds like COMPILER." },
+            { word: "PTR", clue: "Stores a memory address.", hint: "Short for POINTER." },
+            { word: "ARRAY", clue: "List of items in memory.", hint: "Linear data structure." },
+            { word: "FUNC", clue: "Reusable block of code.", hint: "Short for FUNCTION." },
+            { word: "VAR", clue: "Named storage in memory.", hint: "Short for VARIABLE." },
+            { word: "SYNTAX", clue: "Rules of a language.", hint: "The grammar of code." },
+            { word: "BINARY", clue: "Base-2 number system.", hint: "Zeros and ones." }
         ],
         "ece": [
-            { word: "RESISTOR", clue: "Limits electric current." },
-            { word: "VOLTAGE", clue: "Electric potential." },
-            { word: "CURRENT", clue: "Flow of charge." },
-            { word: "DIODE", clue: "One-way current flow." },
-            { word: "CIRCUIT", clue: "Path for electricity." },
-            { word: "CHIP", clue: "Amplify or switch signals." },
-            { word: "SENSOR", clue: "Detects physical input." },
-            { word: "BATTERY", clue: "Stores energy." }
+            { word: "RESISTOR", clue: "Limits electric current.", hint: "V = IR component." },
+            { word: "VOLTAGE", clue: "Electric potential.", hint: "Measured in Volts." },
+            { word: "CURRENT", clue: "Flow of charge.", hint: "Measured in Amperes." },
+            { word: "DIODE", clue: "One-way current flow.", hint: "P-N Junction device." },
+            { word: "CIRCUIT", clue: "Path for electricity.", hint: "A closed loop." },
+            { word: "CHIP", clue: "Amplify or switch signals.", hint: "Integrated Circuit." },
+            { word: "SENSOR", clue: "Detects physical input.", hint: "Transducer device." },
+            { word: "BATTERY", clue: "Stores energy.", hint: "Chemical power source." }
         ],
         "mech": [
-            { word: "FORCE", clue: "Push or pull." },
-            { word: "MOTION", clue: "Moving state." },
-            { word: "ENERGY", clue: "Ability to do work." },
-            { word: "ENGINE", clue: "Converts heat to work." },
-            { word: "TORQUE", clue: "Twisting force." },
-            { word: "GEAR", clue: "Toothed wheel." },
-            { word: "LEVER", clue: "Rigid bar for lifting." },
-            { word: "PISTON", clue: "Moving cylinder part." }
+            { word: "FORCE", clue: "Push or pull.", hint: "Newton's Second Law." },
+            { word: "MOTION", clue: "Moving state.", hint: "Kinematics concept." },
+            { word: "ENERGY", clue: "Ability to do work.", hint: "Measured in Joules." },
+            { word: "ENGINE", clue: "Converts heat to work.", hint: "IC or Steam." },
+            { word: "TORQUE", clue: "Twisting force.", hint: "Moment of a force." },
+            { word: "GEAR", clue: "Toothed wheel.", hint: "Power transmission." },
+            { word: "LEVER", clue: "Rigid bar for lifting.", hint: "Simple machine." },
+            { word: "PISTON", clue: "Moving cylinder part.", hint: "Found in engines." }
         ],
         "ce": [
-            { word: "BRIDGE", clue: "Structure over gap." },
-            { word: "CEMENT", clue: "Binding material." },
-            { word: "SURVEY", clue: "Mapping land." },
-            { word: "STRESS", clue: "Force on area." },
-            { word: "COLUMN", clue: "Vertical support." },
-            { word: "STRUCT", clue: "Building frame." },
-            { word: "DAM", clue: "Barrier for water." },
-            { word: "SOIL", clue: "Earth material." }
+            { word: "BRIDGE", clue: "Structure over gap.", hint: "Arch, Beam, or Cable." },
+            { word: "CEMENT", clue: "Binding material.", hint: "Component of concrete." },
+            { word: "SURVEY", clue: "Mapping land.", hint: "Theodolite work." },
+            { word: "STRESS", clue: "Force on area.", hint: "Pa or N/m2." },
+            { word: "COLUMN", clue: "Vertical support.", hint: "Compressive member." },
+            { word: "STRUCT", clue: "Building frame.", hint: "Load-bearing skeleton." },
+            { word: "DAM", clue: "Barrier for water.", hint: "Hydroelectric source." },
+            { word: "SOIL", clue: "Earth material.", hint: "Geotechnical study." }
         ],
         "csM": [
-            { word: "PYTHON", clue: "AI coding language." },
-            { word: "NEURAL", clue: "Brain-like network." },
-            { word: "DATA", clue: "Set of information." },
-            { word: "LEARN", clue: "Improve from data." },
-            { word: "MODEL", clue: "AI representation." },
-            { word: "LAYER", clue: "Part of a network." },
-            { word: "WEIGHT", clue: "Signal strength." },
-            { word: "TRAIN", clue: "Teach an AI." }
+            { word: "PYTHON", clue: "AI coding language.", hint: "Primary language for ML." },
+            { word: "NEURAL", clue: "Brain-like network.", hint: "Deep Learning base." },
+            { word: "DATA", clue: "Set of information.", hint: "Nourishment for AI." },
+            { word: "LEARN", clue: "Improve from data.", hint: "The 'L' in ML." },
+            { word: "MODEL", clue: "AI representation.", hint: "Result of training." },
+            { word: "LAYER", clue: "Part of a network.", hint: "Input, Hidden, Output." },
+            { word: "WEIGHT", clue: "Signal strength.", hint: "Adjusted during training." },
+            { word: "TRAIN", clue: "Teach an AI.", hint: "Processing datasets." }
         ],
         "csd": [
             { word: "DESIGN", clue: "User experience plan." },
@@ -112,14 +113,14 @@ const L1_WORDS: Record<AcademicYear, Record<Department, L1Word[]>> = {
     },
     "2nd Year": {
         "cse": [
-            { word: "OBJECT", clue: "An instance of a class." },
-            { word: "CLASS", clue: "A blueprint for creating objects." },
-            { word: "EXTENDS", clue: "Mechanism where one class acquires the properties of another." },
-            { word: "POLY", clue: "Ability of an object to take on many forms." },
-            { word: "ENCODER", clue: "Wrapping of data and methods into a single unit." },
-            { word: "LIST", clue: "Linear data structure with nodes." },
-            { word: "STACK", clue: "Linear structure following LIFO." },
-            { word: "QUEUE", clue: "Linear structure following FIFO." }
+            { word: "OBJECT", clue: "An instance of a class.", hint: "The 'O' in OOP." },
+            { word: "CLASS", clue: "A blueprint for creating objects.", hint: "Defines properties and methods." },
+            { word: "EXTENDS", clue: "Mechanism where one class acquires the properties of another.", hint: "Keyword for Inheritance." },
+            { word: "POLY", clue: "Ability of an object to take on many forms.", hint: "Short for Polymorphism." },
+            { word: "ENCODER", clue: "Wrapping of data and methods into a single unit.", hint: "Part of Encapsulation." },
+            { word: "LIST", clue: "Linear data structure with nodes.", hint: "Linked List." },
+            { word: "STACK", clue: "Linear structure following LIFO.", hint: "Last-In, First-Out." },
+            { word: "QUEUE", clue: "Linear structure following FIFO.", hint: "First-In, First-Out." }
         ],
         "ece": [
             { word: "AMP", clue: "A device that increases the power of a signal." },
@@ -152,12 +153,12 @@ const L1_WORDS: Record<AcademicYear, Record<Department, L1Word[]>> = {
             { word: "DEFORM", clue: "Element displacement under load." }
         ],
         "csM": [
-            { word: "NEURAL", clue: "Brain-like network." },
-            { word: "LEARN", clue: "Acquire knowledge." },
-            { word: "DATA", clue: "Information units." },
-            { word: "MODEL", clue: "AI system type." },
-            { word: "AGENT", clue: "AI that acts." },
-            { word: "PROMPT", clue: "Input for AI." }
+            { word: "NEURAL", clue: "Brain-like network.", hint: "Artificial Neural Network." },
+            { word: "LEARN", clue: "Acquire knowledge.", hint: "Machine Learning." },
+            { word: "DATA", clue: "Information units.", hint: "Big Data." },
+            { word: "MODEL", clue: "AI system type.", hint: "CNN or RNN." },
+            { word: "AGENT", clue: "AI that acts.", hint: "Intelligent Agent." },
+            { word: "PROMPT", clue: "Input for AI.", hint: "Instruction for LLM." }
         ],
         "csd": [
             { word: "LAYOUT", clue: "Visual arrangement." },
@@ -170,14 +171,14 @@ const L1_WORDS: Record<AcademicYear, Record<Department, L1Word[]>> = {
     },
     "3rd Year": {
         "cse": [
-            { word: "PROCESS", clue: "A program in execution." },
-            { word: "THREAD", clue: "Smallest unit of execution." },
-            { word: "LOCK", clue: "Situation where processes are blocked." },
-            { word: "PAGING", clue: "Memory management scheme." },
-            { word: "DBASE", clue: "Type of database model." },
-            { word: "NORMAL", clue: "Reducing database redundancy." },
-            { word: "TXN", clue: "Sequence of database operations." },
-            { word: "PACKET", clue: "Independent entity of data." }
+            { word: "PROCESS", clue: "A program in execution.", hint: "Managed by the OS." },
+            { word: "THREAD", clue: "Smallest unit of execution.", hint: "Part of a process." },
+            { word: "LOCK", clue: "Situation where processes are blocked.", hint: "Deadlock scenario." },
+            { word: "PAGING", clue: "Memory management scheme.", hint: "Virtual memory concept." },
+            { word: "DBASE", clue: "Type of database model.", hint: "Rational or SQL." },
+            { word: "NORMAL", clue: "Reducing database redundancy.", hint: "First, Second, Third NF." },
+            { word: "TXN", clue: "Sequence of database operations.", hint: "Abbreviation for Transaction." },
+            { word: "PACKET", clue: "Independent entity of data.", hint: "Network layer unit." }
         ],
         "ece": [
             { word: "CPU", clue: "IC containing functions of a CPU." },
@@ -228,14 +229,14 @@ const L1_WORDS: Record<AcademicYear, Record<Department, L1Word[]>> = {
     },
     "4th Year": {
         "cse": [
-            { word: "CLOUD", clue: "Remote resource availability." },
-            { word: "MACHINE", clue: "Device performing actions." },
-            { word: "ML", clue: "AI learning from data." },
-            { word: "SECURE", clue: "System protection." },
-            { word: "NETWORK", clue: "Computers sharing resources." },
-            { word: "AGILE", clue: "Iterative development." },
-            { word: "SCRUM", clue: "Project management framework." },
-            { word: "DEVOPS", clue: "Combined Dev and Ops." }
+            { word: "CLOUD", clue: "Remote resource availability.", hint: "AWS or Azure." },
+            { word: "MACHINE", clue: "Device performing actions.", hint: "Machine Learning." },
+            { word: "ML", clue: "AI learning from data.", hint: "Abbreviation for Machine Learning." },
+            { word: "SECURE", clue: "System protection.", hint: "Cyber Security." },
+            { word: "NETWORK", clue: "Computers sharing resources.", hint: "LAN or WAN." },
+            { word: "AGILE", clue: "Iterative development.", hint: "SDLC Methodology." },
+            { word: "SCRUM", clue: "Project management framework.", hint: "Part of Agile." },
+            { word: "DEVOPS", clue: "Combined Dev and Ops.", hint: "CI/CD Pipeline." }
         ],
         "ece": [
             { word: "IOT", clue: "Internet of Things." },
@@ -312,14 +313,17 @@ const L2_BLANKS: Record<AcademicYear, Record<Department, SemanticBlank[]>> = {
             { word: "ALGORITHM", hint: "Steps to solve a problem." },
             { word: "VARIABLE", hint: "Named storage location." },
             { word: "DEBUG", hint: "Fixing code errors." },
-            { word: "FUNCTION", hint: "Reusable code block." }
+            { word: "FUNCTION", hint: "Reusable code block." },
+            { word: "HARDWARE", hint: "Physical parts of a computer." },
+            { word: "FIREWALL", hint: "Prevents unauthorized network access." }
         ],
         "ece": [
             { word: "DIODE", hint: "Allows current in one way." },
             { word: "RESISTOR", hint: "Limits electric current." },
             { word: "VOLTAGE", hint: "Electric potential difference." },
             { word: "CURRENT", hint: "Flow of electric charge." },
-            { word: "CAPACITOR", hint: "Stores electrical energy." }
+            { word: "CAPACITOR", hint: "Stores electrical energy." },
+            { word: "INDUCTOR", hint: "Stores energy in a magnetic field." }
         ],
         "mech": [
             { word: "FRICTION", hint: "Force resisting motion." },
@@ -339,8 +343,9 @@ const L2_BLANKS: Record<AcademicYear, Record<Department, SemanticBlank[]>> = {
             { word: "PYTHON", hint: "Language used for AI." },
             { word: "ALGORITHM", hint: "Steps to solve a problem." },
             { word: "VARIABLE", hint: "Named storage location." },
-            { word: "DATA", hint: "Information used for analysis." },
-            { word: "DATASET", hint: "Collection of records." }
+            { word: "DATASET", hint: "Collection of records." },
+            { word: "NEURON", hint: "Basic unit of a neural network." },
+            { word: "CLASSIFY", hint: "Assigning data to categories." }
         ],
         "csd": [
             { word: "PYTHON", hint: "Language used for AI." },
@@ -356,14 +361,17 @@ const L2_BLANKS: Record<AcademicYear, Record<Department, SemanticBlank[]>> = {
             { word: "ENCAP", hint: "Binding data and functions." },
             { word: "INHERIT", hint: "Class deriving from another." },
             { word: "DATABASE", hint: "Collection of structured info." },
-            { word: "INTERFACE", hint: "Shared boundary for components." }
+            { word: "INTERFACE", hint: "Shared boundary for components." },
+            { word: "SEMAPHORE", hint: "Flag used for thread coordination." },
+            { word: "PROTOCOL", hint: "Rules for data exchange." }
         ],
         "ece": [
             { word: "MUX", hint: "Selects between input signals." },
             { word: "OSCILLATE", hint: "Produces periodic signals." },
             { word: "AMPLIFY", hint: "Increase signal power." },
             { word: "MODULATE", hint: "Varying waveform properties." },
-            { word: "TRANSISTOR", hint: "Switches electrical signals." }
+            { word: "TRANSISTOR", hint: "Switches electrical signals." },
+            { word: "RECTIFY", hint: "Converting AC to DC." }
         ],
         "mech": [
             { word: "THERMO", hint: "Deals with heat and work." },
@@ -377,14 +385,16 @@ const L2_BLANKS: Record<AcademicYear, Record<Department, SemanticBlank[]>> = {
             { word: "CONTOUR", hint: "Outline of a shape." },
             { word: "SURVEY", hint: "Determining earth positions." },
             { word: "MECHANIC", hint: "Concerned with motions." },
-            { word: "LEVEL", hint: "Finding elevation points." }
+            { word: "LEVEL", hint: "Finding elevation points." },
+            { word: "TRUSS", hint: "Triangle-based support structure." }
         ],
         "csM": [
             { word: "REGRESS", hint: "Determining relationship strength." },
             { word: "NUMPY", hint: "Python math library." },
             { word: "PANDAS", hint: "Data manipulation library." },
-            { word: "STATS", hint: "Analyzing numerical data." },
-            { word: "PROB", hint: "Likelihood of an event." }
+            { word: "PROB", hint: "Likelihood of an event." },
+            { word: "EPOCH", hint: "One full pass over a dataset." },
+            { word: "GRADIENT", hint: "Slope used in optimization." }
         ],
         "csd": [
             { word: "LAYOUT", hint: "Visual arrangement." },
@@ -396,11 +406,13 @@ const L2_BLANKS: Record<AcademicYear, Record<Department, SemanticBlank[]>> = {
     },
     "3rd Year": {
         "cse": [
-            { word: "DEADLOCK", hint: "A state in an OS where each process is waiting for a resource." },
-            { word: "NORMALIZATION", hint: "Structuring a relational database to reduce data redundancy." },
-            { word: "PROCESS", "hint": "An instance of a computer program that is being executed." },
-            { word: "THREAD", hint: "The smallest sequence of programmed instructions managed by a scheduler." },
-            { word: "DATAGRAM", hint: "A basic transfer unit associated with a packet-switched network." }
+            { word: "DEADLOCK", hint: "Current execution state where processes are stuck." },
+            { word: "NORMALIZATION", hint: "Reducing database redundancy." },
+            { word: "PROCESS", hint: "A program in execution." },
+            { word: "THREAD", hint: "Smallest unit of execution." },
+            { word: "DATAGRAM", hint: "Packet unit in networking." },
+            { word: "BANDWIDTH", hint: "Maximum data transfer rate." },
+            { word: "VLAN", hint: "Logical subnetwork design." }
         ],
         "ece": [
             { word: "FLIPFLOP", hint: "A circuit that has two stable states and can be used to store state information." },
@@ -410,11 +422,13 @@ const L2_BLANKS: Record<AcademicYear, Record<Department, SemanticBlank[]>> = {
             { word: "CMOS", hint: "Complementary metal-oxide-semiconductor." }
         ],
         "mech": [
-            { word: "CONVECTION", hint: "The transfer of heat due to the bulk movement of molecules." },
-            { word: "CONDUCTION", hint: "The process by which heat or electricity is directly transmitted." },
-            { word: "RADIATION", hint: "The emission of energy as electromagnetic waves." },
-            { word: "CASTING", hint: "A manufacturing process in which a liquid material is usually poured into a mold." },
-            { word: "WELDING", hint: "A fabrication process that joins materials." }
+            { word: "CONVECTION", hint: "Heat transfer via fluid movement." },
+            { word: "CONDUCTION", hint: "Direct heat transfer via contact." },
+            { word: "RADIATION", hint: "Heat transfer via EM waves." },
+            { word: "CASTING", hint: "Pouring liquid into a mold." },
+            { word: "WELDING", hint: "Joining metal parts." },
+            { word: "TURBINE", hint: "Extracts energy from fluid flow." },
+            { word: "GEARBOX", hint: "Assembly that provides speed/torque conversion." }
         ],
         "ce": [
             { word: "FOUNDATION", hint: "The lowest part of a civil structure that is in direct contact with the soil." },
@@ -424,11 +438,12 @@ const L2_BLANKS: Record<AcademicYear, Record<Department, SemanticBlank[]>> = {
             { word: "REINFORCEMENT", hint: "The action or process of strengthening." }
         ],
         "csM": [
-            { word: "DEEP", hint: "ML network depth." },
-            { word: "NODE", hint: "Network point." },
-            { word: "GPU", hint: "Fast processor." },
-            { word: "PYTHON", hint: "AI language." },
-            { word: "CLOUD", hint: "Remote AI compute." }
+            { word: "DEEP", hint: "Neural network layer depth." },
+            { word: "NODE", hint: "Neural network signal point." },
+            { word: "GPU", hint: "Processors for parallel arithmetic." },
+            { word: "PYTHON", hint: "AI primary languge." },
+            { word: "CLUSTER", hint: "Grouping similar data points." },
+            { word: "OVERFIT", hint: "Model performing too well on train data." }
         ],
         "csd": [
             { word: "STYLE", hint: "Visual look." },
@@ -440,11 +455,12 @@ const L2_BLANKS: Record<AcademicYear, Record<Department, SemanticBlank[]>> = {
     },
     "4th Year": {
         "cse": [
-            { word: "CLOUD", hint: "Remote storage." },
+            { word: "CLOUD", hint: "Remote storage and compute." },
             { word: "SECURE", hint: "System protection." },
-            { word: "AGILE", hint: "Iterative plan." },
+            { word: "AGILE", hint: "Iterative development methodology." },
             { word: "DEVOPS", hint: "Dev+Ops practice." },
-            { word: "TRUST", hint: "System belief." }
+            { word: "KUBERNETES", hint: "Container orchestration system." },
+            { word: "DOCKER", hint: "Liquid-less container platform." }
         ],
         "ece": [
             { word: "IOT", hint: "Internet of Things." },
@@ -486,8 +502,7 @@ const L2_BLANKS: Record<AcademicYear, Record<Department, SemanticBlank[]>> = {
 
 export function getSemanticBlanks(year: AcademicYear, dept: Department): SemanticBlank[] {
     const yrBank = L2_BLANKS[year] || L2_BLANKS["1st Year"];
-    const targetDept = (dept === "csM" || dept === "csd") ? "cse" : dept;
-    return yrBank[targetDept] || yrBank["cse"];
+    return yrBank[dept] || yrBank["cse"];
 }
 
 // -----------------------------------------------------------------------------------

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '@/context/GameContext';
 import { TerminalText } from '@/components/ui/TerminalText';
 import { GlitchText } from '@/components/ui/GlitchText';
-import { ShieldAlert, CheckCircle2, Lock, Unlock, Zap, Timer, BrainCircuit, Activity, LayoutGrid, AlertTriangle, List, HelpCircle } from 'lucide-react';
+import { ShieldAlert, CheckCircle2, Lock, Unlock, Zap, Timer, BrainCircuit, Activity, LayoutGrid, AlertTriangle, List, HelpCircle, Lightbulb } from 'lucide-react';
 import { getCrosswordWords, AcademicYear, Department } from '@/lib/questionBank';
 import { cn } from "@/lib/utils";
 
@@ -21,6 +21,7 @@ export function Level1() {
   const [foundWords, setFoundWords] = useState<string[]>([]);
   const [success, setSuccess] = useState(false);
   const [errorFlash, setErrorFlash] = useState(false);
+  const [showHint, setShowHint] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
   const [timeLeft, setTimeLeft] = useState(LEVEL_TIME);
 
@@ -92,6 +93,7 @@ export function Level1() {
     setFoundWords([]);
     setSuccess(false);
     setErrorFlash(false);
+    setShowHint(false);
     setTimeLeft(LEVEL_TIME);
     setTimeout(() => setIsInitializing(false), 800);
   }, [targetEntries]);
@@ -163,6 +165,7 @@ export function Level1() {
       setSelectedCells([]);
       if (currentQuestionIdx < targetEntries.length - 1) {
         setCurrentQuestionIdx(currentQuestionIdx + 1);
+        setShowHint(false); // Reset hint when moving to next question
       } else {
         setSuccess(true);
         setTimeout(() => completeLevel("SYSTEM"), 3000);
@@ -343,8 +346,17 @@ export function Level1() {
 
         <div className="w-full lg:w-[450px] flex flex-col gap-6">
           <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2 text-[#00ffff] font-bold text-xs uppercase tracking-[0.2em]">
-              <HelpCircle className="w-4 h-4" /> Search the Matrix for:
+            <div className="flex items-center justify-between text-[#00ffff] font-bold text-xs uppercase tracking-[0.2em]">
+              <div className="flex items-center gap-2">
+                <HelpCircle className="w-4 h-4" /> Search the Matrix for:
+              </div>
+              <button
+                onClick={() => setShowHint(true)}
+                className="hover:text-white transition-colors flex items-center gap-1"
+                disabled={showHint}
+              >
+                <Lightbulb className="w-3 h-3" /> Hint
+              </button>
             </div>
             <div className={cn("border-2 p-6 box-glow rounded-sm min-h-[160px] flex flex-col justify-center items-center transition-colors relative overflow-hidden",
               isCritical ? "border-red-600 bg-red-950/20" : "border-[#00ffff]/40 bg-[#001122]/60")}>
@@ -361,6 +373,15 @@ export function Level1() {
                   <p className="text-lg md:text-xl font-bold text-white leading-relaxed">
                     "{currentEntry.clue}"
                   </p>
+                  {showHint && currentEntry.hint && (
+                    <motion.p
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      className="text-xs font-mono text-[#00ffff] bg-[#00ffff]/10 p-2 border border-[#00ffff]/20 mt-2 italic"
+                    >
+                      HINT: {currentEntry.hint}
+                    </motion.p>
+                  )}
                 </motion.div>
               </AnimatePresence>
 

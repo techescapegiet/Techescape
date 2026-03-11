@@ -151,14 +151,9 @@ export function Level5() {
   };
 
   const handleStageFailure = (msg?: string) => {
-    const rem = attempts - 1;
-    setAttempts(rem);
+    // We don't subtract attempts anymore to allow infinite tries
     setErrorFlash(true);
-    if (rem <= 0) {
-      setTimeout(() => handleMissionFailure("HYPER-MASHUP OVERLOAD: SYSTEM PURGE"), 1000);
-    } else {
-      setTimeout(() => setErrorFlash(false), 1000);
-    }
+    setTimeout(() => setErrorFlash(false), 1000);
   };
 
   // S1 logic
@@ -304,9 +299,9 @@ export function Level5() {
           </div>
           <div className="h-10 w-[1px] bg-white/10" />
           <div className="flex flex-col">
-            <span className="text-[10px] text-[#ff003c] font-bold uppercase tracking-widest">Integrity</span>
-            <div className={cn("text-2xl font-mono font-bold flex gap-1", attempts === 1 ? "text-[#ff003c] animate-pulse" : "text-[#00ff9f]")}>
-              {attempts} LIVES
+            <span className="text-[10px] text-[#00ffff] font-bold uppercase tracking-widest">Protocol</span>
+            <div className="text-2xl font-mono font-bold text-[#00ff00] uppercase">
+              ACTIVE
             </div>
           </div>
         </div>
