@@ -26,9 +26,12 @@ CREATE TABLE IF NOT EXISTS event_settings (
 );
 
 -- Initialize the single settings row
-INSERT INTO event_settings (id, is_live, game_started) 
-VALUES (1, false, false) 
-ON CONFLICT (id) DO NOTHING;
+INSERT INTO event_settings (id, is_live, game_started, maintenance_message) 
+VALUES (1, false, false, 'WAIT FOR THE EVENT - SYSTEM IS NOT ONLINE') 
+ON CONFLICT (id) DO UPDATE SET 
+    is_live = EXCLUDED.is_live,
+    game_started = EXCLUDED.game_started,
+    maintenance_message = EXCLUDED.maintenance_message;
 
 -- 3. PLAYERS TABLE (Active Sessions & Progress)
 CREATE TABLE IF NOT EXISTS players (
@@ -104,6 +107,7 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
+DROP TRIGGER IF EXISTS update_collab_sessions_updated_at ON collab_sessions;
 CREATE TRIGGER update_collab_sessions_updated_at
     BEFORE UPDATE ON collab_sessions
     FOR EACH ROW

@@ -193,7 +193,10 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       syncPlayerToSupabase(updatedPlayer);
     }
 
-    const effectiveStartTime = globalStartTime || currentStartTime;
+    // Use global start time if available, otherwise fallback to local player startTime
+    // SAFEGUARD: If globalStartTime is more than 1 hr old, it's stale (from a previous day/event). Ignore it.
+    const isGlobalStale = globalStartTime && (now - globalStartTime > TOTAL_MISSION_TIME * 1000);
+    const effectiveStartTime = (globalStartTime && !isGlobalStale) ? globalStartTime : currentStartTime;
 
     const timer = setInterval(() => {
       const elapsed = Math.floor((Date.now() - effectiveStartTime) / 1000);
