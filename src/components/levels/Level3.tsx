@@ -238,7 +238,7 @@ export function Level3() {
           setShowHint(false);
         } else {
           setSuccess(true);
-          setTimeout(() => completeLevel("BINARY"), 3000);
+          setTimeout(() => completeLevel("LOGIC"), 3000);
         }
       } else {
         setErrorFlash(true);

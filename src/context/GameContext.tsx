@@ -172,30 +172,27 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!player) return;
+
     if (!isGameStarted) {
       // Freeze timer at 1 hr if game hasn't started
       setTimeRemaining(TOTAL_MISSION_TIME);
       return;
     }
 
-    // When game is started, sync local start time so the 60 min countdown begins perfectly across all devices
-    const savedPlayer = localStorage.getItem("escape_room_player");
+    // GAME HAS STARTED
     let currentStartTime = player.startTime;
+    const now = Date.now();
 
-    // If the timer was frozen (i.e., they logged in early), we override their local start time to NOW
-    if (savedPlayer) {
-      const parsed = JSON.parse(savedPlayer);
-      if (parsed.startTime < Date.now() - 3600000 && timeRemaining === TOTAL_MISSION_TIME) {
-        // It's a stale start time from an earlier login, reset it.
-        const newTime = Date.now();
-        currentStartTime = newTime;
-        const updatedPlayer = { ...parsed, startTime: newTime };
-        setPlayer(updatedPlayer);
-        localStorage.setItem("escape_room_player", JSON.stringify(updatedPlayer));
-      }
+    // Reset local start time if it was set way before the game actually started
+    // (i.e. they were sitting in the lobby)
+    if (!globalStartTime && (player.startTime < now - 1000)) {
+      currentStartTime = now;
+      const updatedPlayer = { ...player, startTime: now };
+      setPlayer(updatedPlayer);
+      localStorage.setItem("escape_room_player", JSON.stringify(updatedPlayer));
+      syncPlayerToSupabase(updatedPlayer);
     }
 
-    // Use global start time if available, otherwise fallback to local player startTime
     const effectiveStartTime = globalStartTime || currentStartTime;
 
     const timer = setInterval(() => {
@@ -210,7 +207,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [player, isGameStarted]);
+  }, [player?.id, isGameStarted, globalStartTime]);
 
   const erasePlayerData = async () => {
     if (!player) return;

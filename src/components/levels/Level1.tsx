@@ -207,9 +207,9 @@ export function Level1() {
       <div className="flex flex-col items-center justify-center p-12 mt-12 border-2 border-[#00ff00] bg-[#002200]/50 box-glow text-center rounded-lg">
         <CheckCircle2 className="w-24 h-24 text-[#00ff00] mb-6 animate-pulse" />
         <h2 className="text-4xl font-bold text-[#00ff00] text-glow mb-4">MATRIX BYPASSED</h2>
-        <div className="text-5xl font-mono font-bold text-[#00ffff] tracking-[0.5em] bg-black p-8 border-2 border-[#00ffff]">
-          {targetEntries[0].word}
-        </div>
+            <div className="text-5xl font-mono font-bold text-[#00ffff] tracking-[0.5em] bg-black p-8 border-2 border-[#00ffff]">
+              SYSTEM
+            </div>
         <div className="text-white/40 font-mono mt-4">FRAGMENT RECOVERED: SYSTEM</div>
       </div>
     );
