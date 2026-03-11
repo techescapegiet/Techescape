@@ -295,7 +295,7 @@ export function getCrosswordWords(year: AcademicYear, dept: Department): L1Word[
     const yrBank = L1_WORDS[year] || L1_WORDS["1st Year"];
     const targetDept = (dept === "csM" || dept === "csd") ? "cse" : dept;
     const pool = yrBank[targetDept] || yrBank["cse"];
-    return [...pool].sort(() => 0.5 - Math.random()).slice(0, 3);
+    return [...pool].sort(() => 0.5 - Math.random()).slice(0, 6);
 }
 
 // -----------------------------------------------------------------------------------
