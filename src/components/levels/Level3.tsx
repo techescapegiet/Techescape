@@ -47,12 +47,13 @@ export function Level3() {
   // Setup My Questions
   useEffect(() => {
     if (player?.academicYear && player?.department) {
+      const myDept = player.department as Department;
       if (mode === "collab" && session?.id) {
         const myOffset = session.role === "host" ? 0 : 3;
-        setMyQuestions(getMCQs(session.id, myOffset));
+        setMyQuestions(getMCQs(myDept, session.id, myOffset));
       } else {
         // Solo or choice mode
-        setMyQuestions(getMCQs());
+        setMyQuestions(getMCQs(myDept));
       }
     }
   }, [player, mode, session?.id, session?.role]);
@@ -73,9 +74,10 @@ export function Level3() {
           return;
         }
 
+        const partnerDept = (data.access_keys as unknown as { department: Department }[])?.[0]?.department || "cse";
         // Partner uses the REVERSE offset
         const partnerOffset = session.role === "host" ? 3 : 0;
-        setPartnerQuestions(getMCQs(session.id, partnerOffset));
+        setPartnerQuestions(getMCQs(partnerDept, session.id, partnerOffset));
       };
       fetchPartnerData();
     }
@@ -168,7 +170,7 @@ export function Level3() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [mode, session, player?.sessionId, completeLevel, currentStep]);
+  }, [mode, session, player?.sessionId, completeLevel, currentStep, handleMissionFailure]);
 
   // DECENTRALIZED Atomic Sync Controller: 
   // Either client will attempt to advance the step as soon as both flags are true
@@ -404,7 +406,7 @@ export function Level3() {
           {!amIAnswered ? (
             <>
               <p className="text-xl font-bold mb-4 min-h-[80px] leading-relaxed italic border-l-2 border-[#00ffff] pl-4">
-                "{q.question}"
+                &quot;{q.question}&quot;
               </p>
               {showHint && (
                 <div className="mb-6 p-2 bg-[#00ffff]/5 border border-[#00ffff]/20 text-[#00ffff] text-xs italic animate-pulse">
@@ -466,7 +468,7 @@ export function Level3() {
                 </div>
               ) : (
                 <div className="flex flex-col flex-1">
-                  <p className="text-sm opacity-50 italic mb-4">"{partnerQuestions[currentStep]?.question || "..."}"</p>
+                  <p className="text-sm opacity-50 italic mb-4">&quot;{partnerQuestions[currentStep]?.question || "..."}&quot;</p>
                   <div className="grid grid-cols-1 gap-2 flex-1">
                     {partnerQuestions[currentStep]?.options.map((opt, idx) => (
                       <button

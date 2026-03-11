@@ -30,7 +30,7 @@ interface GameContextType {
   user: User | null;
   isEventLive: boolean;
   isGameStarted: boolean;
-  checkEventStatus: () => Promise<{ isLive: boolean, isStarted: boolean }>;
+  checkEventStatus: () => Promise<{ isLive: boolean, isStarted: boolean, startTime: number | null }>;
   erasePlayerData: () => Promise<void>;
   handleMissionFailure: (reason: string) => Promise<void>;
 }
@@ -46,6 +46,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isEventLive, setIsEventLive] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
+  const [globalStartTime, setGlobalStartTime] = useState<number | null>(null);
   const router = useRouter();
 
   // Sync player to Supabase using session history model
@@ -106,6 +107,14 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         console.log("EVENT SETTINGS UPDATED:", payload.new);
         setIsEventLive(payload.new.is_live);
         setIsGameStarted(payload.new.game_started || false);
+        
+        // Parse global start time if available
+        if (payload.new.game_started && payload.new.maintenance_message?.startsWith("START_TIME:")) {
+          const ts = parseInt(payload.new.maintenance_message.split(":")[1]);
+          if (!isNaN(ts)) setGlobalStartTime(ts);
+        } else {
+          setGlobalStartTime(null);
+        }
       })
       .subscribe((status) => {
         console.log("Supabase Realtime Status:", status);
@@ -127,16 +136,28 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const checkEventStatus = async () => {
     const { data, error } = await supabase
       .from("event_settings")
-      .select("is_live, game_started")
+      .select("is_live, game_started, maintenance_message")
       .eq("id", 1)
       .maybeSingle();
 
     if (data && !error) {
       setIsEventLive(data.is_live);
       setIsGameStarted(data.game_started || false);
-      return { isLive: data.is_live, isStarted: data.game_started || false };
+      
+      let startTime = null;
+      if (data.game_started && data.maintenance_message?.startsWith("START_TIME:")) {
+        const ts = parseInt(data.maintenance_message.split(":")[1]);
+        if (!isNaN(ts)) {
+          startTime = ts;
+          setGlobalStartTime(ts);
+        }
+      } else {
+        setGlobalStartTime(null);
+      }
+      
+      return { isLive: data.is_live, isStarted: data.game_started || false, startTime };
     }
-    return { isLive: false, isStarted: false };
+    return { isLive: false, isStarted: false, startTime: null };
   };
 
   const signInWithGoogle = async () => {
@@ -174,8 +195,11 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
+    // Use global start time if available, otherwise fallback to local player startTime
+    const effectiveStartTime = globalStartTime || currentStartTime;
+
     const timer = setInterval(() => {
-      const elapsed = Math.floor((Date.now() - currentStartTime) / 1000);
+      const elapsed = Math.floor((Date.now() - effectiveStartTime) / 1000);
       const remaining = Math.max(0, TOTAL_MISSION_TIME - elapsed);
       setTimeRemaining(remaining);
 
@@ -227,7 +251,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const handleMissionFailure = async (_reason: string) => {
+  const handleMissionFailure = async (reason: string) => {
+    console.log("Mission failed:", reason);
     // Just redirect to failure page, let the page handle the cinematic erasure
     router.push("/failure");
   };

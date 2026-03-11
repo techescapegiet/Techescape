@@ -3,94 +3,104 @@
 import { useState, useEffect } from "react";
 import { useGame } from "@/context/GameContext";
 import { GlowingButton } from "@/components/ui/GlowingButton";
-import { TerminalText } from "@/components/ui/TerminalText";
-import { CheckCircle2, XCircle, Bug, Clock, LifeBuoy, Code2, Play, Lightbulb } from "lucide-react";
+import { CheckCircle2, Bug, Code2, Play, Lightbulb } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 import { getDebuggingChallenges, CodeChallenge } from "@/lib/questionBank";
 
+
 function normalize(code: string): string {
-  return code.replace(/\r\n/g, "\n").replace(/\t/g, "    ").trim();
+    return code
+        .replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '$1') // Remove comments
+        .replace(/\s+/g, "") // Remove all whitespace and newlines
+        .trim();
 }
 
 export function Level4() {
-  const { completeLevel, handleMissionFailure, player } = useGame();
+    const { completeLevel, handleMissionFailure, player } = useGame();
 
-  const [selectedLanguage, setSelectedLanguage] = useState<"C" | "Java" | "Python" | null>(null);
-  const [challenges, setChallenges] = useState<CodeChallenge[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [userCode, setUserCode] = useState("");
-  const [compileResult, setCompileResult] = useState<"idle" | "success" | "error">("idle");
-  const [compileMsg, setCompileMsg] = useState("");
-  const [attempts, setAttempts] = useState(3);
-  const [success, setSuccess] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes for 5 snippets
-  const [showHint, setShowHint] = useState(false);
-  const [isCompleting, setIsCompleting] = useState(false);
+    const [selectedLanguage, setSelectedLanguage] = useState<"C" | "Java" | "Python" | null>(null);
+    const [challenges, setChallenges] = useState<CodeChallenge[]>([]);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [userCode, setUserCode] = useState("");
+    const [compileResult, setCompileResult] = useState<"idle" | "success" | "error" | "executing">("idle");
+    const [compileMsg, setCompileMsg] = useState("");
+    const [consoleOutput, setConsoleOutput] = useState("");
 
-  useEffect(() => {
-    if (selectedLanguage) {
-      const pool = getDebuggingChallenges(selectedLanguage);
-      setChallenges(pool);
-      if (pool.length > 0) {
-        setUserCode(pool[0].initialCode);
-      }
-    }
-  }, [selectedLanguage, player]);
+    const [success, setSuccess] = useState(false);
+    const [timeLeft, setTimeLeft] = useState(300); // 5 minutes for 5 snippets
+    const [showHint, setShowHint] = useState(false);
+    const [isCompleting, setIsCompleting] = useState(false);
 
-  useEffect(() => {
-    if (challenges.length === 0 || success) return;
-    if (timeLeft <= 0) {
-      handleMissionFailure("TIME EXPIRED: SECURITY NODE 4 LOCKED");
-      return;
-    }
-    const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
-    return () => clearInterval(timer);
-  }, [timeLeft, challenges.length, success, handleMissionFailure]);
-
-  const currentChallenge = challenges[currentIndex];
-
-  const handleCompile = () => {
-    if (!currentChallenge) return;
-    const userNorm = normalize(userCode);
-
-    const isCorrect = Array.isArray(currentChallenge.expectedSolutionSnippet)
-      ? currentChallenge.expectedSolutionSnippet.some(s => userNorm.includes(normalize(s)))
-      : userNorm.includes(normalize(currentChallenge.expectedSolutionSnippet as string));
-
-    if (isCorrect) {
-      setCompileResult("success");
-      setCompileMsg("✓ Snippet verified. Injection payload ready.");
-
-      setTimeout(() => {
-        if (currentIndex < challenges.length - 1) {
-          const nextIdx = currentIndex + 1;
-          setCurrentIndex(nextIdx);
-          setUserCode(challenges[nextIdx].initialCode);
-          setCompileResult("idle");
-          setShowHint(false);
-          setCompileMsg("");
-        } else {
-          setSuccess(true);
-          if (!isCompleting) {
-            setIsCompleting(true);
-            setTimeout(() => completeLevel("STACK"), 2000);
-          }
+    useEffect(() => {
+        if (selectedLanguage) {
+            const pool = getDebuggingChallenges(selectedLanguage);
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setChallenges(pool);
+            if (pool.length > 0) {
+                // eslint-disable-next-line react-hooks/set-state-in-effect
+                setUserCode(pool[0].initialCode);
+                setConsoleOutput("");
+            }
         }
-      }, 1500);
-    } else {
-      const remaining = attempts - 1;
-      setAttempts(remaining);
-      setCompileResult("error");
-      setCompileMsg(`✗ Compilation failed. Syntax or logic error detected.`);
-      if (remaining <= 0) {
-        setTimeout(() => handleMissionFailure("PATCH REJECTED: SYSTEM LOCKDOWN"), 1000);
-      } else {
-        setTimeout(() => setCompileResult("idle"), 2000);
-      }
-    }
-  };
+    }, [selectedLanguage, player]);
+
+    useEffect(() => {
+        if (challenges.length === 0 || success) return;
+        if (timeLeft <= 0) {
+            handleMissionFailure("TIME EXPIRED: SECURITY NODE 4 LOCKED");
+            return;
+        }
+        const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
+        return () => clearInterval(timer);
+    }, [timeLeft, challenges.length, success, handleMissionFailure]);
+
+    const currentChallenge = challenges[currentIndex];
+
+    const handleVerify = async () => {
+        if (!currentChallenge || compileResult === "executing") return;
+
+        setCompileResult("executing");
+        setCompileMsg("ANALYZING SOURCE CODE...");
+        setConsoleOutput("> INITIALIZING STATIC ANALYSIS...");
+
+        // Artificial delay for "hacking" feel
+        await new Promise(resolve => setTimeout(resolve, 800));
+
+        const normalizedUser = normalize(userCode);
+        const normalizedSolution = normalize(currentChallenge.solutionCode);
+
+        if (normalizedUser === normalizedSolution) {
+            setCompileResult("success");
+            setCompileMsg("✓ LOGIC MATCHED. SECURITY BYPASSED.");
+            setConsoleOutput(`> EXECUTION SUCCESSFUL\n> OUTPUT: ${currentChallenge.expectedOutput}\n> STATUS: CODE_VERIFIED`);
+
+            setTimeout(() => {
+                if (currentIndex < challenges.length - 1) {
+                    const nextIdx = currentIndex + 1;
+                    setCurrentIndex(nextIdx);
+                    setUserCode(challenges[nextIdx].initialCode);
+                    setCompileResult("idle");
+                    setShowHint(false);
+                    setCompileMsg("");
+                    setConsoleOutput("");
+                } else {
+                    setSuccess(true);
+                    if (!isCompleting) {
+                        setIsCompleting(true);
+                        setTimeout(() => completeLevel("STACK"), 2000);
+                    }
+                }
+            }, 2000);
+        } else {
+            setCompileResult("error");
+            setCompileMsg("✗ LOGIC MISMATCH DETECTED");
+            setConsoleOutput(`> EXECUTION FAILED\n> ERROR: INCORRECT SYNTAX OR LOGIC\n> HINT: ${currentChallenge.errorHint}`);
+            setTimeout(() => setCompileResult("idle"), 3000);
+        }
+    };
+
 
   // Success screen
   if (success) {
@@ -110,7 +120,7 @@ export function Level4() {
       <div className="flex flex-col items-center justify-center p-8 md:p-12 mt-8 md:mt-12 border border-[#00ffff]/30 bg-black/60 box-glow text-center rounded-lg max-w-2xl mx-auto w-full">
         <Code2 className="w-16 h-16 text-[#00ffff] mb-6" />
         <h2 className="text-2xl md:text-3xl font-bold text-[#00ffff] mb-2 uppercase tracking-tight">Select Debugging Protocol</h2>
-        <p className="text-white/60 mb-8 font-mono text-sm italic">"Choose the language interface to bypass this security layer."</p>
+        <p className="text-white/60 mb-8 font-mono text-sm italic">&quot;Choose the language interface to bypass this security layer.&quot;</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
           {(["C", "Java", "Python"] as const).map((lang) => (
@@ -153,15 +163,6 @@ export function Level4() {
             <div className="text-[10px] text-[#00ffff]/50 uppercase font-mono mb-1">Timer</div>
             <div className={cn("text-lg md:text-xl font-mono font-bold", timeLeft < 30 ? "text-[#ff003c]" : "text-[#00ff9f]")}>
               {timeLeft}s
-            </div>
-          </div>
-
-          <div className="px-3 md:px-4 border-l border-white/10">
-            <div className="text-[10px] text-[#00ffff]/50 uppercase font-mono mb-1">Lives</div>
-            <div className="flex gap-1 mt-1">
-              {[...Array(3)].map((_, i) => (
-                <LifeBuoy key={i} className={cn("w-4 h-4", i < attempts ? "text-[#00ff9f]" : "text-white/10")} />
-              ))}
             </div>
           </div>
         </div>
@@ -224,8 +225,8 @@ export function Level4() {
             <h3 className="text-[10px] text-[#ff003c]/60 uppercase tracking-widest font-bold mb-2 flex items-center gap-2">
               <Bug className="w-3 h-3" /> CONSOLE OUTPUT
             </h3>
-            <div className="font-mono text-xs text-[#ff6b6b] whitespace-pre-wrap flex-1">
-              <span className="text-white/30">&gt; </span>{"Compilation/Logic Error."}
+            <div className="font-mono text-xs text-[#ff6b6b] whitespace-pre-wrap flex-1 overflow-auto max-h-[300px]">
+              {consoleOutput || <span className="text-white/20">READY FOR EXECUTION...</span>}
             </div>
 
             {showHint && (
@@ -243,14 +244,14 @@ export function Level4() {
           <AnimatePresence>
             {compileResult !== "idle" && (
               <motion.div
-                initial={{ opacity: 0, y: 5 }}
+                initial={{ opacity: 0, y: 3 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 className={cn(
                   "border p-3 md:p-4 font-mono text-xs md:text-sm rounded-sm",
-                  compileResult === "success"
-                    ? "border-[#00ff00]/50 bg-[#002200] text-[#00ff00]"
-                    : "border-[#ff003c]/50 bg-[#220000] text-[#ff003c] animate-shake"
+                  compileResult === "success" ? "border-[#00ff00]/50 bg-[#002200] text-[#00ff00]" :
+                    compileResult === "executing" ? "border-[#00ffff]/50 bg-[#001111] text-[#00ffff]" :
+                      "border-[#ff003c]/50 bg-[#220000] text-[#ff003c] animate-shake"
                 )}
               >
                 {compileMsg}
@@ -260,11 +261,20 @@ export function Level4() {
 
           {/* Compile Button */}
           <GlowingButton
-            onClick={handleCompile}
-            className="w-full py-3 md:py-4 uppercase tracking-[0.3em] font-black text-base md:text-lg flex items-center justify-center gap-2"
-            disabled={compileResult === "success"}
+            onClick={handleVerify}
+            className="w-full py-3 md:py-4 uppercase tracking-[0.2em] md:tracking-[0.3em] font-black text-sm md:text-lg flex items-center justify-center gap-2"
+            disabled={compileResult === "success" || compileResult === "executing"}
           >
-            <Play className="w-4 h-4 md:w-5 md:h-5" /> COMPILE & RUN
+            {compileResult === "executing" ? (
+              <div className="flex items-center gap-3">
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ANALYZING...
+              </div>
+            ) : (
+              <>
+                <Play className="w-4 h-4 md:w-5 md:h-5" /> VERIFY LOGIC
+              </>
+            )}
           </GlowingButton>
         </div>
       </div>

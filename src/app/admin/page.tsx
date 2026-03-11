@@ -24,6 +24,7 @@ export default function AdminPage() {
   const [players, setPlayers] = useState<LivePlayer[]>([]);
   const [isLive, setIsLive] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
+  const [globalStartTime, setGlobalStartTime] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [isPurging, setIsPurging] = useState(false);
   const [isFinalizing, setIsFinalizing] = useState(false);
@@ -42,12 +43,19 @@ export default function AdminPage() {
   const fetchLiveStatus = async () => {
     const { data } = await supabase
       .from("event_settings")
-      .select("is_live, game_started")
+      .select("is_live, game_started, maintenance_message")
       .eq("id", 1)
       .maybeSingle();
     if (data) {
       setIsLive(data.is_live);
       setIsGameStarted(data.game_started || false);
+      
+      if (data.game_started && data.maintenance_message?.startsWith("START_TIME:")) {
+        const ts = parseInt(data.maintenance_message.split(":")[1]);
+        if (!isNaN(ts)) setGlobalStartTime(ts);
+      } else {
+        setGlobalStartTime(null);
+      }
     }
   };
 
@@ -77,13 +85,26 @@ export default function AdminPage() {
     if (!confirm(msg)) return;
 
     const newStatus = !isGameStarted;
+    const updateData: { game_started: boolean; maintenance_message?: string } = { game_started: newStatus };
+    
+    if (newStatus) {
+      // Starting the game: Set global start time
+      updateData.maintenance_message = `START_TIME:${Date.now()}`;
+    } else {
+      // Ending the game: Reset maintenance message to default
+      updateData.maintenance_message = "WAIT FOR THE EVENT - SYSTEM IS NOT ONLINE";
+    }
+
     const { error } = await supabase
       .from("event_settings")
-      .update({ game_started: newStatus })
+        .update(updateData)
       .eq("id", 1);
 
-    if (!error) setIsGameStarted(newStatus);
-    else {
+    if (!error) {
+      setIsGameStarted(newStatus);
+      if (newStatus) setGlobalStartTime(Date.now());
+      else setGlobalStartTime(null);
+    } else {
       console.error(error);
       alert("PROTOCOL FAILURE: " + error.message);
     }
@@ -103,9 +124,9 @@ export default function AdminPage() {
       .order("created_at", { ascending: false });
 
     if (data && !error) {
-      const formatted: LivePlayer[] = data.map((p: any) => {
-        // Calculate time remaining (roughly 60 mins from creation)
-        const start = new Date(p.created_at).getTime();
+      const formatted: LivePlayer[] = (data as unknown as Record<string, any>[]).map((p) => {
+        // Calculate time remaining (60 mins from global start if started, else registration time)
+        const start = globalStartTime || new Date(p.created_at).getTime();
         const now = Date.now();
         const elapsed = Math.floor((now - start) / 1000);
         const remaining = Math.max(0, 3600 - elapsed);
@@ -229,7 +250,7 @@ export default function AdminPage() {
       return;
     }
 
-    const formatted = data.map(d => ({
+    const formatted = (data as unknown as { academic_year: string, operative_name: string, final_node: string, status: string, archived_at: string, id: string }[]).map(d => ({
       id: d.id,
       pc_id: d.academic_year || "N/A", // Reusing field for export
       name: d.operative_name,
@@ -292,9 +313,9 @@ export default function AdminPage() {
     let aVal = a[sortField];
     let bVal = b[sortField];
     if (sortField === "level") {
-      const getLexLevel = (l: any) => l === "TERMINATED" ? -1 : l === "RECONSTRUCTED" ? 99 : Number(l) || 0;
-      aVal = getLexLevel(a.level) as any;
-      bVal = getLexLevel(b.level) as any;
+      const getLexLevel = (l: string | number) => l === "TERMINATED" ? -1 : l === "RECONSTRUCTED" ? 99 : Number(l) || 0;
+      aVal = getLexLevel(a.level) as unknown as string;
+      bVal = getLexLevel(b.level) as unknown as string;
     }
     if (aVal < bVal) return sortDir === "asc" ? -1 : 1;
     if (aVal > bVal) return sortDir === "asc" ? 1 : -1;
