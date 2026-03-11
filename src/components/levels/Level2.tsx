@@ -24,10 +24,14 @@ export function Level2() {
   const [timeLeft, setTimeLeft] = useState(LEVEL_TIME);
   const [success, setSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
 
   const skipLevel = () => {
     setSuccess(true);
-    setTimeout(() => completeLevel("BINARY"), 1000);
+    if (!isCompleting) {
+      setIsCompleting(true);
+      setTimeout(() => completeLevel("BINARY"), 1000);
+    }
   };
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -179,7 +183,10 @@ export function Level2() {
         setCurrentQuestionIdx(prev => prev + 1);
       } else {
         setSuccess(true);
-        setTimeout(() => completeLevel("BINARY"), 3000); // Level 2 codeword
+        if (!isCompleting) {
+          setIsCompleting(true);
+          setTimeout(() => completeLevel("BINARY"), 3000); // Level 2 codeword
+        }
       }
     } else {
       setIsError(true);

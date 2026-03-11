@@ -39,6 +39,7 @@ export function Level3() {
   const [stepSuccess, setStepSuccess] = useState(false); // New: feedback between questions
   const [errorFlash, setErrorFlash] = useState(false);
   const [showHint, setShowHint] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
 
   // Dynamic Syllabus Questions
   const [myQuestions, setMyQuestions] = useState<MCQQuestion[]>([]);
@@ -90,7 +91,10 @@ export function Level3() {
       }).eq("id", session.id);
     } else {
       setSuccess(true);
-      setTimeout(() => completeLevel("LOGIC"), 1000);
+      if (!isCompleting) {
+        setIsCompleting(true);
+        setTimeout(() => completeLevel("LOGIC"), 1000);
+      }
     }
   };
 
@@ -107,7 +111,10 @@ export function Level3() {
           setStatus(data.status);
           if (data.status === "completed") {
             setSuccess(true);
-            setTimeout(() => completeLevel("LOGIC"), 3000);
+            if (!isCompleting) {
+              setIsCompleting(true);
+              setTimeout(() => completeLevel("LOGIC"), 3000);
+            }
           }
         }
       };
@@ -149,7 +156,10 @@ export function Level3() {
 
         if (data.status === "completed") {
           setSuccess(true);
-          setTimeout(() => completeLevel("LOGIC"), 3000);
+          if (!isCompleting) {
+            setIsCompleting(true);
+            setTimeout(() => completeLevel("LOGIC"), 3000);
+          }
         } else if (data.status === "failed") {
           handleMissionFailure("SHIELD REJECTION: COLLABORATION FAILED");
         }
@@ -238,7 +248,10 @@ export function Level3() {
           setShowHint(false);
         } else {
           setSuccess(true);
-          setTimeout(() => completeLevel("LOGIC"), 3000);
+          if (!isCompleting) {
+            setIsCompleting(true);
+            setTimeout(() => completeLevel("LOGIC"), 3000);
+          }
         }
       } else {
         setErrorFlash(true);

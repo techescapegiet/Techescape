@@ -20,8 +20,11 @@ import {
   CodeChallenge
 } from "@/lib/questionBank";
 
-const normalize = (code: string): string => {
-  return code.replace(/\r\n/g, "\n").replace(/\t/g, "    ").trim();
+const normalize = (code: string) => {
+  return code
+    .replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '') // Remove comments
+    .replace(/\s+/g, '')                      // Remove all whitespace
+    .trim();
 };
 
 export function Level5() {
@@ -256,9 +259,9 @@ export function Level5() {
   // S4 logic
   const handleS4Compile = () => {
     const u = normalize(userCode);
-    const isCorrect = Array.isArray(s4Data.expectedSolutionSnippet)
-      ? s4Data.expectedSolutionSnippet.some((s: string) => u.includes(normalize(s)))
-      : u.includes(normalize(s4Data.expectedSolutionSnippet as string));
+    const isCorrect = Array.isArray(s4Data.solutionCode)
+      ? s4Data.solutionCode.some((s: string) => u.includes(normalize(s)))
+      : u.includes(normalize(s4Data.solutionCode as string));
 
     if (isCorrect) {
       setCompileResult("success");

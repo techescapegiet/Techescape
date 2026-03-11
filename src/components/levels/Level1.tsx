@@ -23,6 +23,7 @@ export function Level1() {
   const [errorFlash, setErrorFlash] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [isCompleting, setIsCompleting] = useState(false);
   const [timeLeft, setTimeLeft] = useState(LEVEL_TIME);
 
   // Dynamically load words based on player's syllabus
@@ -33,7 +34,10 @@ export function Level1() {
 
   const skipLevel = () => {
     setSuccess(true);
-    setTimeout(() => completeLevel("SYSTEM"), 1000);
+    if (!isCompleting) {
+      setIsCompleting(true);
+      setTimeout(() => completeLevel("SYSTEM"), 1000);
+    }
   };
 
   const initializeGame = useCallback(() => {
@@ -168,7 +172,10 @@ export function Level1() {
         setShowHint(false); // Reset hint when moving to next question
       } else {
         setSuccess(true);
-        setTimeout(() => completeLevel("SYSTEM"), 3000);
+        if (!isCompleting) {
+          setIsCompleting(true);
+          setTimeout(() => completeLevel("SYSTEM"), 3000);
+        }
       }
     } else if (spelled.length >= currentWord.length || !currentWord.startsWith(spelled)) {
       setErrorFlash(true);

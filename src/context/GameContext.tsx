@@ -215,28 +215,20 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const erasePlayerData = async () => {
     if (!player) return;
     try {
-      // 0. Generate a NEW PIN to invalidate the old one
       const newPin = Math.floor(100000 + Math.random() * 900000).toString();
-
-      // 1. Release PC assignment and change PIN
+      // 1. RENEW PIN only. DO NOT wipe registration details (assigned_to, roll_number, etc.)
       await supabase
         .from("access_keys")
         .update({
           pin: newPin,
-          assigned_to: null,
-          roll_number: null,
-          email: null,
-          academic_year: null,
-          department: null,
-          user_id: null,
-          is_assigned: false
+          // We keep the student details for the admin to see in the "FAILED" status
+          is_assigned: true 
         })
         .eq("pc_id", player.id);
 
-      // 2. Mark session as failed in players table (THE PERMANENT BAN)
+      // 2. Mark session as failed in players table
       await supabase.from("players").update({
         status: 'failed',
-        pc_id: null,
         is_online: false,
         last_seen: new Date().toISOString()
       }).eq("id", player.sessionId);
@@ -310,25 +302,37 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 
   const completeLevel = async (fragment: string) => {
     if (!player) return;
-    const updatedPlayer = {
-      ...player,
-      currentLevel: player.currentLevel + 1,
-      fragments: [...player.fragments, fragment],
-    };
-    setPlayer(updatedPlayer);
-    localStorage.setItem("escape_room_player", JSON.stringify(updatedPlayer));
-    await syncPlayerToSupabase(updatedPlayer);
+    
+    setPlayer(prev => {
+      if (!prev) return null;
+      // Prevent duplicates
+      const newFragments = prev.fragments.includes(fragment) 
+        ? prev.fragments 
+        : [...prev.fragments, fragment];
 
-    if (updatedPlayer.currentLevel > 5) {
-      // Mark session as completed so leaderboard can show it and calculate time
-      await supabase.from("players").update({
-        status: "completed",
-        last_seen: new Date().toISOString()
-      }).eq("id", updatedPlayer.sessionId);
-      router.push("/reconstruct");
-    } else {
-      router.push("/dashboard");
-    }
+      const updated = {
+        ...prev,
+        currentLevel: prev.currentLevel + 1,
+        fragments: newFragments,
+      };
+      
+      localStorage.setItem("escape_room_player", JSON.stringify(updated));
+      syncPlayerToSupabase(updated);
+      
+      // Perform navigation after state update logic
+      if (updated.currentLevel > 5) {
+        supabase.from("players").update({
+          status: "completed",
+          last_seen: new Date().toISOString()
+        }).eq("id", updated.sessionId).then(() => {
+          router.push("/reconstruct");
+        });
+      } else {
+        router.push("/dashboard");
+      }
+      
+      return updated;
+    });
   };
 
 
