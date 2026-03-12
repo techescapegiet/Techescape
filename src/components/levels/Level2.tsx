@@ -28,13 +28,7 @@ export function Level2() {
   const [isCompleting, setIsCompleting] = useState(false);
   const [hintsUsed, setHintsUsed] = useState(0);
 
-  const skipLevel = () => {
-    setSuccess(true);
-    if (!isCompleting) {
-      setIsCompleting(true);
-      setTimeout(() => completeLevel("BINARY"), 1000);
-    }
-  };
+
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -235,12 +229,7 @@ export function Level2() {
             </div>
           </div>
 
-          <button
-            onClick={skipLevel}
-            className="bg-white/5 hover:bg-white/10 text-white/30 hover:text-white/60 text-[9px] px-2 py-0.5 rounded border border-white/10 transition-colors uppercase font-mono self-center"
-          >
-            Skip
-          </button>
+
 
           <div className={cn("px-6 py-3 border-2 flex items-center gap-3",
             isCriticalTime ? "border-red-500 text-red-500 bg-red-500/10 box-glow animate-pulse" : "border-[#00ffff] text-[#00ffff] bg-black"

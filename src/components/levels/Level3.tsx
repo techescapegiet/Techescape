@@ -85,19 +85,7 @@ export function Level3() {
     }
   }, [mode, session?.id, session?.partnerId, session?.role]);
 
-  const skipLevel = async () => {
-    if (mode === "collab" && session) {
-      await supabase.from("collab_sessions").update({
-        status: "completed"
-      }).eq("id", session.id);
-    } else {
-      setSuccess(true);
-      if (!isCompleting) {
-        setIsCompleting(true);
-        setTimeout(() => completeLevel("LOGIC"), 1000);
-      }
-    }
-  };
+
 
   // Initial Sync from DB
   useEffect(() => {
@@ -316,12 +304,7 @@ export function Level3() {
           <TerminalText text="Warning: This node requires high-level theoretical clearance. Collaboration recommended." speed={20} />
         </div>
 
-        <button
-          onClick={skipLevel}
-          className="bg-white/5 hover:bg-white/10 text-white/20 hover:text-white/40 text-[10px] px-2 py-1 rounded border border-white/10 transition-colors self-center"
-        >
-          DEBUG: SKIP
-        </button>
+
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
           <div className="border border-[#00ff00]/30 p-8 flex flex-col bg-[#001100] group hover:border-[#00ff00] transition-colors">

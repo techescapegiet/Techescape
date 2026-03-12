@@ -33,13 +33,7 @@ export function Level1() {
     return getCrosswordWords(player.academicYear as AcademicYear, player.department as Department).slice(0, 6);
   }, [player]);
 
-  const skipLevel = () => {
-    setSuccess(true);
-    if (!isCompleting) {
-      setIsCompleting(true);
-      setTimeout(() => completeLevel("SYSTEM"), 1000);
-    }
-  };
+
 
   const initializeGame = useCallback(() => {
     setIsInitializing(true);
@@ -278,12 +272,7 @@ export function Level1() {
                 );
               })}
             </div>
-            <button
-              onClick={skipLevel}
-              className="bg-white/5 hover:bg-white/10 text-white/30 hover:text-white/60 text-[9px] px-2 py-0.5 mt-2 rounded border border-white/10 transition-colors uppercase font-mono"
-            >
-              Skip
-            </button>
+
           </div>
 
           <div className={cn("flex flex-col items-center p-3 border-2 min-w-[140px] box-glow",

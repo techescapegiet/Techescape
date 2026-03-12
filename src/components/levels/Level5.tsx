@@ -31,10 +31,11 @@ export function Level5() {
   const { completeLevel, handleMissionFailure, player } = useGame();
 
   const [stage, setStage] = useState<number>(1);
-  const [attempts, setAttempts] = useState(3);
+  const [attempts, setAttempts] = useState(5);
   const [success, setSuccess] = useState(false);
   const [errorFlash, setErrorFlash] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
+  const [showS3Hint, setShowS3Hint] = useState(false);
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes total for all 4 stages
 
   // Timer logic
@@ -59,9 +60,11 @@ export function Level5() {
   const [blanks, setBlanks] = useState<string[]>([]);
   const [revealedIndices, setRevealedIndices] = useState<number[]>([]);
   const s2InputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [s2HintsLeft, setS2HintsLeft] = useState(2);
 
   // Stage 3 (MCQ)
   const [s3Data, setS3Data] = useState<any>(null);
+  const [s3HintsLeft, setS3HintsLeft] = useState(1);
 
   // Stage 4 (Debug)
   const [s4Data, setS4Data] = useState<any>(null);
@@ -166,7 +169,13 @@ export function Level5() {
   };
 
   const handleStageFailure = (msg?: string) => {
-    // We don't subtract attempts anymore to allow infinite tries
+    setAttempts(prev => {
+      const newAttempts = prev - 1;
+      if (newAttempts <= 0) {
+        handleMissionFailure(msg || "GAUNTLET FAILED: SYSTEM LOCKDOWN");
+      }
+      return newAttempts;
+    });
     setErrorFlash(true);
     setTimeout(() => setErrorFlash(false), 1000);
   };
@@ -262,10 +271,44 @@ export function Level5() {
     }
   };
 
+  const handleS2Hint = () => {
+    if (stage !== 2 || s2HintsLeft <= 0 || !s2Data) return;
+
+    const unrevealed = s2Data.word.split("").map((_: string, i: number) => i)
+      .filter((i: number) => !revealedIndices.includes(i) && blanks[i] !== s2Data.word[i]);
+
+    if (unrevealed.length > 0) {
+      const randomIndex = unrevealed[Math.floor(Math.random() * unrevealed.length)];
+      setRevealedIndices(prev => [...prev, randomIndex]);
+      
+      const nb = [...blanks];
+      nb[randomIndex] = s2Data.word[randomIndex];
+      setBlanks(nb);
+      setS2HintsLeft(prev => prev - 1);
+
+      if (nb.every(b => b !== "")) {
+        if (nb.join("") === s2Data.word) {
+          handleStageSuccess();
+        }
+      }
+    }
+  };
+
   // S3 logic
   const handleS3Select = (idx: number) => {
     if (idx === s3Data.correct) handleStageSuccess();
-    else handleStageFailure();
+    else handleStageFailure("INCORRECT PROTOCOL: SECURITY SHIELD REJECTED");
+  };
+
+  const handleS3Hint = () => {
+    if (stage !== 3 || s3HintsLeft <= 0 || !s3Data) return;
+    
+    // For MCQ, we usually hide 1 or 2 wrong options as a hint
+    setS3HintsLeft(prev => prev - 1);
+    // Simple alert or feedback for now, or we could pass it to the UI
+    // Let's just reveal the correct answer's first letter or something? 
+    // Actually, "hint" in the question bank is usually explanation.
+    setShowS3Hint(true);
   };
 
   // S4 logic
@@ -317,6 +360,13 @@ export function Level5() {
             <span className="text-[10px] text-[#00ffff] font-bold uppercase tracking-widest">Protocol</span>
             <div className="text-2xl font-mono font-bold text-[#00ff00] uppercase">
               ACTIVE
+            </div>
+          </div>
+          <div className="h-10 w-[1px] bg-white/10" />
+          <div className="flex flex-col">
+            <span className="text-[10px] text-[#ff003c] font-bold uppercase tracking-widest">Lives</span>
+            <div className="text-2xl font-mono font-bold text-[#ff003c]">
+              {attempts}
             </div>
           </div>
         </div>
@@ -416,8 +466,19 @@ export function Level5() {
                       </div>
                     </div>
 
-                    <div className="text-center">
+                    <div className="text-center space-y-4">
                       <p className="text-xl md:text-2xl font-bold text-white italic">"{s2Data.hint}"</p>
+                      
+                      <button
+                        onClick={handleS2Hint}
+                        disabled={s2HintsLeft <= 0}
+                        className={cn(
+                          "inline-flex items-center gap-2 px-4 py-1.5 border border-[#00ffff]/40 bg-[#00ffff]/10 hover:bg-[#00ffff]/20 transition-all text-[#00ffff] font-mono text-sm uppercase tracking-widest rounded-full",
+                          s2HintsLeft <= 0 ? "opacity-30 cursor-not-allowed" : "hover:scale-105 active:scale-95"
+                        )}
+                      >
+                        <Lightbulb className="w-4 h-4" /> Use Hint ({s2HintsLeft} left)
+                      </button>
                     </div>
 
                     <div className="flex flex-wrap justify-center gap-2 md:gap-4 py-8">
@@ -458,6 +519,23 @@ export function Level5() {
 
                     <div className="text-center">
                       <p className="text-xl md:text-2xl font-bold text-white mb-6">"{s3Data.question}"</p>
+                      
+                      {!showS3Hint ? (
+                        <button
+                          onClick={handleS3Hint}
+                          disabled={s3HintsLeft <= 0}
+                          className={cn(
+                            "inline-flex items-center gap-2 px-4 py-1.5 border border-[#00ff00]/40 bg-[#00ff00]/10 hover:bg-[#00ff00]/20 transition-all text-[#00ff00] font-mono text-sm uppercase tracking-widest rounded-full mb-6",
+                            s3HintsLeft <= 0 ? "opacity-30 cursor-not-allowed" : "hover:scale-105 active:scale-95"
+                          )}
+                        >
+                          <Lightbulb className="w-4 h-4" /> Use Hint ({s3HintsLeft} left)
+                        </button>
+                      ) : (
+                        <div className="mb-6 p-3 bg-[#00ff00]/5 border border-[#00ff00]/30 text-[#00ff00] text-sm italic animate-pulse rounded">
+                          HINT: {s3Data.explanation || "Review the protocol requirements carefully."}
+                        </div>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
