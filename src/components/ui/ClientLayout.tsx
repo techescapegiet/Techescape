@@ -57,6 +57,18 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
         }
     }, [pathname, player, router]);
 
+    // Anti-flicker and absolute security guard:
+    // Do NOT render the page children at all if the player is trying to view a mismatched level.
+    if (player) {
+         const levelMatch = pathname.match(/^\/level\/(\d+)$/);
+         if (levelMatch) {
+             const requestedLevel = parseInt(levelMatch[1], 10);
+             if (requestedLevel !== player.currentLevel) {
+                 return null; // Return nothing while the useEffect performs the router.replace
+             }
+         }
+    }
+
     return (
         <>
             <AnimatePresence mode="wait">

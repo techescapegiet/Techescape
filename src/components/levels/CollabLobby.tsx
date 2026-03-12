@@ -219,7 +219,7 @@ export function CollabLobby({ onJoinSession }: CollabLobbyProps) {
                 </AnimatePresence>
             </div>
 
-            <div className="min-h-[200px]">
+            <div className="min-h-[200px] max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-12 gap-4">
                         <Loader2 className="w-8 h-8 animate-spin text-[#00ffff]" />
@@ -230,7 +230,7 @@ export function CollabLobby({ onJoinSession }: CollabLobbyProps) {
                         <TerminalText text="NO OTHER OPERATIVES DETECTED AT NODE 3. WAIT FOR REINFORCEMENTS OR PROCEED SOLO." speed={30} />
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {onlinePlayers.map((p) => (
                             <div key={p.id} className="flex items-center justify-between p-4 border border-[#00ff00]/30 bg-[#001100] hover:border-[#00ff00] transition-colors relative group overflow-hidden">
                                 <div className="absolute inset-0 bg-gradient-to-r from-[#00ff00]/0 via-[#00ff00]/5 to-[#00ff00]/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />

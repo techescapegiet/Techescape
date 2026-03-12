@@ -18,7 +18,7 @@ function normalize(code: string): string {
 }
 
 export function Level4() {
-    const { completeLevel, handleMissionFailure, player } = useGame();
+    const { completeLevel, handleMissionFailure, player, setPlayerLanguage } = useGame();
 
     const [selectedLanguage, setSelectedLanguage] = useState<"C" | "Java" | "Python" | null>(null);
     const [challenges, setChallenges] = useState<CodeChallenge[]>([]);
@@ -126,7 +126,7 @@ export function Level4() {
           {(["C", "Java", "Python"] as const).map((lang) => (
             <button
               key={lang}
-              onClick={() => setSelectedLanguage(lang)}
+              onClick={() => { setSelectedLanguage(lang); setPlayerLanguage(lang); }}
               className="flex flex-col items-center gap-3 p-6 border border-[#00ffff]/20 bg-white/5 hover:bg-[#00ffff]/10 hover:border-[#00ffff] transition-all rounded-lg group"
             >
               <div className="text-xl font-bold text-white group-hover:text-[#00ffff] transition-colors">{lang}</div>
@@ -218,7 +218,12 @@ export function Level4() {
           <div className="border border-[#00ffff]/20 bg-black/40 p-3 md:p-4 rounded-sm flex justify-between items-center">
             <div>
               <h3 className="text-[10px] text-[#00ffff]/50 uppercase tracking-widest font-bold mb-2">OBJECTIVE ({currentChallenge.title})</h3>
-              <p className="text-sm md:text-base font-bold text-white">Fix the broken code to pass the checks.</p>
+              <p className="text-sm md:text-base font-bold text-white mb-3">Fix the broken code to pass the checks.</p>
+              
+              <div className="bg-[#00ffff]/5 border border-[#00ffff]/20 p-2 rounded">
+                <h4 className="text-[9px] text-[#00ffff]/70 uppercase font-bold mb-1">Expected Output:</h4>
+                <div className="font-mono text-xs text-white/90 whitespace-pre-wrap">{currentChallenge.expectedOutput}</div>
+              </div>
             </div>
             <button 
               onClick={() => setShowHint(true)}

@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import { GlowingButton } from "@/components/ui/GlowingButton";
 import { TerminalText } from "@/components/ui/TerminalText";
-import { Shield, Eye, Trash2, Power, RefreshCw, Zap, AlertTriangle, Users, Download, Archive, Filter, Activity } from "lucide-react";
+import { Shield, Eye, Trash2, Power, RefreshCw, Zap, AlertTriangle, Users, Download, Archive, Filter, Activity, Key } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { exportToCSV, exportToPDF } from "@/lib/exportUtils";
+import { exportToCSV, exportToPDF, exportAccessKeys } from "@/lib/exportUtils";
 import { CyberAvatar } from "@/components/ui/CyberAvatar";
 
 interface LivePlayer {
@@ -26,6 +26,7 @@ export default function AdminPage() {
   const [players, setPlayers] = useState<LivePlayer[]>([]);
   const [isLive, setIsLive] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
+  const [unlockedLevel, setUnlockedLevel] = useState(1);
   const [globalStartTime, setGlobalStartTime] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [isPurging, setIsPurging] = useState(false);
@@ -33,7 +34,7 @@ export default function AdminPage() {
   const [isAuthWiping, setIsAuthWiping] = useState(false);
   const [sortField, setSortField] = useState<keyof LivePlayer>("name");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
-  const [filterStatus, setFilterStatus] = useState<"ALL" | "ACTIVE" | "COMPLETED" | "FAILED">("ALL");
+  const [filterStatus, setFilterStatus] = useState<"ALL" | "ACTIVE" | "COMPLETED" | "FAILED" | "NODE-01" | "NODE-02" | "NODE-03" | "NODE-04" | "NODE-05">("ALL");
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,15 +43,16 @@ export default function AdminPage() {
     }
   };
 
-  const fetchLiveStatus = async () => {
+  const fetchEventSettings = async () => {
     const { data } = await supabase
       .from("event_settings")
-      .select("is_live, game_started, maintenance_message")
+      .select("is_live, game_started, maintenance_message, unlocked_level")
       .eq("id", 1)
       .maybeSingle();
     if (data) {
       setIsLive(data.is_live);
       setIsGameStarted(data.game_started || false);
+      setUnlockedLevel(data.unlocked_level || 1);
       
       if (data.game_started && data.maintenance_message?.startsWith("START_TIME:")) {
         const ts = parseInt(data.maintenance_message.split(":")[1]);
@@ -61,17 +63,22 @@ export default function AdminPage() {
     }
   };
 
-  const toggleEventLive = async () => {
-    const newStatus = !isLive;
-    const { error } = await supabase
-      .from("event_settings")
-      .update({ is_live: newStatus })
-      .eq("id", 1);
-
-    if (!error) setIsLive(newStatus);
+  const toggleLive = async () => {
+    const nextState = !isLive;
+    const { error } = await supabase.from("event_settings").update({ is_live: nextState }).eq("id", 1);
+    if (!error) setIsLive(nextState);
     else {
       console.error(error);
       alert("FAILED TO TOGGLE LIVE STATUS: " + error.message);
+    }
+  };
+
+  const unlockLevel = async (level: number) => {
+    const { error } = await supabase.from("event_settings").update({ unlocked_level: level }).eq("id", 1);
+    if (error) {
+      alert("Failed to unlock level: " + error.message);
+    } else {
+      fetchEventSettings(); // Refresh settings to update unlockedLevel
     }
   };
 
@@ -121,7 +128,7 @@ export default function AdminPage() {
         current_level, 
         status,
         created_at,
-        access_keys (assigned_to)
+        access_keys (assigned_to, roll_number)
       `)
       .order("created_at", { ascending: false });
 
@@ -265,6 +272,25 @@ export default function AdminPage() {
     exportToCSV(formatted, `techescape-master-archive-${new Date().toISOString().split('T')[0]}.csv`);
   };
 
+  const downloadPins = async () => {
+    const { data, error } = await supabase
+      .from("access_keys")
+      .select("*")
+      .order("pc_id", { ascending: true });
+
+    if (error) {
+      alert("Failed to fetch access keys: " + error.message);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      alert("No access keys found.");
+      return;
+    }
+
+    exportAccessKeys(data);
+  };
+
   const clearFailedPlayers = async () => {
     if (!confirm("Are you sure you want to permanently delete all FAILED sessions from the database?")) return;
     setIsPurging(true);
@@ -282,8 +308,9 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (isAdmin) {
-      fetchLiveStatus();
+      fetchEventSettings();
       fetchPlayers();
+      fetchEventSettings(); // Fetch initial event settings for unlockedLevel
 
       // Real-time subscriptions
       const playerSub = supabase.channel("admin-players")
@@ -291,7 +318,7 @@ export default function AdminPage() {
         .subscribe();
 
       const statusSub = supabase.channel("admin-status")
-        .on("postgres_changes", { event: "UPDATE", schema: "public", table: "event_settings" }, () => fetchLiveStatus())
+        .on("postgres_changes", { event: "UPDATE", schema: "public", table: "event_settings" }, () => fetchEventSettings())
         .subscribe();
 
       const interval = setInterval(fetchPlayers, 30000); // 30s fallback
@@ -302,7 +329,7 @@ export default function AdminPage() {
         clearInterval(interval);
       };
     }
-  }, [isAdmin]);
+  }, [isAdmin, fetchEventSettings]);
 
   const handleSort = (field: keyof LivePlayer) => {
     if (sortField === field) setSortDir(sortDir === "asc" ? "desc" : "asc");
@@ -325,7 +352,14 @@ export default function AdminPage() {
     return 0;
   }).filter(p => {
     if (filterStatus === "ALL") return true;
-    return p.status === filterStatus;
+    if (filterStatus === "ACTIVE") return p.status === "ACTIVE";
+    if (filterStatus === "COMPLETED") return p.status === "COMPLETED";
+    if (filterStatus === "FAILED") return p.status === "FAILED";
+    if (filterStatus.startsWith("NODE-")) {
+      const targetLvl = parseInt(filterStatus.split("-")[1]);
+      return p.level === targetLvl;
+    }
+    return true;
   });
 
   // Calculate Node Distribution
@@ -368,6 +402,19 @@ export default function AdminPage() {
     );
   }
 
+  const statusClassMap: Record<string, string> = {
+    "ACTIVE": "border-[#00ff00] text-[#00ff00] bg-[#00ff00]/10",
+    "COMPLETED": "border-[#00ffff] text-[#00ffff] bg-[#00ffff]/10",
+    "FAILED": "border-[#ff003c] text-[#ff003c] bg-[#ff003c]/10",
+    "RECONSTRUCTED": "bg-[#00ffff]/10 border-[#00ffff] text-[#00ffff]",
+    "TERMINATED": "bg-[#ff003c]/10 border-[#ff003c] text-[#ff003c]",
+    "NODE-01": "bg-blue-500/10 border-blue-500 text-blue-500",
+    "NODE-02": "bg-green-500/10 border-green-500 text-green-500",
+    "NODE-03": "bg-indigo-500/10 border-indigo-500 text-indigo-500",
+    "NODE-04": "bg-orange-500/10 border-orange-500 text-orange-500",
+    "NODE-05": "bg-red-500/10 border-red-500 text-red-500",
+  };
+
   return (
     <div className="flex-1 w-full max-w-7xl mx-auto flex flex-col gap-6 p-4 md:p-8">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[#ff003c]/50 pb-6 whitespace-nowrap">
@@ -389,6 +436,9 @@ export default function AdminPage() {
           <button onClick={() => exportToPDF(sortedPlayers)} className="px-4 py-2 border border-[#00ffff]/40 bg-[#00ffff]/10 text-[#00ffff] hover:bg-[#00ffff]/20 transition-all font-mono text-xs uppercase flex items-center gap-2">
             <Download className="w-4 h-4" /> PDF
           </button>
+          <button onClick={downloadPins} className="px-4 py-2 border border-[#00ff00]/40 bg-[#00ff00]/10 text-[#00ff00] hover:bg-[#00ff00]/20 transition-all font-mono text-xs uppercase flex items-center gap-2">
+            <Key className="w-4 h-4" /> Download PIN List
+          </button>
 
           <GlowingButton
             variant={isGameStarted ? "danger" : "cyan"}
@@ -401,7 +451,7 @@ export default function AdminPage() {
 
           <GlowingButton
             variant={isLive ? "cyan" : "danger"}
-            onClick={toggleEventLive}
+            onClick={toggleLive}
             className="flex-1 md:flex-none py-2 px-6"
           >
             <Power className="w-4 h-4 mr-2" />
@@ -476,6 +526,28 @@ export default function AdminPage() {
             </div>
             <p className="text-[10px] opacity-40 mt-3 text-center uppercase tracking-widest">Resets all stations for next round</p>
           </div>
+
+          <div className="p-4 border border-[#00ffff]/30 bg-[#00ffff]/5 box-glow mt-4">
+            <h3 className="text-[10px] font-bold text-[#00ffff] uppercase mb-3 flex items-center gap-2">
+              <Shield className="w-3 h-3" /> Node Authorization
+            </h3>
+            <div className="grid grid-cols-5 gap-2">
+              {[1, 2, 3, 4, 5].map(lvl => (
+                <button
+                  key={lvl}
+                  onClick={() => unlockLevel(lvl)}
+                  className={`py-2 text-[10px] font-bold transition-all border ${
+                    (unlockedLevel || 1) >= lvl
+                      ? "bg-[#00ffff] text-black border-[#00ffff] shadow-[0_0_10px_#00ffff]"
+                      : "bg-[#00ffff]/10 text-[#00ffff] border-[#00ffff]/30 hover:bg-[#00ffff]/20"
+                  }`}
+                >
+                  N{lvl}
+                </button>
+              ))}
+            </div>
+            <p className="text-[8px] opacity-40 mt-3 text-center uppercase tracking-widest font-mono">Sets Global Clearance Level</p>
+          </div>
         </div>
 
         <div className="md:col-span-3 border border-[#00ff00]/20 bg-black/80 p-4 md:p-6 box-glow overflow-hidden flex flex-col">
@@ -487,16 +559,16 @@ export default function AdminPage() {
             </h2>
 
             <div className="flex flex-wrap items-center gap-2">
-              {(["ALL", "ACTIVE", "COMPLETED", "FAILED"] as const).map(status => (
+              {(["ALL", "ACTIVE", "COMPLETED", "FAILED", "NODE-01", "NODE-02", "NODE-03", "NODE-04", "NODE-05"] as const).map(status => (
                 <button
                   key={status}
                   onClick={() => setFilterStatus(status)}
-                  className={`px-3 py-1 text-[10px] font-bold uppercase font-mono border transition-all ${filterStatus === status
+                  className={`px-2 py-1 text-[9px] font-bold uppercase font-mono border transition-all ${filterStatus === status
                     ? "bg-white text-black border-white shadow-[0_0_10px_white]"
                     : "bg-transparent text-white/50 border-white/20 hover:border-white/50 hover:text-white"
                     }`}
                 >
-                  <Filter className="w-3 h-3 inline-block mr-1 opacity-50" />
+                  <Filter className="w-2.5 h-2.5 inline-block mr-1 opacity-50" />
                   {status}
                 </button>
               ))}
@@ -569,10 +641,7 @@ export default function AdminPage() {
                     </td>
                     <td className="py-4 px-4 text-[#ff003c] font-bold">{p.timeRemaining}</td>
                     <td className="py-4 px-4">
-                      <span className={`px-2 py-0.5 text-[10px] font-bold rounded-sm border ${p.status === "ACTIVE" ? "border-[#00ff00] text-[#00ff00] bg-[#00ff00]/10" :
-                        p.status === "COMPLETED" ? "border-[#00ffff] text-[#00ffff] bg-[#00ffff]/10" :
-                          "border-[#ff003c] text-[#ff003c] bg-[#ff003c]/10"
-                        }`}>
+                      <span className={`px-2 py-0.5 text-[10px] font-bold rounded-sm border ${statusClassMap[p.status] || statusClassMap[`NODE-0${p.level}`] || "border-gray-500 text-gray-500 bg-gray-500/10"}`}>
                         {p.status}
                       </span>
                     </td>

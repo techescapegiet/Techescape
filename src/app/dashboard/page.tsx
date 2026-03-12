@@ -244,12 +244,33 @@ export default function DashboardPage() {
               transition={{ delay: 1.0, duration: 0.4 }}
               className="mt-auto pt-4 shadow-[0_-20px_40px_-20px_rgba(0,0,0,0.8)]"
             >
-              <GlowingButton onClick={startNextLevel} className="w-full py-5 text-xl tracking-[0.2em] font-black italic">
-                {player.currentLevel <= 5 ? "INITIALIZE BREACH PROTOCOL" : "INITIATE RECONSTRUCTION"}
-              </GlowingButton>
-              <div className="mt-3 text-center text-[10px] text-white/30 uppercase tracking-[0.3em] font-bold">
-                By Proceeding, You Acknowledge All System Risks
-              </div>
+              {player.currentLevel > (useGame().unlockedLevel || 1) ? (
+                <div className="w-full py-8 border-2 border-[#00ffff]/30 bg-black/60 flex flex-col items-center justify-center gap-4 relative overflow-hidden group">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#00ffff]/5 to-transparent animate-pulse" />
+                  <div className="flex items-center gap-3 text-[#00ffff] font-black italic text-xl tracking-widest animate-pulse">
+                    <Lock className="w-6 h-6" />
+                    AWAITING HQ CLEARANCE
+                  </div>
+                  <TerminalText 
+                    text={`NODE 0${player.currentLevel} IS CURRENTLY LOCKED by GLOBAL COMMAND.`} 
+                    className="text-[10px] text-[#00ffff]/60 uppercase tracking-[0.2em] font-mono"
+                    speed={30}
+                  />
+                  <div className="flex items-center gap-2 mt-2">
+                    <div className="w-1.5 h-1.5 bg-[#00ffff] rounded-full animate-ping" />
+                    <span className="text-[8px] text-[#00ffff]/40 font-bold uppercase tracking-widest">Standing by for authorization signal...</span>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <GlowingButton onClick={startNextLevel} className="w-full py-5 text-xl tracking-[0.2em] font-black italic">
+                    {player.currentLevel <= 5 ? "INITIALIZE BREACH PROTOCOL" : "INITIATE RECONSTRUCTION"}
+                  </GlowingButton>
+                  <div className="mt-3 text-center text-[10px] text-white/30 uppercase tracking-[0.3em] font-bold">
+                    By Proceeding, You Acknowledge All System Risks
+                  </div>
+                </>
+              )}
             </motion.div>
           </div>
         </motion.div>

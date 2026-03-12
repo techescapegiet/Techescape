@@ -26,6 +26,7 @@ export function Level2() {
   const [isError, setIsError] = useState(false);
   const [isCorrectFlash, setIsCorrectFlash] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
+  const [hintsUsed, setHintsUsed] = useState(0);
 
   const skipLevel = () => {
     setSuccess(true);
@@ -76,6 +77,7 @@ export function Level2() {
 
     setBlanks(initialBlanks);
     setTimeLeft(LEVEL_TIME); // Reset timer for new question
+    setHintsUsed(0); // Reset hints for the new question
 
     // Focus first empty input
     setTimeout(() => {
@@ -149,7 +151,7 @@ export function Level2() {
   };
 
   const useHint = () => {
-    if (success || timeLeft <= 5) return;
+    if (success || timeLeft <= 5 || hintsUsed >= 3) return;
     const currentQData = questions[currentQuestionIdx];
     if (!currentQData) return;
     const word = currentQData.word;
@@ -161,6 +163,7 @@ export function Level2() {
     if (unrevealed.length > 0) {
       const idx = unrevealed[Math.floor(Math.random() * unrevealed.length)];
       setRevealedIndices(prev => [...prev, idx]);
+      setHintsUsed(prev => prev + 1);
 
       const newBlanks = [...blanks];
       newBlanks[idx] = word[idx];
@@ -281,10 +284,11 @@ export function Level2() {
         <div className="text-center mb-12 relative z-10">
           <button
             onClick={useHint}
-            className="inline-flex items-center gap-2 px-4 py-1.5 border border-[#00ffff]/40 bg-[#00ffff]/10 hover:bg-[#00ffff]/20 hover:scale-105 active:scale-95 transition-all cursor-pointer text-[#00ffff] font-mono text-sm uppercase tracking-widest mb-6 rounded-full"
+            disabled={hintsUsed >= 3 || timeLeft <= 5}
+            className={cn("inline-flex items-center gap-2 px-4 py-1.5 border border-[#00ffff]/40 bg-[#00ffff]/10 hover:bg-[#00ffff]/20 transition-all cursor-pointer text-[#00ffff] font-mono text-sm uppercase tracking-widest mb-6 rounded-full", (hintsUsed >= 3 || timeLeft <= 5) ? "opacity-30 cursor-not-allowed grayscale" : "hover:scale-105 active:scale-95")}
             title="Reveal 1 letter (-5 seconds)"
           >
-            <Lightbulb className="w-4 h-4" /> Use Hint (-5s)
+            <Lightbulb className="w-4 h-4" /> Use Hint ({3 - hintsUsed} left, -5s)
           </button>
           <h3 className="text-2xl md:text-3xl font-bold text-white leading-relaxed">
             "{currentQ.hint}"

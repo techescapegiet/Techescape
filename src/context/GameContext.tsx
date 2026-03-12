@@ -15,6 +15,7 @@ export interface Player {
   rollNumber: string;
   academicYear: string;
   department: string;
+  selectedLanguage?: "C" | "Java" | "Python";
 }
 
 interface GameContextType {
@@ -27,12 +28,15 @@ interface GameContextType {
   isTimeUp: boolean;
   syncOfflineStatus: () => void;
   signInWithGoogle: () => Promise<void>;
-  user: User | null;
-  isEventLive: boolean;
-  isGameStarted: boolean;
-  checkEventStatus: () => Promise<{ isLive: boolean, isStarted: boolean, startTime: number | null }>;
+  user: any;
+  isEventLive: boolean; // Controls access to login
+  isGameStarted: boolean; // Controls access to dashboard
+  unlockedLevel: number; // Controls progression between levels
+  globalStartTime: number | null;
+  checkEventStatus: () => Promise<{ isLive: boolean, isStarted: boolean, startTime: number | null, unlockedLevel: number }>;
   erasePlayerData: () => Promise<void>;
   handleMissionFailure: (reason: string) => Promise<void>;
+  setPlayerLanguage: (lang: "C" | "Java" | "Python") => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -46,6 +50,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isEventLive, setIsEventLive] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
+  const [unlockedLevel, setUnlockedLevel] = useState(1);
   const [globalStartTime, setGlobalStartTime] = useState<number | null>(null);
   const router = useRouter();
 
@@ -107,6 +112,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         console.log("EVENT SETTINGS UPDATED:", payload.new);
         setIsEventLive(payload.new.is_live);
         setIsGameStarted(payload.new.game_started || false);
+        setUnlockedLevel(payload.new.unlocked_level || 1);
         
         // Parse global start time if available
         if (payload.new.game_started && payload.new.maintenance_message?.startsWith("START_TIME:")) {
@@ -134,15 +140,16 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const checkEventStatus = async () => {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("event_settings")
-      .select("is_live, game_started, maintenance_message")
+      .select("is_live, game_started, maintenance_message, unlocked_level")
       .eq("id", 1)
       .maybeSingle();
 
-    if (data && !error) {
+    if (data) {
       setIsEventLive(data.is_live);
       setIsGameStarted(data.game_started || false);
+      setUnlockedLevel(data.unlocked_level || 1);
       
       let startTime = null;
       if (data.game_started && data.maintenance_message?.startsWith("START_TIME:")) {
@@ -155,9 +162,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         setGlobalStartTime(null);
       }
       
-      return { isLive: data.is_live, isStarted: data.game_started || false, startTime };
+      return { isLive: data.is_live, isStarted: data.game_started || false, startTime, unlockedLevel: data.unlocked_level || 1 };
     }
-    return { isLive: false, isStarted: false, startTime: null };
+    return { isLive: false, isStarted: false, startTime: null, unlockedLevel: 1 };
   };
 
   const signInWithGoogle = async () => {
@@ -320,6 +327,13 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     setPlayer(null);
     localStorage.removeItem("escape_room_player");
     router.push("/");
+  };
+
+  const setPlayerLanguage = (lang: "C" | "Java" | "Python") => {
+    if (!player) return;
+    const updatedPlayer = { ...player, selectedLanguage: lang };
+    setPlayer(updatedPlayer);
+    localStorage.setItem("escape_room_player", JSON.stringify(updatedPlayer));
   };
 
   const completeLevel = async (fragment: string) => {
@@ -510,9 +524,12 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         user,
         isEventLive,
         isGameStarted,
+        unlockedLevel,
+        globalStartTime,
         checkEventStatus,
         erasePlayerData,
-        handleMissionFailure
+        handleMissionFailure,
+        setPlayerLanguage
       }}
     >
       {children}

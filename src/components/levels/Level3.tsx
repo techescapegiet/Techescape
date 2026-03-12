@@ -26,7 +26,7 @@ export function Level3() {
 
   // Dynamic state for collab
   const [currentStep, setCurrentStep] = useState(0);
-  const [attempts, setAttempts] = useState(3);
+  const [attempts, setAttempts] = useState(5);
   const [hostAnswered, setHostAnswered] = useState(false);
   const [guestAnswered, setGuestAnswered] = useState(false);
   const [status, setStatus] = useState<"active" | "completed" | "failed">("active");
@@ -39,6 +39,7 @@ export function Level3() {
   const [stepSuccess, setStepSuccess] = useState(false); // New: feedback between questions
   const [errorFlash, setErrorFlash] = useState(false);
   const [showHint, setShowHint] = useState(false);
+  const [hintUsed, setHintUsed] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
 
   // Dynamic Syllabus Questions
@@ -142,6 +143,7 @@ export function Level3() {
             setStepSuccess(false);
             setSelected(null);
             setShowHint(false);
+            setHintUsed(false);
             setPartnerSelection(null);
             setHostAnswered(false);
             setGuestAnswered(false);
@@ -246,6 +248,7 @@ export function Level3() {
           setCurrentStep(currentStep + 1);
           setSelected(null);
           setShowHint(false);
+          setHintUsed(false);
         } else {
           setSuccess(true);
           if (!isCompleting) {
@@ -408,8 +411,13 @@ export function Level3() {
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-bold text-[#00ffff] tracking-widest uppercase">My Interface</h3>
             <div className="flex items-center gap-4">
-              {!amIAnswered && (
-                <button onClick={() => setShowHint(true)} className="text-[10px] text-[#00ffff]/60 hover:text-[#00ffff] uppercase font-bold">Hint</button>
+              {!amIAnswered && !hintUsed && (
+                <button
+                  onClick={() => { setShowHint(true); setHintUsed(true); }}
+                  className="text-[10px] text-[#00ffff]/60 hover:text-[#00ffff] uppercase font-bold border border-[#00ffff]/30 px-2 py-1"
+                >
+                  Get Hint (1 left)
+                </button>
               )}
               {amIAnswered && <CheckCircle2 className="w-6 h-6 text-[#00ff00] animate-bounce" />}
             </div>

@@ -10,6 +10,14 @@ export interface ExportPlayer {
     timeRemaining: string;
 }
 
+export interface ExportAccessKey {
+    pc_id: string;
+    pin: string;
+    hint: string;
+    is_assigned: boolean;
+    assigned_to?: string;
+}
+
 /**
  * Downloads the player data as a CSV file.
  */
@@ -101,4 +109,36 @@ export function exportToPDF(data: ExportPlayer[], filename = "techescape-export.
     });
 
     doc.save(filename);
+}
+
+/**
+ * Downloads the access key (PIN) list as a CSV file.
+ */
+export function exportAccessKeys(data: ExportAccessKey[], filename = "techescape-pins.csv") {
+    if (!data || !data.length) {
+        alert("No data to export");
+        return;
+    }
+
+    const headers = ["Terminal ID", "Secure PIN", "Location Hint", "Status", "Assigned To"];
+    const csvRows = [headers.join(",")];
+
+    for (const row of data) {
+        const values = [
+            `"${row.pc_id}"`,
+            `"${row.pin}"`,
+            `"${row.hint}"`,
+            `"${row.is_assigned ? 'ASSIGNED' : 'AVAILABLE'}"`,
+            `"${row.assigned_to || 'N/A'}"`
+        ];
+        csvRows.push(values.join(","));
+    }
+
+    const csvString = csvRows.join("\n");
+    const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", filename);
+    link.click();
 }

@@ -34,8 +34,19 @@ export function Level5() {
   const [attempts, setAttempts] = useState(3);
   const [success, setSuccess] = useState(false);
   const [errorFlash, setErrorFlash] = useState(false);
-  const [showHint, setShowHint] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(600); // 10 minutes total for all 4 stages
+
+  // Timer logic
+  useEffect(() => {
+    if (success || isCompleting) return;
+    if (timeLeft <= 0) {
+      handleMissionFailure("TIME EXPIRED: ULTIMATE GAUNTLET FAILED");
+      return;
+    }
+    const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft, success, isCompleting, handleMissionFailure]);
 
   // Stage 1 (Crossword/Word Search)
   const [s1Words, setS1Words] = useState<any[]>([]);
@@ -82,8 +93,8 @@ export function Level5() {
     const mcqs = getMCQs();
     const d3 = mcqs[Math.floor(Math.random() * mcqs.length)];
 
-    const langs: ("C" | "Java" | "Python")[] = ["C", "Java", "Python"];
-    const d4Pool = getDebuggingChallenges(langs[Math.floor(Math.random() * 3)]);
+    const lang = player?.selectedLanguage || (["C", "Java", "Python"] as const)[Math.floor(Math.random() * 3)];
+    const d4Pool = getDebuggingChallenges(lang);
     const d4 = d4Pool[0];
 
     setS2Data(d2); setS3Data(d3); setS4Data(d4);
@@ -144,7 +155,6 @@ export function Level5() {
   const handleStageSuccess = () => {
     if (stage < 4) {
       setStage(stage + 1);
-      setShowHint(false);
       setErrorFlash(false);
     } else {
       setSuccess(true);
@@ -310,9 +320,17 @@ export function Level5() {
             </div>
           </div>
         </div>
-        <div className="text-right">
-          <Cpu className="w-8 h-8 text-[#ff003c] ml-auto mb-1 opacity-50" />
-          <span className="text-[10px] text-white/40 font-mono">NODE_5_MASHUP</span>
+        <div className="flex items-center gap-6">
+          <div className="flex flex-col items-end">
+            <span className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Time Remaining</span>
+            <div className={cn("text-2xl font-mono font-black", timeLeft <= 60 ? "text-[#ff003c] animate-ping" : "text-[#00ffff]")}>
+              {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, "0")}
+            </div>
+          </div>
+          <div className="text-right">
+            <Cpu className="w-8 h-8 text-[#ff003c] ml-auto mb-1 opacity-50" />
+            <span className="text-[10px] text-white/40 font-mono">NODE_5_MASHUP</span>
+          </div>
         </div>
       </div>
 
@@ -341,9 +359,6 @@ export function Level5() {
                         <Search className="w-5 h-5" />
                         <h3 className="uppercase tracking-[0.2em] font-bold">Level 1: Encryption Query ({foundWords.length}/{s1Words.length})</h3>
                       </div>
-                      <button onClick={() => setShowHint(true)} className="text-[10px] text-[#00ff9f] hover:underline uppercase font-bold flex items-center gap-1">
-                        <Lightbulb className="w-3 h-3" /> Get Hint
-                      </button>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -399,18 +414,10 @@ export function Level5() {
                         <Binary className="w-5 h-5" />
                         <h3 className="uppercase tracking-[0.2em] font-bold">Level 2: Semantic Recovery</h3>
                       </div>
-                      <button onClick={() => setShowHint(true)} className="text-[10px] text-[#00ffff] hover:underline uppercase font-bold flex items-center gap-1">
-                        <Lightbulb className="w-3 h-3" /> Get Hint
-                      </button>
                     </div>
 
                     <div className="text-center">
                       <p className="text-xl md:text-2xl font-bold text-white italic">"{s2Data.hint}"</p>
-                      {showHint && (
-                        <div className="mt-2 text-sm text-[#00ffff] font-mono italic animate-pulse">
-                          💡 Word Length: {s2Data.word.length} letters
-                        </div>
-                      )}
                     </div>
 
                     <div className="flex flex-wrap justify-center gap-2 md:gap-4 py-8">
@@ -447,18 +454,10 @@ export function Level5() {
                         <ShieldCheck className="w-5 h-5" />
                         <h3 className="uppercase tracking-[0.2em] font-bold">Level 3: Protocol Knowledge</h3>
                       </div>
-                      <button onClick={() => setShowHint(true)} className="text-[10px] text-[#00ff00] hover:underline uppercase font-bold flex items-center gap-1">
-                        <Lightbulb className="w-3 h-3" /> Get Hint
-                      </button>
                     </div>
 
                     <div className="text-center">
                       <p className="text-xl md:text-2xl font-bold text-white mb-6">"{s3Data.question}"</p>
-                      {showHint && (
-                        <div className="mb-6 mx-auto w-fit p-2 border border-[#00ff00]/30 bg-[#00ff00]/5 text-[#00ff00] font-mono text-sm italic">
-                          💡 Hint: {s3Data.explanation || "Think about the core concept."}
-                        </div>
-                      )}
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -483,21 +482,17 @@ export function Level5() {
                         <Bug className="w-5 h-5" />
                         <h3 className="uppercase tracking-[0.2em] font-bold">Level 4: {s4Data.title}</h3>
                       </div>
-                      <button onClick={() => setShowHint(true)} className="text-[10px] text-[#ff003c] hover:underline uppercase font-bold flex items-center gap-1">
-                        <Lightbulb className="w-3 h-3" /> Get Hint
-                      </button>
                     </div>
 
                     <div className="border border-[#00ffff]/20 bg-black/40 p-3 rounded-sm">
                       <h3 className="text-[10px] text-[#00ffff]/50 uppercase tracking-widest font-bold mb-1">OBJECTIVE</h3>
-                      <p className="text-sm font-bold text-white">Debug the code to pass the integration test.</p>
-                    </div>
-
-                    {showHint && (
-                      <div className="p-2 border border-[#ff003c]/30 bg-[#ff003c]/5 text-[#ff003c] font-mono text-xs italic">
-                        💡 Hint: {s4Data.errorHint}
+                      <p className="text-sm font-bold text-white mb-2">Debug the code to pass the integration test.</p>
+                      
+                      <div className="bg-[#00ffff]/5 border border-[#00ffff]/20 p-2 rounded">
+                        <h4 className="text-[9px] text-[#00ffff]/70 uppercase font-bold mb-1">Expected Output:</h4>
+                        <div className="font-mono text-xs text-white/80 whitespace-pre-wrap">{s4Data.expectedOutput}</div>
                       </div>
-                    )}
+                    </div>
 
                     <div className="border border-[#ff003c]/30 bg-[#0a0a0a] flex flex-col rounded-sm overflow-hidden h-[180px]">
                       <div className="flex items-center justify-between px-3 p-1.5 bg-[#1a1a1a] border-b border-white/10">
