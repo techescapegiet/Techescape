@@ -244,7 +244,7 @@ export default function DashboardPage() {
               transition={{ delay: 1.0, duration: 0.4 }}
               className="mt-auto pt-4 shadow-[0_-20px_40px_-20px_rgba(0,0,0,0.8)]"
             >
-              {player.currentLevel > (useGame().unlockedLevel || 1) ? (
+              {player.currentLevel > (useGame().unlockedLevel ?? 1) ? (
                 <div className="w-full py-8 border-2 border-[#00ffff]/30 bg-black/60 flex flex-col items-center justify-center gap-4 relative overflow-hidden group">
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#00ffff]/5 to-transparent animate-pulse" />
                   <div className="flex items-center gap-3 text-[#00ffff] font-black italic text-xl tracking-widest animate-pulse">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { GlowingButton } from "@/components/ui/GlowingButton";
 import { TerminalText } from "@/components/ui/TerminalText";
 import { Shield, Eye, Trash2, Power, RefreshCw, Zap, AlertTriangle, Users, Download, Archive, Filter, Activity, Key } from "lucide-react";
@@ -43,7 +43,7 @@ export default function AdminPage() {
     }
   };
 
-  const fetchEventSettings = async () => {
+  const fetchEventSettings = useCallback(async () => {
     const { data } = await supabase
       .from("event_settings")
       .select("is_live, game_started, maintenance_message, unlocked_level")
@@ -52,7 +52,7 @@ export default function AdminPage() {
     if (data) {
       setIsLive(data.is_live);
       setIsGameStarted(data.game_started || false);
-      setUnlockedLevel(data.unlocked_level || 1);
+      setUnlockedLevel(data.unlocked_level ?? 1);
       
       if (data.game_started && data.maintenance_message?.startsWith("START_TIME:")) {
         const ts = parseInt(data.maintenance_message.split(":")[1]);
@@ -61,7 +61,7 @@ export default function AdminPage() {
         setGlobalStartTime(null);
       }
     }
-  };
+  }, []);
 
   const toggleLive = async () => {
     const nextState = !isLive;
@@ -74,11 +74,15 @@ export default function AdminPage() {
   };
 
   const unlockLevel = async (level: number) => {
-    const { error } = await supabase.from("event_settings").update({ unlocked_level: level }).eq("id", 1);
+    // If clicking the current level, toggle it down to level-1 (or 0)
+    const nextLevel = unlockedLevel === level ? Math.max(0, level - 1) : level;
+    
+    const { error } = await supabase.from("event_settings").update({ unlocked_level: nextLevel }).eq("id", 1);
     if (error) {
-      alert("Failed to unlock level: " + error.message);
+      alert("Failed to update clearance: " + error.message);
     } else {
-      fetchEventSettings(); // Refresh settings to update unlockedLevel
+      setUnlockedLevel(nextLevel);
+      // No need to fetch immediately as the listener will catch it, but we update local state for snappiness
     }
   };
 
@@ -119,7 +123,7 @@ export default function AdminPage() {
     }
   };
 
-  const fetchPlayers = async () => {
+  const fetchPlayers = useCallback(async () => {
     const { data, error } = await supabase
       .from("players")
       .select(`
@@ -134,7 +138,6 @@ export default function AdminPage() {
 
     if (data && !error) {
       const formatted: LivePlayer[] = (data as unknown as Record<string, any>[]).map((p) => {
-        // Calculate time remaining (60 mins from global start if started, else registration time)
         const start = globalStartTime || new Date(p.created_at).getTime();
         const now = Date.now();
         const elapsed = Math.floor((now - start) / 1000);
@@ -155,7 +158,7 @@ export default function AdminPage() {
       setPlayers(formatted);
     }
     setLoading(false);
-  };
+  }, [globalStartTime]);
 
   const kickPlayer = async (sessionId: string, pcId: string | null) => {
     if (!confirm("Are you sure you want to terminate this session? This will release the PC and wipe progress.")) return;
@@ -537,9 +540,11 @@ export default function AdminPage() {
                   key={lvl}
                   onClick={() => unlockLevel(lvl)}
                   className={`py-2 text-[10px] font-bold transition-all border ${
-                    (unlockedLevel || 1) >= lvl
-                      ? "bg-[#00ffff] text-black border-[#00ffff] shadow-[0_0_10px_#00ffff]"
-                      : "bg-[#00ffff]/10 text-[#00ffff] border-[#00ffff]/30 hover:bg-[#00ffff]/20"
+                    unlockedLevel === lvl
+                      ? "bg-[#00ffff] text-black border-[#00ffff] shadow-[0_0_15px_#00ffff] scale-105"
+                      : unlockedLevel >= lvl 
+                        ? "bg-[#00ffff]/40 text-black border-[#00ffff]/50" 
+                        : "bg-[#00ffff]/10 text-[#00ffff] border-[#00ffff]/30 hover:bg-[#00ffff]/20"
                   }`}
                 >
                   N{lvl}
@@ -562,7 +567,7 @@ export default function AdminPage() {
               {(["ALL", "ACTIVE", "COMPLETED", "FAILED", "NODE-01", "NODE-02", "NODE-03", "NODE-04", "NODE-05"] as const).map(status => (
                 <button
                   key={status}
-                  onClick={() => setFilterStatus(status)}
+                  onClick={() => setFilterStatus(prev => prev === status ? "ALL" : status)}
                   className={`px-2 py-1 text-[9px] font-bold uppercase font-mono border transition-all ${filterStatus === status
                     ? "bg-white text-black border-white shadow-[0_0_10px_white]"
                     : "bg-transparent text-white/50 border-white/20 hover:border-white/50 hover:text-white"

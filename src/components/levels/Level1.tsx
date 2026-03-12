@@ -10,7 +10,7 @@ import { getCrosswordWords, AcademicYear, Department } from '@/lib/questionBank'
 import { cn } from "@/lib/utils";
 
 const GRID_SIZE = 9;
-const LEVEL_TIME = 420; // 7 minutes in seconds
+const LEVEL_TIME = 900; // 15 minutes in seconds
 
 export function Level1() {
   const { completeLevel, handleMissionFailure, player } = useGame();

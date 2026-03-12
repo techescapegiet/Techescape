@@ -112,7 +112,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         console.log("EVENT SETTINGS UPDATED:", payload.new);
         setIsEventLive(payload.new.is_live);
         setIsGameStarted(payload.new.game_started || false);
-        setUnlockedLevel(payload.new.unlocked_level || 1);
+        setUnlockedLevel(payload.new.unlocked_level ?? 1);
         
         // Parse global start time if available
         if (payload.new.game_started && payload.new.maintenance_message?.startsWith("START_TIME:")) {
@@ -149,7 +149,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     if (data) {
       setIsEventLive(data.is_live);
       setIsGameStarted(data.game_started || false);
-      setUnlockedLevel(data.unlocked_level || 1);
+      setUnlockedLevel(data.unlocked_level ?? 1);
       
       let startTime = null;
       if (data.game_started && data.maintenance_message?.startsWith("START_TIME:")) {
